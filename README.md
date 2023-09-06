@@ -43,7 +43,7 @@
 
 ### 3. 本地开发
 
-1. 先启动zerosx-gateway、zerosx-auth、zeros-system这三个项目；
+1. 先启动zerosx-gateway、zerosx-auth、zerosx-system这三个项目；
 2. 启动前端项目，启动说明请看【zerosx-ui/zerosx-vue2/README.md】；
 3. 浏览器访问前端地址，即可体验。
 4. 调试接口文档：
