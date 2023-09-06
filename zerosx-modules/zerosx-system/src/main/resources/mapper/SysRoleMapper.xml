@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zerosx.system.mapper.ISysRoleMapper">
+
+
+    <select id="selectRoleByUserId" resultType="com.zerosx.system.vo.SysRoleVO">
+        SELECT sr.*
+        FROM t_sys_user_role sur
+                 LEFT JOIN t_sys_role sr ON sur.role_id = sr.id
+        where sur.user_id = #{userId}
+    </select>
+
+</mapper>

@@ -1,0 +1,361 @@
+server:
+  # undertow 配置
+  undertow:
+    # HTTP post内容的最大大小。当值为-1时，默认值为大小是无限的
+    max-http-post-size: -1
+    # 以下的配置会影响buffer,这些buffer会用于服务器连接的IO操作,有点类似netty的池化内存管理
+    # 每块buffer的空间大小,越小的空间被利用越充分
+    buffer-size: 512
+    # 是否分配的直接内存
+    direct-buffers: true
+    threads:
+      # 设置IO线程数, 它主要执行非阻塞的任务,它们会负责多个连接, 默认设置每个CPU核心一个线程
+      io: 8
+      # 阻塞任务线程池, 当执行类似servlet请求阻塞操作, undertow会从这个线程池中取得线程,它的值设置取决于系统的负载
+      worker: 256
+      
+spring:
+  main:
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    serialization:
+      write-dates-as-timestamps: false
+  datasource:
+    hikari:
+      # 最大连接池数量
+      maxPoolSize: 20
+      # 最小空闲线程数量
+      minIdle: 10
+      # 配置获取连接等待超时的时间
+      connectionTimeout: 30000
+      # 校验超时时间
+      validationTimeout: 5000
+      # 空闲连接存活最大时间，默认10分钟
+      idleTimeout: 600000
+      # 此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认30分钟
+      maxLifetime: 1800000
+      # 连接测试query（配置检测连接是否有效）
+      connectionTestQuery: SELECT 1
+      # 多久检查一次连接的活性
+      keepaliveTime: 30000
+      # poolName
+      pool-name: ${spring.application.name}
+
+  redis:
+    keyPrefix: zerosx-cloud
+    database: 0
+    host: 127.0.0.1
+    port: 6479
+    password: zerosx@123456
+    #ssl:
+    timeout: 3000
+    connectTimeout: 10000
+    clientName: ${spring.application.name}
+    redisson:
+      config: |
+        threads: 4
+        # core * 2
+        nettyThreads: 4
+        #codec: !<org.redisson.codec.JsonJacksonCodec> {}
+        transportMode: "NIO"
+        #单节点配置
+        singleServerConfig:
+          # 最小空闲连接数
+          idleConnectionTimeout: 10000
+          connectTimeout: 10000
+          # 命令等待超时，单位：毫秒
+          timeout: 3000
+          #retryAttempts: 3
+          #retryInterval: 1500
+          #密码
+          password: zerosx@123456
+          #subscriptionsPerConnection: 5
+          clientName: ${spring.application.name}
+          address: "redis://192.168.3.6:6479"
+          #subscriptionConnectionMinimumIdleSize: 1
+          # 发布和订阅连接池大小
+          subscriptionConnectionPoolSize: 50
+          #connectionMinimumIdleSize: 24
+          #连接池大小
+          connectionPoolSize: 64
+          #数据库
+          database: 0
+          #dnsMonitoringInterval: 5000
+#        clusterServersConfig:
+#          idleConnectionTimeout: 10000
+#          connectTimeout: 10000
+#          timeout: 3000
+#          retryAttempts: 3
+#          retryInterval: 1500
+#          failedSlaveReconnectionInterval: 3000
+#          failedSlaveCheckInterval: 60000
+#          password: null
+#          subscriptionsPerConnection: 5
+#          clientName: null
+#          loadBalancer: !<org.redisson.connection.balancer.RoundRobinLoadBalancer> {}
+#          subscriptionConnectionMinimumIdleSize: 1
+#          subscriptionConnectionPoolSize: 50
+#          slaveConnectionMinimumIdleSize: 24
+#          slaveConnectionPoolSize: 64
+#          masterConnectionMinimumIdleSize: 24
+#          masterConnectionPoolSize: 64
+#          readMode: "SLAVE"
+#          subscriptionMode: "SLAVE"
+#          nodeAddresses:
+#          - "redis://127.0.0.1:7004"
+#          - "redis://127.0.0.1:7001"
+#          - "redis://127.0.0.1:7000"
+#          scanInterval: 1000
+#          pingConnectionInterval: 0
+#          keepAlive: false
+#          tcpNoDelay: false
+
+
+  task:
+    execution:
+      pool:
+        # 最大线程数
+        max-size: 100
+        # 核心线程数
+        core-size: 5
+        # 存活时间
+        keep-alive: 60000
+        # 队列大小
+        queue-capacity: 1000
+        # 是否允许核心线程超时
+        allow-core-thread-timeout: true
+      # 线程名称前缀
+      thread-name-prefix: ${spring.application.name}-
+  #sentinel dashboard
+  cloud:
+    # sentinel:
+    #   transport:
+    #     #dashboard: "192.168.170.11:6119"
+    #     dashboard: "127.0.0.1:6119"
+    #   eager: true
+    loadbalancer:
+      retry:
+        enabled: true
+      enabled: true
+      cache:
+        enabled: true
+        ttl: 5S
+
+logging:
+  #config: classpath:logback-spring.xml
+  config: D:\chenyanhui\OpenSource\zerosx-cloud\zerosx-commons\zerosx-common-log\src\main\resources\logback-spring.xml
+    
+  level:
+    com.alibaba.nacos.client.naming: warn
+    com.zerosx: debug
+    #com.alibaba.nacos.client: warn
+  file:
+    path: /home/zerosx-cloud/logs/${spring.application.name}
+  logback:
+    rollingpolicy:
+      clean-history-on-start: false
+      max-file-size: 50MB
+      total-size-cap: 1GB
+      max-history: 31
+
+#feign配置
+feign:
+  #sentinel
+  sentinel:
+    enabled: true
+  #熔断器
+  circuitbreaker:
+    group:
+      enabled: true
+    enabled: true
+  okhttp:
+    enabled: false
+  httpclient:
+    enabled: true
+    max-connections: 600
+    max-connections-per-route: 600
+    #客户端和服务器建立连接的timeout ms
+    connection-timeout: 10000
+    #以下两字段是自定义
+    #读取超时时间 ms
+    read-timeout: 30000
+    #连接池获取连接的超时时间 ms
+    connection-request-timeout: 200
+  client:
+    config:
+      default: #default全局的配置
+        #日志级别，BASIC：基本的请求和响应信息 FULL:全日志
+        loggerLevel: BASIC
+        #超时时间
+        #connectTimeout: 30000
+        #readTimeout: 30000
+  compression:
+    request:
+      enabled: true
+      mime-types: text/xml,application/xml,application/json
+      min-request-size: 8192
+    response:
+      enabled: true
+
+
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: 1
+      logic-not-delete-value: 0
+      table-prefix: "t_"
+
+  configuration:
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #关闭打印
+    #log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+    cache-enabled: false
+    map-underscore-to-camel-case: true
+
+
+xxl:
+  job:
+    adminAddresses: http://192.168.170.11:8082/xxl-job-admin/
+    ### 执行器通讯TOKEN [选填]：非空时启用；
+    accessToken: ""
+    #addresses: ${xxl-job-admin-addr}
+    ### 调度中心部署跟地址 [选填]：如调度中心集群部署存在多个地址则用逗号分隔。执行器将会使用该地址进行"执行器心跳注册"和"任务结果回调"；为空则关闭自动注册；
+    ### 执行器AppName [选填]：执行器心跳注册分组依据；为空则关闭自动注册
+    appname: ${spring.application.name}
+    address: ""
+    ip: ""
+    ### 执行器端口号 [选填]：小于等于0则自动获取；默认端口为9999，单机部署多个执行器时，注意要配置不同执行器端口；
+    port: 1${server.port}
+    ### xxl-job log path
+    logpath: /Users/lunay/logs/${spring.application.name}/jobhandler
+    ### xxl-job log retention days
+    logretentiondays: 7
+
+zerosx:
+  #日志链路追踪
+  trace:
+    enable: true
+  #短信服务器
+  sms:
+    enabled: true
+    default-sms:
+      accessKeyId: LTAI5tLbF7vT83t8jU9pX6xm
+      accessKeySecret: KDsnhLztTelgK14WO008lqL0Obh6dX
+  #mybatis敏感字段加解密
+  mybatis-crypto:
+    enabled: true
+    algorithm: sm4
+    key: 1234567898765432
+  #mybatis-plus自动填充
+  mybatis-plus:
+    auto-fill:
+      enabled: true
+      enableInsertFill: true
+      enableUpdateFill: true
+      createTimeField: createTime
+      updateTimeField: updateTime
+      createByField: createBy
+      updateByField: updateBy
+  security:
+    tokenStoreType: redis
+    renewToken: true
+    renewTokenPercent: 0.2
+    tokenStorePrefix: "zerosx-cloud:"
+    signingKey: zerosx-cloud
+    ignoreAuthUrls:
+      - /oauth/token
+      - /api-auth/oauth/token
+      - /api-auth/auth/getImgCode
+      - /api-auth/auth/code
+      - /api-auth/auth/getSmsCode
+      # 登出接口
+      - /api-auth/token/logout
+      - /oauth/token123
+      - /doc.html
+      - /v3/api-docs
+      - /v3/api-docs/swagger-config
+      - /v3/api-docs/**
+      - /swagger-ui/index.html
+      - /swagger-resources
+      - /favicon.ico
+      - /swagger-resources/configuration/ui
+      - /v2/api-docs-ext
+      - /v2/api-docs
+      - /swagger-ui.html
+      - /swagger-resources/configuration/security
+      # - /api-auth/v3/api-docs/default
+      # - /api-system/v3/api-docs/default
+      # - /api-order/v3/api-docs/default
+      - /api-order/**
+
+    perms:
+      urlPermissionEnable: true
+      passClientIds:
+        - ems
+      passPermsUrls:
+        - /oauth/**
+        - /api-system/ems/user_login
+        - /api-system/areas
+        - /api-system/sys/menu/getRouters/**
+        - /api-system/sys/menu/roleMenuTree
+        - /api-system/sys/role/roleList
+        - /api-system/muti_tenancy/select_options
+        - /api-auth/auth/getImgCode
+        - /api-saas/saas/sys_user/current
+        - /api-system/sys_user/getInfo
+        - /api-system/getRouters
+        - /api-system/sys_post/select_list
+        - /api-system/sys_role/select_list
+        - /api-system/sys_dept/tree_select
+        - /api-system/**/queryById/**
+        - /api-system/**/getById/**
+        - /api-system/sysDictData_selectList/{dictType}
+        - /api-system/sys_menu/roleMenuTree
+        - /api-system/upload_file
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+    show-extensions: true
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: 'default'
+      paths-to-match: '/**'
+      packages-to-scan: 
+        - com.zerosx
+        - com.github.knife4j
+  default-flat-param-object: false
+
+
+# seata配置
+seata:
+  # 默认关闭，如需启用spring.datasource.dynami.seata需要同时开启
+  enabled: true
+  # Seata 应用编号，默认为 ${spring.application.name}
+  application-id: ${spring.application.name}
+  # Seata 事务组编号，用于 TC 集群名
+  tx-service-group: ${spring.application.name}-group
+  config:
+    type: nacos
+    nacos:
+      server-addr: ${spring.cloud.nacos.config.server-addr}
+      group: ${spring.cloud.nacos.config.group}
+      namespace: ${spring.cloud.nacos.config.namespace}
+      data-id: seataServer.properties
+  registry:
+    type: nacos
+    nacos:
+      application: seata-server
+      server-addr: ${spring.cloud.nacos.config.server-addr}
+      group: ${spring.cloud.nacos.discovery.group}
+      namespace: ${spring.cloud.nacos.config.namespace}

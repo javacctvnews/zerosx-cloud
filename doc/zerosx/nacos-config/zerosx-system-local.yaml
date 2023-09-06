@@ -1,0 +1,66 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+  datasource:
+    url: jdbc:mysql://192.168.3.6:13306/zerosx_system?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true
+    username: root
+    password: zerosx@123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+
+
+logging:
+  level:
+    com.zerosx: debug
+
+
+mybatis-plus:
+  configuration:
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #关闭打印
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+
+zerosx:
+  file-server:
+    type: s3
+    filePrefix: zerosx_cloud
+    s3:
+      accessKey: LTAI5tLbF7vT83t8jU9pX6xm
+      accessKeySecret: KDsnhLztTelgK14WO008lqL0Obh6dX
+      endpoint: oss-cn-shenzhen.aliyuncs.com
+      bucketName: zeros-cloud-oss
+
+  tenant:
+    enable: false
+    ignoreTables:
+      - t_area_city_source
+      - t_sys_dict_data
+      - t_sys_dict_type
+      - t_sys_menu
+      - t_sys_role_menu
+      - t_sys_user_role
+      - t_sys_role_dept
+      - t_sys_role_menu
+      - t_sys_user_post
+      - t_sys_user_role
+      - undo_log
+    ignoreSqls:
+      - com.zerosx.system.mapper.IMutiTenancyGroupMapper.selectTenancyExist
+      - com.zerosx.system.mapper.ISysUserMapper.selectLoginSysUser
+      - com.zerosx.system.mapper.ISysRoleMapper.selectRoleByUserId
+      - com.zerosx.system.mapper.IMutiTenancyGroupMapper.selectTenancy
+  
+# knife4j-openapi3
+knife4j:
+  # 开启增强配置
+  enable: true
+  # 开启生产环境屏蔽
+  production: false
+  # 开启Swagger的Basic认证功能,默认是false
+  # basic:
+  #   enable: true
+  #   # Basic认证用户名
+  #   username: admin
+  #   # Basic认证密码
+  #   password: admin123

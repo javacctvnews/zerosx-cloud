@@ -1,0 +1,45 @@
+server:
+  port: 19120
+
+spring:
+  application:
+    name: zerosx-monitor
+
+  profiles:
+    active: @profiles.active@
+
+  security:
+    user:
+      name: admin123
+      #Admin123
+      password: "{bcrypt}$2a$10$wjn3iLKN8aX6Q3P4YOYoWOU.ExMMKuuXxnLS/LL5/A4B.uKfgPJDa"
+
+  cloud:
+    nacos:
+      config:
+        server-addr: @nacos.server@
+        file-extension: yaml
+        namespace: @nacos.namespace@
+        group: @nacos.config.group@
+        username: @nacos.username@
+        password: @nacos.password@
+        shared-configs:
+          - dataId: common-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+            group: ${spring.cloud.nacos.config.group}
+            refresh: true
+      discovery:
+        server-addr: @nacos.server@
+        namespace: @nacos.namespace@
+        group: @nacos.discovery.group@
+        username: @nacos.username@
+        password: @nacos.password@
+
+##### spring-boot-actuator配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

@@ -1,0 +1,5 @@
+com.zerosx.common.core.config.CustomPasswordEncoder
+com.zerosx.common.core.config.CustomJacksonConfig
+com.zerosx.common.core.utils.SpringUtils
+com.zerosx.common.core.config.async.DefaultAsyncExecutorConfig
+com.zerosx.common.core.config.AspectJAutoProxyConfig

@@ -1,0 +1,17 @@
+spring:
+
+  datasource:
+    url: jdbc:mysql://192.168.3.6:13306/zerosx_auth?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true
+    username: root
+    password: zerosx@123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #type: com.alibaba.druid.pool.DruidDataSource
+    type: com.zaxxer.hikari.HikariDataSource
+
+zerosx:
+  tenant:
+    enable: true
+    ignoreTables:
+      - t_stock
+      - undo_log
+    ignoreSqls:

@@ -1,0 +1,25 @@
+package ${package}.${moduleName}.dto;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.Setter;
+#if(${hasBigDecimal})
+import java.math.BigDecimal;
+#end
+import java.util.Date;
+import java.io.Serializable;
+
+/**
+ * ${comments}
+ * @Description
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Getter
+@Setter
+@Schema(description = "${comments}:分页查询DTO")
+public class ${className}PageDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+}

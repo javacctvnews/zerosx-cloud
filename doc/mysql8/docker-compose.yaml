@@ -1,0 +1,29 @@
+#数据库一般需要将数据挂载到宿主机上,以免容器损坏导致数据丢失
+version: '3'
+services:
+  #mysql
+  db-mysql:
+    image: mysql:8.0.34 # 或其它mysql版本 docker pull mysql:8.0.34
+    container_name: zerosx_mysql8
+    environment:
+      - MYSQL_ROOT_PASSWORD=zerosx@123456
+      - TZ=Asia/Shanghai
+      - SET_CONTAINER_TIMEZONE=true
+      - CONTAINER_TIMEZONE=Asia/Shanghai
+    # 容器日志大小配置
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '5g'
+    volumes:
+      # 前面宿主机目录，后面容器内目录
+      # 配置
+      - ./mysql8.0.34/conf:/etc/mysql/conf.d
+      # 数据
+      - ./mysql8.0.34/data:/var/lib/mysql
+      # 日志
+      - ./mysql8.0.34/logs:/var/log/mysql
+    ports:
+      # 前面宿主机目录，后面容器内目录
+      - 13306:3306
+    restart: always

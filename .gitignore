@@ -6,6 +6,7 @@ doc/mysql8/mysql8.0.34/logs
 doc/nacos/logs
 doc/redis/data
 doc/seata/logs
+.DS_store
 
 # Compiled class file
 *.class
@@ -69,7 +70,6 @@ nbdist/
 
 ######################################################################
 # Others
-*.log
 *.xml.versionsBackup
 *.swp
 

@@ -1,0 +1,48 @@
+package ${package}.${moduleName}.vo;
+
+import lombok.Getter;
+import lombok.Setter;
+#if(${hasBigDecimal})
+import java.math.BigDecimal;
+#end
+import java.io.Serializable;
+import java.util.Date;
+import io.swagger.v3.oas.annotations.media.Schema;
+import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.zerosx.common.base.anno.Trans;
+import com.zerosx.common.base.constants.CommonConstants;
+
+/**
+ * ${comments}
+ * @Description
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Getter
+@Setter
+@ExcelIgnoreUnannotated
+@Schema(description = "${comments}:分页结果对象")
+public class ${className}PageVO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+#foreach ($column in $columns)
+#if($column.columnName != "deleted")
+    @Schema(description = "$column.comments")
+#if($column.columnName != $pk.columnName && $column.columnName != "operator_id")
+    @ExcelProperty(value = {"$column.comments"})
+#end
+#if($column.columnName == "operator_id")
+    @Trans(type = CommonConstants.TRANS_OPERATOR_ID, ref = "operatorName")
+#end
+    private $column.attrType $column.attrname;
+
+#if($column.columnName == "operator_id")
+    @Schema(description = "租户公司")
+    @ExcelProperty(value = {"租户公司"})
+    private String operatorName;
+#end
+#end
+#end
+}

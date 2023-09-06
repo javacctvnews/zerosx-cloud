@@ -1,0 +1,88 @@
+package ${package}.${moduleName}.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import org.springframework.stereotype.Service;
+import com.zerosx.common.core.service.impl.SuperServiceImpl;
+import com.zerosx.common.core.vo.CustomPageVO;
+import com.zerosx.common.base.vo.RequestVO;
+import com.zerosx.common.core.utils.BeanCopierUtil;
+import com.zerosx.common.core.utils.PageUtils;
+import com.zerosx.common.base.exception.BusinessException;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Arrays;
+
+import lombok.extern.slf4j.Slf4j;
+
+import ${package}.${moduleName}.entity.${className};
+import ${package}.${moduleName}.mapper.I${className}Mapper;
+import ${package}.${moduleName}.service.I${className}Service;
+import ${package}.${moduleName}.vo.${className}PageVO;
+import ${package}.${moduleName}.dto.${className}PageDTO;
+import ${package}.${moduleName}.dto.${className}DTO;
+import ${package}.${moduleName}.vo.${className}VO;
+
+/**
+ * ${comments}
+ * @Description
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Slf4j
+@Service
+public class ${className}ServiceImpl extends SuperServiceImpl<I${className}Mapper, ${className}> implements I${className}Service {
+
+    @Override
+    public CustomPageVO<${className}PageVO> pageList(RequestVO<${className}PageDTO> requestVO, boolean searchCount) {
+        return PageUtils.of(baseMapper.selectPage(PageUtils.of(requestVO, searchCount), getWrapper(requestVO.getT())).convert((e) -> {
+            ${className}PageVO tarVO = BeanCopierUtil.copyProperties(e, ${className}PageVO.class);
+            //todo
+            return tarVO;
+        }));
+    }
+
+    @Override
+    public List<${className}> dataList(${className}PageDTO query) {
+        return list(getWrapper(query));
+    }
+
+    private LambdaQueryWrapper<${className}> getWrapper(${className}PageDTO query) {
+        LambdaQueryWrapper<${className}> qw = Wrappers.lambdaQuery(${className}.class);
+        if(query == null){
+            return qw;
+        }
+        //todo
+
+        return qw;
+    }
+
+    @Override
+    public boolean add(${className}DTO ${classname}DTO) {
+        ${className} addEntity = BeanCopierUtil.copyProperties(${classname}DTO, ${className}.class);
+        return save(addEntity);
+    }
+
+    @Override
+    public boolean update(${className}DTO ${classname}DTO) {
+        ${className} dbUpdate = getById(${classname}DTO.getId());
+        if (dbUpdate == null) {
+            throw new BusinessException("编辑记录不存在");
+        }
+        ${className} updateEntity = BeanCopierUtil.copyProperties(${classname}DTO, ${className}.class);
+        return updateById(updateEntity);
+    }
+
+   @Override
+    public ${className}VO queryById(Long id) {
+        return BeanCopierUtil.copyProperties(getById(id), ${className}VO.class);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deleteRecord(Long[] ids) {
+        return removeByIds(Arrays.asList(ids));
+    }
+
+}

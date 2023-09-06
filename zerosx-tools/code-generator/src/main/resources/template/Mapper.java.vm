@@ -1,0 +1,16 @@
+package ${package}.${moduleName}.mapper;
+
+import ${package}.${moduleName}.entity.${className};
+import com.zerosx.common.core.service.SuperMapper;
+import org.apache.ibatis.annotations.Mapper;
+
+/**
+ * ${comments}
+ * 
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Mapper
+public interface I${className}Mapper extends SuperMapper<${className}> {
+
+}

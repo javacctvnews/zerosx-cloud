@@ -1,0 +1,2 @@
+com.zerosx.common.log.config.LogConfiguration
+com.zerosx.common.log.trance.TraceOncePerRequestFilter

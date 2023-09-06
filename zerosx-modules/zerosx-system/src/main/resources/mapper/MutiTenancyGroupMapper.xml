@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zerosx.system.mapper.IMutiTenancyGroupMapper">
+
+    <select id="selectTenancyExist" resultType="int">
+        select count(1) from t_muti_tenancy_group mtg
+        where 1=1 and mtg.deleted = 0
+        <if test="id != null">
+            and mtg.id != #{id}
+        </if>
+        and (mtg.tenant_group_name = #{tenantGroupName} or mtg.social_credit_code = #{socialCreditCode})
+    </select>
+
+    <select id="selectTenancy" resultType="com.zerosx.system.entity.MutiTenancyGroup">
+        select *
+        from t_muti_tenancy_group
+        where operator_id = #{operatorId}
+    </select>
+
+</mapper>

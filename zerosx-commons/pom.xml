@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.zerosx.cloud</groupId>
+    <artifactId>zerosx-cloud</artifactId>
+    <version>0.0.1</version>
+  </parent>
+
+  <artifactId>zerosx-commons</artifactId>
+  <name>zerosx-commons</name>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>zerosx-common-base</module>
+    <module>zerosx-common-loadbalancer</module>
+    <module>zerosx-common-sentinel</module>
+    <module>zerosx-common-redis</module>
+    <module>zerosx-common-security</module>
+    <module>zerosx-common-core</module>
+    <module>zerosx-common-oss</module>
+    <module>zerosx-common-log</module>
+    <module>zerosx-common-db</module>
+    <module>zerosx-common-seata</module>
+    <module>zerosx-common-encrypt</module>
+    <module>zerosx-common-encrypt2</module>
+    <module>zerosx-common-sms</module>
+  </modules>
+
+  <!--<dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+    </dependency>
+  </dependencies>-->
+
+</project>

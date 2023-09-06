@@ -1,0 +1,2 @@
+com.zerosx.common.db.config.TenantAutoConfiguration
+com.zerosx.common.db.config.MybatisPlusConfiguration
