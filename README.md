@@ -37,7 +37,7 @@
 
 ### 2. 软件架构
 
-<img style="width: 80%;text-align: center;" src="https://zeros-cloud-oss.oss-cn-shenzhen.aliyuncs.com/Zeros-platform%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%9B%BE.png?Expires=1691787901&OSSAccessKeyId=TMP.3Kd7wcxn9wDiwufTufRFjnEWei5LnKHVro16MQCpW1RxDbz5zhmFzWKB5TwUTE865tn3KriCMLgR5QtCdxWLFa5aJLWNWR&Signature=51QfPH90VYpT%2F0jtB5mBMazCkhI%3D"/>
+<img style="width: 80%;text-align: center;" src="./doc/images/zerosx-cloud.png" alt="系统架构图"/>
 
 ### 3. 使用说明
 
@@ -155,6 +155,5 @@ docker push registry.cn-shenzhen.aliyuncs.com/zeros-cloud/zeros-ui:v1.1.0
     </tr>
      <tr>
        <td><img src="./doc/images/img19.png"/></td>
-      
     </tr>
 </table>
