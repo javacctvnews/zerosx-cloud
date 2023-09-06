@@ -25,21 +25,23 @@
 
 ### 1. 简介
 
-此平台是由作者个人兴趣下搭建及开发，完全开源，免费使用，仅供学习参考。
+此平台是由作者个人兴趣下搭建及开发，开源，免费，仅供初学者学习参考。
 
 * 基于JDK8、SpringBoot2.7.14、SpringCloud2021.0.5和SpringCloudAlibaba2021.0.5.0且采用前后端分离的微服务多租户体系架构。
 * 采用自定义starter组件化的思想，结构解耦，易于扩展。
 * 实现了SpringCloudGateway集成OAuth2统一认证授权及URL级功能权限校验（适用于网络隔离场景，即网关是统一入口），且可自定义扩展OAuth2授权模式。
 * 集成Knife4j的OpenAPI3的接口文档，方便前后端对接，基础功能和文档注释完全由代码生成器一键生成（前后端代码）。
 * 代码生成器一键生成基础CRUD功能，节约开发时间，更多注重业务开发。
-* 提供一套基于Vue2.x的前端项目[zerosx-vue2]，此项目是参考【若依】前端开源改造，感谢若依，作者前端刚开始学习，不喜勿喷。
+* 提供一套基于Vue2.x的前端项目[zerosx-vue2]，此项目是参考【若依】前端开源改造，感谢若依，作者前端刚开始学习，勿喷。
 * 与此架构类似的项目已在作者所在公司线上运营，对于中小型企业项目开发是非常有性价比的一套架构。
 
 ### 2. 软件架构
 
-<img style="width: 80%;text-align: center;" src="https://zeros-cloud-oss.oss-cn-shenzhen.aliyuncs.com/Zeros-platform%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%9B%BE.png?Expires=1691787901&OSSAccessKeyId=TMP.3Kd7wcxn9wDiwufTufRFjnEWei5LnKHVro16MQCpW1RxDbz5zhmFzWKB5TwUTE865tn3KriCMLgR5QtCdxWLFa5aJLWNWR&Signature=51QfPH90VYpT%2F0jtB5mBMazCkhI%3D"/>
+<img style="width: 80%;text-align: center;" src="./doc/images/zerosx-cloud.png" alt="系统架构图"/>
 
-### 3. 使用说明
+> 备注：图中灰色块组件作者并未搭建（服务器资源有限），只做一个选型参考。
+
+### 3. 本地开发
 
 1. 先启动zerosx-gateway、zerosx-auth、zeros-system这三个项目；
 2. 启动前端项目，启动说明请看【zerosx-ui/zerosx-vue2/README.md】；
@@ -70,6 +72,7 @@
     * 行政区域：中华人民共和国行政区域的维护
     * 系统监控：SpringBootAdmin系统监控
     * 接口文档：OpenAPI3聚合接口文档
+    * 短信配置：短信服务商及短信业务模板的相关配置
 
 ### 5. 打包部署
 
@@ -82,7 +85,12 @@ mvn clean package -DskipTests -Pprod
 * 打包镜像
 
 ```shell 
+# 网关服务
 docker build -t zeros-cloud/zeros-gateway:v1.0.0 .
+# 系统服务
+docker build -t zeros-cloud/zerosx-modules/zerosx-system:v1.0.0 .
+# 授权服务
+docker build -t zeros-cloud/zeros-auth:v1.0.0 .
 ```
 
 * 推送远程仓库
@@ -90,7 +98,7 @@ docker build -t zeros-cloud/zeros-gateway:v1.0.0 .
 ```shell
 #推送远程仓库 示例
 #登录
-docker login --username=841132320@qq.com registry.cn-shenzhen.aliyuncs.com
+docker login --username=841****20@qq.com registry.cn-shenzhen.aliyuncs.com
 #tag
 docker tag [imageId] registry.cn-shenzhen.aliyuncs.com/zeros-cloud/zeros-ui:v1.1.0
 #push
@@ -102,7 +110,8 @@ docker push registry.cn-shenzhen.aliyuncs.com/zeros-cloud/zeros-ui:v1.1.0
 > 因服务器资源有限，组件均采用 **Docker** 单节点方式部署，使用 **Docker Compose** 进行编排，安装的组件及版本如下：<br>
 > <img src="https://img.shields.io/badge/Nacos-2.2.0-critical?logo=alibabadotcom" alt="">
 > <img src="https://img.shields.io/badge/Redis-6.2.13-blue?logo=redis" alt="">
-> <img src="https://img.shields.io/badge/MySQL-8.0.x+-green?logo=mysql" alt=""><br>
+> <img src="https://img.shields.io/badge/MySQL-8.0.x-green?logo=mysql" alt="">
+> <img src="https://img.shields.io/badge/Seata-1.6.1-blue?logo=statamic&logoColor=#87CEEB" alt=""><br>
 > 部署应用如下：<br>
 > <img src="https://img.shields.io/badge/zerosx_gateway-0.0.1-blue" alt="">
 > <img src="https://img.shields.io/badge/zerosx_auth-0.0.1-blue" alt="">
@@ -155,6 +164,5 @@ docker push registry.cn-shenzhen.aliyuncs.com/zeros-cloud/zeros-ui:v1.1.0
     </tr>
      <tr>
        <td><img src="./doc/images/img19.png"/></td>
-      
     </tr>
 </table>
