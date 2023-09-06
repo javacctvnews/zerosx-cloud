@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ObjectUtils;
 
-import javax.annotation.PostConstruct;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -32,9 +31,6 @@ public abstract class AbsTranslationService<T> implements ITranslationService<T>
 
     protected static final String EMPTY = StringUtils.EMPTY;
 
-    //@Autowired
-    //private Executor executor;
-
     /**
      * 缓存，提高性能
      */
@@ -46,12 +42,6 @@ public abstract class AbsTranslationService<T> implements ITranslationService<T>
 
     public static Map<String, ITranslationService> transBeanCache = new ConcurrentHashMap<>();
 
-    @PostConstruct
-    public void init() {
-        String translationType = translationType();
-        transBeanCache.put(translationType, this);
-        log.debug("加载翻译接口实现Bean:{}", translationType);
-    }
 
     /**
      * 获取Caffeine缓存

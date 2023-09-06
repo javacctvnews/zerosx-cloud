@@ -4,7 +4,6 @@ import com.zerosx.common.base.constants.CommonConstants;
 import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.redis.enums.RedisKeyNameEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 /**
  * OssTranslationService
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
  * @author: javacctvnews
  * @create: 2023-09-04 16:10
  **/
-@Service
 @Slf4j
 public class OssTranslationService extends AbsTranslationService<String> {
 

@@ -5,7 +5,6 @@ import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.core.utils.SpringUtils;
 import com.zerosx.common.redis.enums.RedisKeyNameEnum;
 import com.zerosx.common.redis.templete.RedissonOpService;
-import org.springframework.stereotype.Service;
 
 /**
  * OssTranslationService
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
  * @author: javacctvnews
  * @create: 2023-09-04 16:10
  **/
-@Service
 public class RegionTranslationService extends AbsTranslationService<String> {
 
     @Override

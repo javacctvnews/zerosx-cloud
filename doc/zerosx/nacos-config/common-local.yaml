@@ -51,7 +51,7 @@ spring:
   redis:
     keyPrefix: zerosx-cloud
     database: 0
-    host: 127.0.0.1
+    host: 192.168.3.6
     port: 6479
     password: zerosx@123456
     #ssl:
@@ -154,7 +154,7 @@ logging:
     
   level:
     com.alibaba.nacos.client.naming: warn
-    com.zerosx: debug
+    #com.zerosx: debug
     #com.alibaba.nacos.client: warn
   file:
     path: /home/zerosx-cloud/logs/${spring.application.name}

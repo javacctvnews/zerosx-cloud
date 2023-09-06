@@ -3,7 +3,6 @@ package com.zerosx.common.core.translation.impl;
 import com.zerosx.common.base.constants.CommonConstants;
 import com.zerosx.common.base.vo.ResultVO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -16,7 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Date 2023/5/26 10:51
  * @Version 1.0
  */
-@Service
 @Slf4j
 public class EnumsTranslationService extends AbsTranslationService<String> {
 

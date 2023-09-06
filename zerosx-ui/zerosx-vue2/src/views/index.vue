@@ -33,12 +33,12 @@
               </el-collapse-item>
               <el-collapse-item title="平台简介" name="2">
                 <div>
-                  <div>此平台是由作者个人兴趣下搭建及开发，完全开源，免费使用，仅供学习参考;</div>
-                  <div>1、基于JDK8、SpringBoot2.7.14、SpringCloud2021.0.5和SpringCloudAlibaba2021.0.5.0且采用前后端分离的微服务多租户体系架构;</div>
-                  <div>2、采用自定义starter组件化的思想，结构解耦，易于扩展;</div>
-                  <div>3、实现了SpringCloudGateway集成OAuth2.0统一认证授权及URL级功能权限校验（适用于网络隔离场景，即网关是统一入口），且可自定义扩展OAuth2.0授权模式;</div>
-                  <div>4、集成Knife4j的OpenAPI3的接口文档，方便前后端对接，基础功能和文档注释完全由代码生成器一键生成（前后端代码）;</div>
-                  <div>5、代码生成器一键生成基础CRUD功能，节约开发时间，更多注重业务开发;</div>
+                  <div>此平台是由作者个人兴趣下搭建及开发，开源，使用，仅供学习参考；</div>
+                  <div>1、基于JDK8、SpringBoot2.7.14、SpringCloud2021.0.5和SpringCloudAlibaba2021.0.5.0且采用前后端分离的微服务多租户体系架构；</div>
+                  <div>2、采用自定义starter组件化的思想，结构解耦，易于扩展；</div>
+                  <div>3、实现了SpringCloudGateway集成OAuth2.0统一认证授权及URL级功能权限校验（适用于网络隔离场景，即网关是统一入口），且可自定义扩展OAuth2.0授权模式；</div>
+                  <div>4、集成Knife4j的OpenAPI3的接口文档，方便前后端对接，基础功能和文档注释完全由代码生成器一键生成（前后端代码）；</div>
+                  <div>5、代码生成器一键生成基础CRUD功能，节约开发时间，更多注重业务开发；</div>
                   <div>6、提供一套基于Vue2.x的前端项目[zerosx-vue2]，此项目是参考【若依】前端开源改造，感谢若依，作者前端刚开始学习，勿喷.</div>
                 </div>
               </el-collapse-item>

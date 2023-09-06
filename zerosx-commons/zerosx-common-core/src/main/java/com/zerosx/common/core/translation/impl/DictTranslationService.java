@@ -6,7 +6,6 @@ import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.redis.enums.RedisKeyNameEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
-import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
@@ -17,7 +16,6 @@ import java.util.Map;
  * @Date 2023/5/26 10:45
  * @Version 1.0
  */
-@Service
 @Slf4j
 public class DictTranslationService extends AbsTranslationService<String> {
 

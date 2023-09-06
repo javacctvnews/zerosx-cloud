@@ -1,10 +1,8 @@
 package com.zerosx.common.encrypt.properties;
 
 import com.zerosx.common.encrypt.enums.AlgorithmEnum;
-import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@Data
 @ConfigurationProperties(prefix = "zerosx.mybatis-crypto")
 public class CustomEncryptProperties {
 
@@ -16,12 +14,35 @@ public class CustomEncryptProperties {
     /**
      * 加密算法 默认aes
      */
-    private String algorithm = AlgorithmEnum.AES.getCode();
+    private String algorithm = AlgorithmEnum.SM4.getCode();
 
     /**
      * 加密秘钥
      */
     private String key = "1234567898765432";
 
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
+    public void setAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 
 }

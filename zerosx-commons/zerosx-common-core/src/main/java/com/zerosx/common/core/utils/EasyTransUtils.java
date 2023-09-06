@@ -117,7 +117,7 @@ public class EasyTransUtils {
         for (Field field : fields) {
             trans = field.getAnnotation(Trans.class);
             if (trans != null) {
-                transAnnoTranslation(t, targetClazz, field, trans);
+                translation(t, targetClazz, field, trans);
             }
         }
     }
@@ -132,7 +132,7 @@ public class EasyTransUtils {
      * @param <T>
      */
     @SneakyThrows
-    private static <T> void transAnnoTranslation(T t, Class<?> targetClazz, Field field, Trans trans) {
+    private static <T> void translation(T t, Class<?> targetClazz, Field field, Trans trans) {
         //字典类型的编码
         String dictCode = trans.key();
         //获取注解字段的值
