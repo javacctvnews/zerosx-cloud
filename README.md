@@ -1,9 +1,13 @@
-# <h1 style="text-align: center;">Zerosx-Cloud 多租户开发平台</span>
+<h1 style="text-align:center">
+    Zerosx-Cloud 多租户开发平台
+</h1>
+
+
 
 <div style="text-align: center">逝者如斯夫，不舍昼夜！</div>
 <div style="text-align: center">
-  <img src="https://img.shields.io/badge/Zerosx_Cloud-v1.1.0.Developer.Beta-critical">
-  <img src="https://img.shields.io/badge/copyright-javacctvnews@163.com-blue">
+  <img src="https://img.shields.io/badge/Zerosx_Cloud-v1.1.0.Developer.Beta-critical" alt="">
+  <img src="https://img.shields.io/badge/copyright-javacctvnews@163.com-blue" alt="">
 </div>
 <div style="text-align: center">
   <img src="https://img.shields.io/badge/JDK-1.8+-blue?logo=openjdk" alt="">
@@ -18,43 +22,44 @@
   <img src="https://img.shields.io/badge/Vue_Router-3.x-blue" alt="">
   <img src="https://img.shields.io/badge/Element_UI-2.x-green" alt="">
 </div>
+<h3 style="text-align:center;color:red;font-size:16px;">如果觉得对您有所帮助，请点右上角 "Star" 支持一下，谢谢啦</h3>
 
-# <h3 style="text-align: center;color:red;">如果觉得对您有所帮助，请点右上角 "Star" 支持一下，谢谢啦</h1>
 <div style="border-bottom: 1px solid #dcdfe6;margin-top: 50px;"></div>
 
 
 ### 1. 简介
 
-此平台是由作者个人兴趣下搭建及开发，开源，免费，仅供初学者学习参考。
+此平台是由作者个人兴趣下搭建及开发，开源，免费，仅供学习参考。
 
-* 基于JDK8、SpringBoot2.7.14、SpringCloud2021.0.5和SpringCloudAlibaba2021.0.5.0且采用前后端分离的微服务多租户体系架构。
-* 采用自定义starter组件化的思想，结构解耦，易于扩展。
-* 实现了SpringCloudGateway集成OAuth2统一认证授权及URL级功能权限校验（适用于网络隔离场景，即网关是统一入口），且可自定义扩展OAuth2授权模式。
-* 集成Knife4j的OpenAPI3的接口文档，方便前后端对接，基础功能和文档注释完全由代码生成器一键生成（前后端代码）。
-* 代码生成器一键生成基础CRUD功能，节约开发时间，更多注重业务开发。
+* 基于JDK8、SpringBoot2.7.14、SpringCloud2021.0.5和SpringCloudAlibaba2021.0.5.0且采用前后端分离的微服务多租户体系架构；
+* 采用自定义starter组件化的思想，结构解耦，易于扩展；
+* 实现了SpringCloudGateway集成OAuth2统一认证授权及URL级功能权限校验（适用于网络隔离场景，即网关是统一入口），且可自定义扩展OAuth2授权模式；
+* 集成Knife4j的OpenAPI3的接口文档，方便前后端对接，基础功能和文档注释完全由代码生成器一键生成（前后端代码）；
+* 代码生成器一键生成基础CRUD功能，节约开发时间，更多注重业务开发；
 * 提供一套基于Vue2.x的前端项目[zerosx-vue2]，此项目是参考【若依】前端开源改造，感谢若依，作者前端刚开始学习，勿喷。
-* 与此架构类似的项目已在作者所在公司线上运营，对于中小型企业项目开发是非常有性价比的一套架构。
 
 ### 2. 软件架构
 
 <img style="width: 80%;text-align: center;" src="./doc/images/zerosx-cloud.png" alt="系统架构图"/>
 
-> 备注：图中灰色块组件作者并未搭建（服务器资源有限），只做一个选型参考。
+> 备注：图中灰色虚线块组件作者并未搭建（服务器资源有限），只做一个选型参考。
 
-### 3. 本地开发
+### 3. 本地开发说明
 
 1. 先启动zerosx-gateway、zerosx-auth、zerosx-system这三个项目；
-2. 启动前端项目，启动说明请看【zerosx-ui/zerosx-vue2/README.md】；
+2. 启动前端项目，如何启动请看文档【zerosx-ui/zerosx-vue2/README.md】；
 3. 浏览器访问前端地址，即可体验。
 4. 调试接口文档：
-  * 网关聚合入口：http://{gateway.host}:{gateway.port}/doc.html
-  * 单体微服务入口：http://{app1.host}:{app1.port}/doc.html (推荐，无token校验)
 
-### 4. 基础功能简介
+     * 网关聚合入口：http://{gateway.host}:{gateway.port}/doc.html
 
-* 首页
+     * 单体微服务入口：http://{app1.host}:{app1.port}/doc.html (推荐，无token校验)
+
+### 4. 内置功能简介
+
 * 租户管理
     * 租户管理：接入系统的租户公司的管理
+    * 套餐管理：租户套餐定价管理
 * 权限管理
     * 用户管理：系统用户的配置，及管理租户的数据权限分配
     * 角色管理：角色菜单权限分配
@@ -74,15 +79,17 @@
     * 接口文档：OpenAPI3聚合接口文档
     * 短信配置：短信服务商及短信业务模板的相关配置
 
-### 5. 打包部署
+### 5. 打包部署（示例）
 
-* 编译打包jar
+
+
+1. 编译打包jar
 
 ```shell
 mvn clean package -DskipTests -Pprod
 ```
 
-* 打包镜像
+2. 打包镜像
 
 ```shell 
 # 网关服务
@@ -93,19 +100,21 @@ docker build -t zeros-cloud/zerosx-modules/zerosx-system:v1.0.0 .
 docker build -t zeros-cloud/zeros-auth:v1.0.0 .
 ```
 
-* 推送远程仓库
+3. 推送远程仓库
+
+   远程仓库使用的是阿里云的[容器镜像服务](https://cr.console.aliyun.com/cn-shenzhen/instances?spm=5176.8351553.0.0.4aec1991d9BtJE)（个人版），将第2步打包的镜像推送到远程仓库，在部署主机上拉取镜像进行部署，示例如下：
 
 ```shell
 #推送远程仓库 示例
 #登录
 docker login --username=841****20@qq.com registry.cn-shenzhen.aliyuncs.com
 #tag
-docker tag [imageId] registry.cn-shenzhen.aliyuncs.com/zeros-cloud/zeros-ui:v1.1.0
+docker tag [imageId] registry.cn-shenzhen.aliyuncs.com/zeros-cloud/zerosx-gateway:v1.1.0
 #push
-docker push registry.cn-shenzhen.aliyuncs.com/zeros-cloud/zeros-ui:v1.1.0
+docker push registry.cn-shenzhen.aliyuncs.com/zeros-cloud/zeros-gateway:v1.1.0
 ```
 
-* 部署说明
+* 部署说明（体验系统）
 
 > 因服务器资源有限，组件均采用 **Docker** 单节点方式部署，使用 **Docker Compose** 进行编排，安装的组件及版本如下：<br>
 > <img src="https://img.shields.io/badge/Nacos-2.2.0-critical?logo=alibabadotcom" alt="">
