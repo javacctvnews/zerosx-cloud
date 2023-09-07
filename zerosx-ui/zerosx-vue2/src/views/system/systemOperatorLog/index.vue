@@ -164,6 +164,7 @@ export default {
             prop: 'id',
             minWidth: '100',
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -172,6 +173,7 @@ export default {
             prop: 'title',
             minWidth: '140',
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -180,13 +182,15 @@ export default {
             prop: 'btnName',
             minWidth: '140',
             sortable: 'custom',
+            align: "center",
           },
         }, {
           slot: 'businessType',
           attrs: {
             label: '操作类型',
             prop: 'businessType',
-            minWidth: '120'
+            minWidth: '120',
+            align: "center",
           },
         },
         {
@@ -194,7 +198,8 @@ export default {
           attrs: {
             label: '操作状态',
             prop: 'status',
-            minWidth: '120'
+            minWidth: '120',
+            align: "center",
           },
         },
         {
@@ -204,34 +209,39 @@ export default {
             prop: 'costTime',
             minWidth: '120',
             sortable: 'custom',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '请求方式',
             prop: 'requestMethod',
-            minWidth: '120'
+            minWidth: '120',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '操作人员',
             prop: 'operatorName',
-            minWidth: '110'
+            minWidth: '110',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '主机归属',
             prop: 'ipLocation',
-            minWidth: '130'
+            minWidth: '130',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '主机',
             prop: 'operatorIp',
-            minWidth: '130'
+            minWidth: '130',
+            align: "center",
           },
         },
         {
@@ -240,20 +250,23 @@ export default {
             prop: 'operatorTime',
             minWidth: '140',
             sortable: 'custom',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '请求URL',
             prop: 'operatorUrl',
-            minWidth: '280'
+            minWidth: '280',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '方法名称',
             prop: 'methodName',
-            minWidth: '280'
+            minWidth: '280',
+            align: "center",
           },
         },
         {
@@ -262,6 +275,7 @@ export default {
             prop: 'operatorIdName',
             minWidth: '140',
             showOverflowTooltip: true,
+            align: "center",
           },
         },
         {

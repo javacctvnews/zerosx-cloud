@@ -61,6 +61,7 @@ public class SysPostServiceImpl extends SuperServiceImpl<ISysPostMapper, SysPost
     public boolean add(SysPostDTO sysPostDTO) {
         SysPost addEntity = BeanCopierUtil.copyProperties(sysPostDTO, SysPost.class);
         addEntity.setPostCode(IdGenerator.getIdStr());
+        checkExistName(sysPostDTO);
         return save(addEntity);
     }
 
@@ -70,8 +71,20 @@ public class SysPostServiceImpl extends SuperServiceImpl<ISysPostMapper, SysPost
         if (dbUpdate == null) {
             throw new BusinessException("编辑记录不存在");
         }
+        checkExistName(sysPostDTO);
         SysPost updateEntity = BeanCopierUtil.copyProperties(sysPostDTO, SysPost.class);
         return updateById(updateEntity);
+    }
+
+    private void checkExistName(SysPostDTO sysPostDTO) {
+        LambdaQueryWrapper<SysPost> countqw = Wrappers.lambdaQuery(SysPost.class);
+        countqw.eq(SysPost::getPostName, sysPostDTO.getPostName());
+        countqw.eq(SysPost::getOperatorId, sysPostDTO.getOperatorId());
+        countqw.ne(sysPostDTO.getId() != null, SysPost::getId, sysPostDTO.getId());
+        long count = count(countqw);
+        if (count > 0) {
+            throw new BusinessException("已存在【" + sysPostDTO.getPostName() + "】，不能重复添加");
+        }
     }
 
     @Override

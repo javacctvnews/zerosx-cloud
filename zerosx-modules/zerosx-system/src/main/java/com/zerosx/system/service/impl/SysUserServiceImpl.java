@@ -69,8 +69,6 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     @Autowired
     private SystemAsyncTask systemAsyncTask;
     @Autowired
-    private IOssFileUploadService ossFileUploadService;
-    @Autowired
     private ISysPostService sysPostService;
     @Autowired
     private ISysDeptService sysDeptService;
@@ -303,8 +301,6 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
         if (sysUser == null) {
             throw new BusinessException("用户不存在");
         }
-        SysUserVO sysUserVO = BeanCopierUtil.copyProperties(sysUser, SysUserVO.class);
-        sysUserVO.setAvatar(ossFileUploadService.getObjectViewUrl(sysUser.getAvatar()));
-        return sysUserVO;
+        return BeanCopierUtil.copyProperties(sysUser, SysUserVO.class);
     }
 }

@@ -16,7 +16,6 @@ import org.springframework.util.ObjectUtils;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -39,9 +38,6 @@ public abstract class AbsTranslationService<T> implements ITranslationService<T>
             //.executor(executor)
             .maximumSize(100)//最大条数1000
             .buildAsync();//定义cache
-
-    public static Map<String, ITranslationService> transBeanCache = new ConcurrentHashMap<>();
-
 
     /**
      * 获取Caffeine缓存

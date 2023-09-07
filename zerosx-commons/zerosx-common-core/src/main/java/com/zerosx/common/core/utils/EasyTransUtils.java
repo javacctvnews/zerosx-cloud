@@ -1,7 +1,7 @@
 package com.zerosx.common.core.utils;
 
 import com.zerosx.common.base.anno.Trans;
-import com.zerosx.common.core.translation.impl.AbsTranslationService;
+import com.zerosx.common.core.translation.TranslationFactory;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -142,7 +142,7 @@ public class EasyTransUtils {
         if (ObjectUtils.isEmpty(code)) {
             return;
         }
-        String dictValue = (String) AbsTranslationService.transBeanCache.get(trans.type()).translation(code, dictCode);
+        String dictValue = (String) TranslationFactory.getTranslation(trans.type()).translation(code, dictCode);
         if (StringUtils.isBlank(dictValue)) {
             return;
         }

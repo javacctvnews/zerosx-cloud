@@ -6,6 +6,7 @@ import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
 import com.zerosx.common.core.utils.BeanCopierUtil;
+import com.zerosx.common.core.utils.IdGenerator;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.redis.templete.RedissonOpService;
@@ -82,6 +83,10 @@ public class SysRoleServiceImpl extends SuperServiceImpl<ISysRoleMapper, SysRole
     @Transactional(rollbackFor = {Exception.class})
     public boolean add(SysRoleDTO sysRoleDTO) {
         SysRole addEntity = BeanCopierUtil.copyProperties(sysRoleDTO, SysRole.class);
+        if (StringUtils.isBlank(sysRoleDTO.getRoleKey())) {
+            addEntity.setRoleKey(IdGenerator.getIdStr());
+        }
+        checkExistName(sysRoleDTO);
         boolean save = save(addEntity);
         if (save) {
             //保持角色与menu的关系表
@@ -99,6 +104,17 @@ public class SysRoleServiceImpl extends SuperServiceImpl<ISysRoleMapper, SysRole
         return save;
     }
 
+    private void checkExistName(SysRoleDTO sysRoleDTO) {
+        LambdaQueryWrapper<SysRole> countqw = Wrappers.lambdaQuery(SysRole.class);
+        countqw.eq(SysRole::getRoleName, sysRoleDTO.getRoleName());
+        countqw.eq(SysRole::getOperatorId, sysRoleDTO.getOperatorId());
+        countqw.ne(sysRoleDTO.getId() !=null, SysRole::getId, sysRoleDTO.getId());
+        long count = count(countqw);
+        if (count > 0) {
+            throw new BusinessException("已存在【" + sysRoleDTO.getRoleName() + "】，不能重复添加");
+        }
+    }
+
     @Override
     @Transactional(rollbackFor = {Exception.class})
     public boolean update(SysRoleDTO sysRoleDTO) {
@@ -106,9 +122,9 @@ public class SysRoleServiceImpl extends SuperServiceImpl<ISysRoleMapper, SysRole
         if (dbUpdate == null) {
             throw new BusinessException("编辑记录不存在");
         }
+        checkExistName(sysRoleDTO);
         //更新前删除改角色关联的权限缓存
         redissonOpService.del(RedisKeyNameEnum.key(RedisKeyNameEnum.ROLE_PERMISSIONS, sysRoleDTO.getId()));
-
         SysRole updateEntity = BeanCopierUtil.copyProperties(sysRoleDTO, SysRole.class);
         LambdaQueryWrapper<SysRoleMenu> srmqw = Wrappers.lambdaQuery(SysRoleMenu.class);
         srmqw.eq(SysRoleMenu::getRoleId, sysRoleDTO.getId());
@@ -123,7 +139,6 @@ public class SysRoleServiceImpl extends SuperServiceImpl<ISysRoleMapper, SysRole
             as.add(srm);
         }
         sysRoleMenuService.saveBatch(as);
-
         boolean updateById = updateById(updateEntity);
         //延时删除
         systemAsyncTask.asyncRedisDelOptions(RedisKeyNameEnum.key(RedisKeyNameEnum.ROLE_PERMISSIONS, sysRoleDTO.getId()));

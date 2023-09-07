@@ -163,6 +163,7 @@ export default {
             prop: 'id',
             minWidth: '100',
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -171,6 +172,7 @@ export default {
             prop: 'dictName',
             minWidth: '140',
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -180,6 +182,7 @@ export default {
             prop: 'dictType',
             minWidth: '160',
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -187,21 +190,24 @@ export default {
           attrs: {
             label: '状态',
             prop: 'dictStatus',
-            minWidth: '80'
+            minWidth: '80',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '备注',
             prop: 'remarks',
-            minWidth: '240'
+            minWidth: '240',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '创建人',
             prop: 'createBy',
-            minWidth: '120'
+            minWidth: '120',
+            align: "center",
           },
         },
         {
@@ -210,20 +216,23 @@ export default {
             prop: 'createTime',
             minWidth: '140',
             sortable: 'custom',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '更新人',
             prop: 'updateBy',
-            minWidth: '120'
+            minWidth: '120',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '更新时间',
             prop: 'updateTime',
-            minWidth: '140'
+            minWidth: '140',
+            align: "center",
           },
         },
         {

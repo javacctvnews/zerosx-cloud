@@ -26,15 +26,15 @@
     <module>zerosx-common-db</module>
     <module>zerosx-common-seata</module>
     <module>zerosx-common-encrypt</module>
-    <module>zerosx-common-encrypt2</module>
     <module>zerosx-common-sms</module>
+    <module>zerosx-common-xxljob</module>
   </modules>
 
-  <!--<dependencies>
+  <dependencies>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-autoconfigure</artifactId>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-context</artifactId>
     </dependency>
-  </dependencies>-->
+  </dependencies>
 
 </project>

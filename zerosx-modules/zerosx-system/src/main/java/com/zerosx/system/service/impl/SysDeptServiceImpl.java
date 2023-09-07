@@ -75,6 +75,7 @@ public class SysDeptServiceImpl extends SuperServiceImpl<ISysDeptMapper, SysDept
     public boolean add(SysDeptDTO sysDeptDTO) {
         SysDept addEntity = BeanCopierUtil.copyProperties(sysDeptDTO, SysDept.class);
         addEntity.setDeptCode(IdGenerator.getIdStr());
+        checkExistName(sysDeptDTO);
         boolean save = save(addEntity);
         sysRoleDeptService.updateSysDeptRoles(addEntity.getId(), sysDeptDTO.getRoleIds(), false);
         return save;
@@ -87,9 +88,21 @@ public class SysDeptServiceImpl extends SuperServiceImpl<ISysDeptMapper, SysDept
         if (dbUpdate == null) {
             throw new BusinessException("编辑记录不存在");
         }
+        checkExistName(sysDeptDTO);
         SysDept updateEntity = BeanCopierUtil.copyProperties(sysDeptDTO, SysDept.class);
         sysRoleDeptService.updateSysDeptRoles(dbUpdate.getId(), sysDeptDTO.getRoleIds(), true);
         return updateById(updateEntity);
+    }
+
+    private void checkExistName(SysDeptDTO sysDeptDTO) {
+        LambdaQueryWrapper<SysDept> countqw = Wrappers.lambdaQuery(SysDept.class);
+        countqw.eq(SysDept::getDeptName, sysDeptDTO.getDeptName());
+        countqw.eq(SysDept::getOperatorId, sysDeptDTO.getOperatorId());
+        countqw.ne(sysDeptDTO.getId() != null, SysDept::getId, sysDeptDTO.getId());
+        long count = count(countqw);
+        if (count > 0) {
+            throw new BusinessException("已存在【" + sysDeptDTO.getDeptName() + "】，不能重复添加");
+        }
     }
 
     @Override

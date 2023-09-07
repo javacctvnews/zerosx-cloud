@@ -3,16 +3,23 @@
 > <a href="https://docs.docker.com/compose/install/">Docker Desktop安装可参考官网：https://docs.docker.com/compose/install </a>
 
 > 建议：初学者按文档介绍的组件顺序执行脚本进行安装，比较不容易出错，即Redis、MySql、Nacos、Seata的顺序
+>
+> 如果完全按照文档安装，只需要改IP（192.168.3.6）即可
 
 ### 1. Redis
 1. 版本：6.2.13，配置文件中的密码：zerosx@123456，端口：6479（可自行修改）
+
 2. 执行安装：
     ```shell
     # 进入目录(可用拷贝到指定目录)
-    cd doc/redis
+    cd zerosx-cloud/doc/redis
     # 安装(指定文件)
     docker-compose -f docker-compose.yaml up -d
     ```
+
+3. 推荐一款Redis客户端应用
+
+    > [QuickRedis](https://sourceforge.net/projects/quickredis/files/)
 
 ### 2. MySql8
 1. 版本：8.0.34，端口：13306，密码：zerosx@123456
@@ -20,7 +27,7 @@
 2. 执行安装：
    ```shell
    # 进入目录
-   cd doc/mysql8
+   cd zerosx-cloud/doc/mysql8
    # 安装(指定文件)
    docker-compose -f docker-compose.yaml up -d
    ```
@@ -29,10 +36,10 @@
 
 2. 执行nacos数据库脚本：
    ```shell
-   执行SQL脚本，文件所在目录：doc/nacos/mysql-schema.sql
+   执行SQL脚本，文件所在目录：zerosx-cloud/doc/nacos/mysql-schema.sql
    ```
    
-3. 修改文件：doc/nacos/docker-compose-nacos2.2.0.yaml，修改项如下：
+3. 修改文件：zerosx-cloud/doc/nacos/docker-compose-nacos2.2.0.yaml，修改项如下：
    ```shell
    #把ip修改成安装主机的IP
    - MYSQL_SERVICE_HOST=192.168.3.6
@@ -41,7 +48,7 @@
 4. 执行安装
    ```shell
    # 进入目录
-   cd doc/nacos
+   cd zerosx-cloud/doc/nacos
    # 安装(指定文件)
    docker-compose -f docker-compose-nacos2.2.0.yaml up -d
    ```
@@ -59,7 +66,7 @@
      
    * 导入微服务配置
      
-     * 方式1：按【doc/zerosx/nacos-config】下文件名逐个新建配置，分组Group名：local
+     * 方式1：按【zerosx-cloud/doc/zerosx/nacos-config】下文件名逐个新建配置，分组Group名：local
      
        ```shell
        # common-local.yaml  		#所有服务共享的配置
@@ -71,7 +78,9 @@
        
        ```
      
-     * 方式2：导入方式，压缩文件【doc/zerosx/nacos-config/nacos_config_export_20230905.zip】
+     * 方式2：导入方式，压缩文件【zerosx-cloud/doc/zerosx/nacos-config/nacos_config_export_20230905.zip】
+     
+   * ![Image text](./images/nacos_config.png)
 ### 4. Seata
 
 1. 版本：1.6.1
@@ -79,10 +88,10 @@
 2. 创建Seata数据库表
 
    ```shell
-   执行SQL脚本，文件所在目录：doc/seata/mysql-schema.sql
+   执行SQL脚本，文件所在目录：zerosx-cloud/doc/seata/mysql-schema.sql
    ```
 
-3. 修改【doc/seata/docker-compose-seata1.6.1.yaml】，修改内容：
+3. 修改【zerosx-cloud/doc/seata/docker-compose-seata1.6.1.yaml】，修改内容：
 
    ```shell
    # seata安装主机的IP
@@ -91,17 +100,20 @@
 
    
 
-4. 修改【doc/seata/seata-server】下的文件
+4. 修改【zerosx-cloud/doc/seata/seata-server】下的文件
 
    * 文件是从官方镜像【seataio/seata-server:1.6.1】中拷贝出来的文件（官方安装文档中有此说明）
 
-   * 修改【doc/seata/seata-server/resources/application.yml】 ，修改内容如下（有2处）：
+   * 修改【zerosx-cloud/doc/seata/seata-server/resources/application.yml】 ，修改内容如下：
 
      ```shell
-     # 修改成nacos的ip端口
+     # 注册中心和配置中心（按需修改）
+     # 修改成nacos的ip端口（2处）
      server-addr: 192.168.3.6:8848
+     # namespace
+     namespace: 32c6d87e-c726-44c5-a87b-a89b0f91c63d
      ```
-
+     
      
 
 5. 新增Nacos配置【seataServer.properties】，并修改如下内容：
@@ -119,19 +131,25 @@
 
    ```shell
    # 进入目录
-   cd doc/seata
+   cd zerosx-cloud/doc/seata
    # 安装(指定文件)
    docker-compose -f docker-compose-seata1.6.1.yaml up -d
    ```
 
-   
+   > [Seata官网安装教程地址](https://seata.io/zh-cn/docs/v1.6/ops/deploy-by-docker-compose)
+
+7. Seata控制台
+
+   > 访问地址：http://192.168.3.6:7091/#/login  
+   >
+   > 用户名：seata  密码：seata，在文件【zerosx-cloud/doc/seata/seata-server/resources/application.yml】中配置
 
 ### 5. 服务库表SQL
 
-​	初始脚本，包括库表创建及初始数据，文件【doc/zerosx/zerosx-sql】
+​	初始脚本，包括库表创建及初始数据，文件【zerosx-cloud/doc/zerosx/zerosx-sql】
 
 ```shell
-执行SQL脚本，文件所在目录：doc/zerosx/zerosx-sql
+执行SQL脚本，文件所在目录：zerosx-cloud/doc/zerosx/zerosx-sql
 # zerosx_auth.sql 			#auth服务数据库
 # zerosx_system.sql			#system服务数据库、菜单目录、初始登录用户
 # t_area_city_source.sql	#行政区域初始数据

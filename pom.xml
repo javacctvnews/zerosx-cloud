@@ -248,7 +248,7 @@
             </dependency>
             <dependency>
                 <groupId>com.zerosx.cloud</groupId>
-                <artifactId>zerosx-common-encrypt2</artifactId>
+                <artifactId>zerosx-common-xxljob</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -57,6 +57,10 @@ public class SysUserController {
     private ISysUserService sysUserService;
     @Autowired
     private IOssFileUploadService ossFileUploadService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private IAuthFeignServiceApi authFeignServiceApi;
 
     @Operation(summary = "分页列表")
     @SystemLog(title = "系统用户", btnName = "分页查询", businessType = BusinessType.QUERY)
@@ -109,17 +113,19 @@ public class SysUserController {
         return ResultVOUtil.success(sysUserService.queryLoginUser(userLoginDTO));
     }
 
+    @Operation(summary = "登录用户信息")
     @GetMapping("/sys_user/getInfo")
     public ResultVO<Map<String, Object>> getInfo() {
         return ResultVOUtil.success(sysUserService.getCurrentUserInfo());
     }
 
+    @Operation(summary = "个人信息")
     @GetMapping("/sys_user/profile")
     public ResultVO<Map<String, Object>> getProfile() {
         return ResultVOUtil.success(sysUserService.getUserProfile());
     }
 
-    @Operation(summary = "用户更换头像")
+    @Operation(summary = "更换用户头像")
     @PostMapping("/sys_user/profile/avatar")
     public ResultVO<Map<String, Object>> getProfile(@RequestParam("avatarfile") MultipartFile file) {
         OssObjectVO ossObjectVO = ossFileUploadService.upload(file);
@@ -147,13 +153,11 @@ public class SysUserController {
      * @param userName
      * @return
      */
+    @Operation(summary = "按用户名查询当前用户信息")
     @PostMapping("/sys_user/current_login_user")
     public ResultVO<LoginUserTenantsBO> currentLoginUser(@RequestParam("userName") String userName) {
         return ResultVOUtil.success(sysUserService.currentLoginUser(userName));
     }
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Operation(summary = "新增测试用户")
     @GetMapping("/sys_user/add_test_users/{num}")
@@ -175,9 +179,6 @@ public class SysUserController {
         }
         return ResultVOUtil.success();
     }
-
-    @Autowired
-    private IAuthFeignServiceApi authFeignServiceApi;
 
     @Operation(summary = "批量登录")
     @GetMapping("/sys_user/login/{num}")

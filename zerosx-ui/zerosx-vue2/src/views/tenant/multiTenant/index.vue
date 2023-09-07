@@ -56,19 +56,19 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="公司全称" prop="tenantGroupName">
-              <el-input v-model="form.tenantGroupName" placeholder="请输入公司全称" maxlength="30" auto-complete="off" />
+              <el-input v-model="form.tenantGroupName" placeholder="请输入公司全称" maxlength="30" auto-complete="off" show-word-limit/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="公司简称" prop="tenantShortName">
-              <el-input v-model="form.tenantShortName" placeholder="请输入公司简称" maxlength="30" />
+              <el-input v-model="form.tenantShortName" placeholder="请输入公司简称" maxlength="10" show-word-limit/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="社会信用代码" prop="socialCreditCode">
-              <el-input v-model="form.socialCreditCode" placeholder="请输入公司社会信用代码" maxlength="30" />
+              <el-input v-model="form.socialCreditCode" placeholder="请输入公司社会信用代码" maxlength="18" show-word-limit/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -91,26 +91,26 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="详细地址" prop="street">
-              <el-input v-model="form.street" placeholder="请输入详细地址" maxlength="30" />
+              <el-input type="textarea" v-model="form.street" placeholder="请输入详细地址" maxlength="100" show-word-limit/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="联系人名称" prop="contactName">
-              <el-input v-model="form.contactName" placeholder="请输入联系人名称" maxlength="30" />
+              <el-input v-model="form.contactName" placeholder="请输入联系人名称" maxlength="30" show-word-limit/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="联系人号码" prop="contactMobilePhone">
-              <el-input v-model="form.contactMobilePhone" placeholder="请输入联系人号码" maxlength="30" />
+              <el-input v-model="form.contactMobilePhone" placeholder="请输入联系人号码" maxlength="11" show-word-limit/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="公司电话" prop="telephone">
-              <el-input v-model="form.telephone" placeholder="请输入公司电话" maxlength="30" />
+              <el-input v-model="form.telephone" placeholder="请输入公司电话" maxlength="12" show-word-limit/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -267,6 +267,7 @@ export default {
             prop: 'id',
             minWidth: '90',
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -275,6 +276,7 @@ export default {
             prop: 'operatorId',
             minWidth: '100',
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -283,6 +285,7 @@ export default {
             prop: 'tenantGroupName',
             minWidth: '180',
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -291,6 +294,7 @@ export default {
             prop: 'tenantShortName',
             minWidth: '140',
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -298,28 +302,32 @@ export default {
           attrs: {
             label: '状态',
             prop: 'validStatus',
-            minWidth: ''
+            minWidth: '100',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '联系人姓名',
             prop: 'contactName',
-            minWidth: '140'
+            minWidth: '140',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '联系人电话',
             prop: 'contactMobilePhone',
-            minWidth: '140'
+            minWidth: '140',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '公司电话',
             prop: 'telephone',
-            minWidth: '140'
+            minWidth: '140',
+            align: "center",
           },
         },
         {
@@ -328,27 +336,31 @@ export default {
             prop: 'createTime',
             minWidth: '150',
             sortable: 'custom',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '所在省',
             prop: 'provinceName',
-            minWidth: '120'
+            minWidth: '120',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '所在市',
             prop: 'cityName',
-            minWidth: '120'
+            minWidth: '120',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '所在区',
             prop: 'areaName',
-            minWidth: '120'
+            minWidth: '120',
+            align: "center",
           },
         },
         {
@@ -356,6 +368,7 @@ export default {
             label: '详细地址',
             prop: 'street',
             minWidth: '180',
+            align: "center",
             showOverflowTooltip: true
           },
         },
@@ -364,7 +377,8 @@ export default {
             label: '备注',
             prop: 'remarks',
             minWidth: '240',
-            showOverflowTooltip: true
+            showOverflowTooltip: true,
+            align: "center",
           },
         },
       ],

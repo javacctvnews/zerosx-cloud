@@ -171,6 +171,7 @@ export default {
             prop: "id",
             minWidth: "100",
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -179,6 +180,7 @@ export default {
             prop: "postName",
             minWidth: "140",
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -187,6 +189,7 @@ export default {
             prop: "postSort",
             minWidth: "140",
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -195,6 +198,7 @@ export default {
             label: "状态",
             prop: "status",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -202,6 +206,7 @@ export default {
             label: "创建者",
             prop: "createBy",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -210,6 +215,7 @@ export default {
             prop: "createTime",
             minWidth: "140",
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -217,6 +223,7 @@ export default {
             label: "更新者",
             prop: "updateBy",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -224,6 +231,7 @@ export default {
             label: "更新时间",
             prop: "updateTime",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -231,6 +239,7 @@ export default {
             label: "备注",
             prop: "remark",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -239,6 +248,7 @@ export default {
             prop: 'operatorName',
             minWidth: '140',
             showOverflowTooltip: true,
+            align: "center",
           },
         },
       ]

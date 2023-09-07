@@ -345,6 +345,7 @@ export default {
             prop: "id",
             minWidth: "90",
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -353,6 +354,7 @@ export default {
             prop: "userName",
             minWidth: "140",
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -360,6 +362,7 @@ export default {
             label: "用户昵称",
             prop: "nickName",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -367,6 +370,7 @@ export default {
             label: "所属部门",
             prop: "deptName",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -375,6 +379,7 @@ export default {
             label: "用户类型",
             prop: "userType",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -383,6 +388,7 @@ export default {
             label: "帐号状态",
             prop: "status",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -390,6 +396,7 @@ export default {
             label: "用户邮箱",
             prop: "email",
             minWidth: "160",
+            align: "center",
           },
         },
         {
@@ -397,6 +404,7 @@ export default {
             label: "手机号码",
             prop: "phoneNumber",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -405,6 +413,7 @@ export default {
             label: "用户性别",
             prop: "sex",
             minWidth: "100",
+            align: "center",
           },
         },
         {
@@ -412,6 +421,7 @@ export default {
             label: "最后登录IP",
             prop: "loginIp",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -419,6 +429,7 @@ export default {
             label: "最后登录时间",
             prop: "loginDate",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -426,6 +437,7 @@ export default {
             label: "创建者",
             prop: "createBy",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -434,6 +446,7 @@ export default {
             prop: "createTime",
             minWidth: "140",
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -441,6 +454,7 @@ export default {
             label: "更新者",
             prop: "updateBy",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -449,6 +463,7 @@ export default {
             prop: "updateTime",
             minWidth: "140",
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -456,6 +471,7 @@ export default {
             label: "备注",
             prop: "remark",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -464,6 +480,7 @@ export default {
             prop: 'operatorName',
             minWidth: '140',
             showOverflowTooltip: true,
+            align: "center",
           },
         },
       ],

@@ -1,15 +1,11 @@
 package com.zerosx.common.core.config;
 
-import com.zerosx.common.core.translation.ITranslationService;
+import com.zerosx.common.base.constants.CommonConstants;
 import com.zerosx.common.core.translation.impl.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-
-import javax.annotation.PostConstruct;
-import java.util.Arrays;
 
 /**
  * TranslationConfig
@@ -22,47 +18,34 @@ import java.util.Arrays;
 @AutoConfiguration
 public class TranslationConfig {
 
-
-    @Bean
+    @Bean(name = CommonConstants.TRANS_DICT)
     @ConditionalOnMissingBean
     public DictTranslationService dictTranslationService() {
         return new DictTranslationService();
     }
 
-    @Bean
+    @Bean(name = CommonConstants.TRANS_ENUMS)
     @ConditionalOnMissingBean
     public EnumsTranslationService enumsTranslationService() {
         return new EnumsTranslationService();
     }
 
-    @Bean
+    @Bean(name = CommonConstants.TRANS_OPERATOR_ID)
     @ConditionalOnMissingBean
     public OperatorNameTranslationService operatorNameTranslationService() {
         return new OperatorNameTranslationService();
     }
 
-    @Bean
+    @Bean(name = CommonConstants.TRANS_OSS)
     @ConditionalOnMissingBean
     public OssTranslationService ossTranslationService() {
         return new OssTranslationService();
     }
 
-    @Bean
+    @Bean(name = CommonConstants.TRANS_REGION)
     @ConditionalOnMissingBean
     public RegionTranslationService regionTranslationService() {
         return new RegionTranslationService();
-    }
-
-
-    @Autowired(required = false)
-    public ITranslationService[] translationServices;
-
-    @PostConstruct
-    public void init() {
-        Arrays.stream(translationServices).forEach((e) -> {
-            AbsTranslationService.transBeanCache.put(e.translationType(), e);
-            log.debug("加载翻译接口实现Bean:{}", e.translationType());
-        });
     }
 
 }

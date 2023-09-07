@@ -106,6 +106,7 @@ export default {
             prop: 'id',
             minWidth: '100',
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -114,13 +115,15 @@ export default {
             prop: 'requestId',
             minWidth: '160',
             sortable: 'custom',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '用户名',
             prop: 'username',
-            minWidth: '140'
+            minWidth: '140',
+            align: "center",
           },
         },
         {
@@ -128,28 +131,32 @@ export default {
           attrs: {
             label: '登录结果',
             prop: 'oauthResult',
-            minWidth: '120'
+            minWidth: '120',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '登录结果描述',
             prop: 'oauthMsg',
-            minWidth: '280'
+            minWidth: '280',
+            align: "center",
           },
         },
         {
           attrs: {
             label: 'IP归属',
             prop: 'sourceLocation',
-            minWidth: '140'
+            minWidth: '140',
+            align: "center",
           },
         },
         {
           attrs: {
             label: 'IP',
             prop: 'sourceIp',
-            minWidth: '140'
+            minWidth: '140',
+            align: "center",
           }
         },
         {
@@ -158,20 +165,23 @@ export default {
             prop: 'applyOauthTime',
             minWidth: '140',
             sortable: 'custom',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '授权ClientId',
             prop: 'clientId',
-            minWidth: '140'
+            minWidth: '140',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '授权类型',
             prop: 'grantType',
-            minWidth: '160'
+            minWidth: '160',
+            align: "center",
           },
         },
         {
@@ -180,20 +190,23 @@ export default {
             prop: 'tokenValue',
             minWidth: '280',
             showOverflowTooltip: true,
+            align: "center",
           },
         },
         {
           attrs: {
             label: '操作系统',
             prop: 'osType',
-            minWidth: '180'
+            minWidth: '180',
+            align: "center",
           },
         },
         {
           attrs: {
             label: '浏览器',
             prop: 'browserType',
-            minWidth: '180'
+            minWidth: '180',
+            align: "center",
           },
         },
         {
@@ -202,6 +215,7 @@ export default {
             prop: 'operatorName',
             minWidth: '140',
             showOverflowTooltip: true,
+            align: "center",
           },
         },
         {

@@ -46,14 +46,20 @@
 
 ### 3. 本地开发说明
 
-1. 先启动zerosx-gateway、zerosx-auth、zerosx-system这三个项目；
-2. 启动前端项目，如何启动请看文档【zerosx-ui/zerosx-vue2/README.md】；
-3. 浏览器访问前端地址，即可体验。
-4. 调试接口文档：
+1. 组件安装教程及脚本请看【zerosx-cloud/doc/README.md】
 
-     * 网关聚合入口：http://{gateway.host}:{gateway.port}/doc.html
+2. 先启动zerosx-gateway、zerosx-auth、zerosx-system这三个项目；
 
-     * 单体微服务入口：http://{app1.host}:{app1.port}/doc.html (推荐，无token校验)
+3. 启动前端项目，如何启动请看文档【zerosx-cloud/zerosx-ui/zerosx-vue2/README.md】；
+
+4. 浏览器访问前端地址，即可体验。
+
+5. 调试接口文档：
+
+   * 网关聚合入口：http://{gateway.host}:{gateway.port}/doc.html
+
+
+   * 单体微服务入口：http://{app1.host}:{app1.port}/doc.html (推荐，无token校验)
 
 ### 4. 内置功能简介
 
@@ -76,6 +82,7 @@
     * 文件管理：OSS存储的文件管理，主要是维护所有文件上传到OSS服务器的记录
     * 行政区域：中华人民共和国行政区域的维护
     * 系统监控：SpringBootAdmin系统监控
+    * 任务调度中心：XXL-JOB任务调度中心
     * 接口文档：OpenAPI3聚合接口文档
     * 短信配置：短信服务商及短信业务模板的相关配置
 

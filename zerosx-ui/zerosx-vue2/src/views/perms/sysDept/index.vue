@@ -290,6 +290,7 @@ export default {
             label: "父部门id",
             prop: "parentId",
             minWidth: "100",
+            align: "center",
             //sortable: 'custom',
           },
         },
@@ -306,6 +307,7 @@ export default {
             prop: "orderNum",
             minWidth: "140",
             //sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -313,6 +315,7 @@ export default {
             label: "负责人",
             prop: "leader",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -320,6 +323,7 @@ export default {
             label: "联系电话",
             prop: "phone",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -327,6 +331,7 @@ export default {
             label: "邮箱",
             prop: "email",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -335,6 +340,7 @@ export default {
             label: "部门状态",
             prop: "status",
             minWidth: "100",
+            align: "center",
           },
         },
         {
@@ -342,6 +348,7 @@ export default {
             label: "创建者",
             prop: "createBy",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -350,6 +357,7 @@ export default {
             prop: "createTime",
             minWidth: "140",
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -357,6 +365,7 @@ export default {
             label: "更新者",
             prop: "updateBy",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -364,6 +373,7 @@ export default {
             label: "更新时间",
             prop: "updateTime",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -372,6 +382,7 @@ export default {
             prop: 'operatorName',
             minWidth: '140',
             showOverflowTooltip: true,
+            align: "center",
           },
         },
       ],

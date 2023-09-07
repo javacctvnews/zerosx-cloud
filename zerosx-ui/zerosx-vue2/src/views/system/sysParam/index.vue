@@ -201,6 +201,7 @@ export default {
             prop: "id",
             minWidth: "100",
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -209,6 +210,7 @@ export default {
             prop: "paramName",
             minWidth: "140",
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -217,6 +219,7 @@ export default {
             prop: "paramKey",
             minWidth: "140",
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -224,6 +227,7 @@ export default {
             label: "参数值",
             prop: "paramValue",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -232,6 +236,7 @@ export default {
             label: "参数范围",
             prop: "paramScope",
             minWidth: "100",
+            align: "center",
           },
         },
         {
@@ -240,6 +245,7 @@ export default {
             label: "状态",
             prop: "status",
             minWidth: "100",
+            align: "center",
           },
         },
         {
@@ -247,6 +253,7 @@ export default {
             label: "备注说明",
             prop: "remark",
             minWidth: "240",
+            align: "center",
           },
         },
 
@@ -256,6 +263,7 @@ export default {
             prop: "createTime",
             minWidth: "140",
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -263,6 +271,7 @@ export default {
             label: "创建人",
             prop: "createBy",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -270,6 +279,7 @@ export default {
             label: "更新时间",
             prop: "updateTime",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -277,6 +287,7 @@ export default {
             label: "更新人",
             prop: "updateBy",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -285,6 +296,7 @@ export default {
             prop: 'operatorName',
             minWidth: '140',
             showOverflowTooltip: true,
+            align: "center",
           },
         },
       ],

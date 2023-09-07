@@ -12,7 +12,7 @@
       <el-form-item label="关键字" prop="roleKeyword">
         <el-input v-model="queryParams.t.roleKeyword" placeholder="角色名称或权限字符串关键字" clearable style="width: 220px;" />
       </el-form-item>
-      <el-form-item label="角色状态" prop="status">
+      <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.t.status" placeholder="状态" clearable style="width: 220px;">
           <el-option v-for="dict in dict.type.StatusEnum" :key="dict.value" :label="dict.label"
             :value="dict.value" />
@@ -78,13 +78,6 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="权限字符串" prop="roleKey">
-              <el-input v-model="form.roleKey" placeholder="请输入角色权限字符串" maxlength="100" show-word-limit />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
             <el-form-item label="状态" prop="status">
               <el-radio-group v-model="form.status">
                 <el-radio v-for="dict in dict.type.StatusEnum" :key="dict.value" :label="dict.value">{{ dict.label
@@ -92,11 +85,18 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+        </el-row>
+        <el-row>
+          <!-- <el-col :span="12">
+            <el-form-item label="权限字符串" prop="roleKey">
+              <el-input v-model="form.roleKey" placeholder="请输入角色权限字符串" maxlength="100" show-word-limit />
+            </el-form-item>
+          </el-col> -->
+          <!-- <el-col :span="12">
             <el-form-item label="显示顺序" prop="roleSort">
               <el-input-number v-model="form.roleSort" controls-position="right" :min="0" style="width: 100%;" />
             </el-form-item>
-          </el-col>
+          </el-col> -->
         </el-row>
         <el-row>
           <el-col :span="24">
@@ -212,6 +212,7 @@ export default {
             prop: "id",
             minWidth: "90",
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -220,29 +221,33 @@ export default {
             prop: "roleName",
             minWidth: "140",
             sortable: 'custom',
+            align: "center",
           },
         },
-        {
-          attrs: {
-            label: "角色权限字符串",
-            prop: "roleKey",
-            minWidth: "140",
-          },
-        },
-        {
-          attrs: {
-            label: "显示顺序",
-            prop: "roleSort",
-            minWidth: "100",
-            sortable: 'custom',
-          },
-        },
+        // {
+        //   attrs: {
+        //     label: "角色权限字符串",
+        //     prop: "roleKey",
+        //     minWidth: "140",
+        //     align: "center",
+        //   },
+        // },
+        // {
+        //   attrs: {
+        //     label: "显示顺序",
+        //     prop: "roleSort",
+        //     minWidth: "100",
+        //     sortable: 'custom',
+        //     align: "center",
+        //   },
+        // },
         {
           slot: 'status',
           attrs: {
-            label: "角色状态",
+            label: "状态",
             prop: "status",
             minWidth: "100",
+            align: "center",
           },
         },
         {
@@ -250,6 +255,7 @@ export default {
             label: "创建者",
             prop: "createBy",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -258,6 +264,7 @@ export default {
             prop: "createTime",
             minWidth: "140",
             sortable: 'custom',
+            align: "center",
           },
         },
         {
@@ -265,6 +272,7 @@ export default {
             label: "更新者",
             prop: "updateBy",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -272,6 +280,7 @@ export default {
             label: "更新时间",
             prop: "updateTime",
             minWidth: "140",
+            align: "center",
           },
         },
         {
@@ -279,7 +288,8 @@ export default {
             label: "备注",
             prop: "remark",
             minWidth: "240",
-            showOverflowTooltip: true
+            showOverflowTooltip: true,
+            align: "center",
           },
         },
         {
@@ -288,6 +298,7 @@ export default {
             prop: 'operatorName',
             minWidth: '140',
             showOverflowTooltip: true,
+            align: "center",
           },
         },
       ],
