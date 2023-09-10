@@ -17,7 +17,7 @@ public class SmsSendDTO {
     private String businessCode;
 
     @Schema(description = "运营商ID")
-    @NotBlank(message = "运营商ID不能为空")
+    //@NotBlank(message = "运营商ID不能为空")
     private String operatorId;
 
     @Schema(description = "手机号码,多个逗号分隔")

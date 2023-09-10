@@ -82,7 +82,7 @@ public class ${className}Controller {
     public void operatorExport(@RequestBody RequestVO<${className}PageDTO> requestVO, HttpServletResponse response) throws IOException {
         long t1 = System.currentTimeMillis();
         CustomPageVO<${className}PageVO> pages = ${classname}Service.pageList(requestVO, false);
-        EasyExcelUtil.writeExcel(response, pages.getList(), "${comments}", ${className}PageVO.class);
+        EasyExcelUtil.writeExcel(response, pages.getList(), ${className}PageVO.class);
         log.debug("【{}】执行导出{}条 耗时:{}ms", ZerosSecurityContextHolder.getUserName(), pages.getTotal(), System.currentTimeMillis() - t1);
     }
 

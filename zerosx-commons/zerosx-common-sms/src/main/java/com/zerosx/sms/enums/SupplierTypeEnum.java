@@ -4,9 +4,13 @@ package com.zerosx.sms.enums;
 import com.zerosx.common.base.anno.AutoDictData;
 import com.zerosx.common.base.enums.CodeEnum;
 import com.zerosx.sms.core.client.IMultiSmsClient;
+import com.zerosx.sms.core.config.AlibabaConfig;
 import com.zerosx.sms.core.config.ISupplierConfig;
+import com.zerosx.sms.core.config.JdCloudConfig;
+import com.zerosx.sms.core.config.JuheConfig;
 import com.zerosx.sms.core.provider.AlibabaProviderFactory;
 import com.zerosx.sms.core.provider.ISmsProviderFactory;
+import com.zerosx.sms.core.provider.JdCloudProviderFactory;
 import com.zerosx.sms.core.provider.JuheProviderFactory;
 import lombok.Getter;
 
@@ -24,15 +28,15 @@ public enum SupplierTypeEnum implements CodeEnum<String> {
     /**
      * 阿里云
      */
-    ALIBABA("alibaba", "阿里云短信", AlibabaProviderFactory.instance()),
+    ALIBABA("alibaba", "阿里云短信", AlibabaProviderFactory.instance(), AlibabaConfig.class),
     /**
      * 聚合，<a href="https://www.juhe.cn/docs/api/id/54">聚合短信</a>
      */
-    JUHE("juhe", "聚合短信", JuheProviderFactory.instance()),
+    JUHE("juhe", "聚合短信", JuheProviderFactory.instance(), JuheConfig.class),
     /**
      * 京东云
      */
-    JDCLOUD("jdcloud", "京东云短信", JuheProviderFactory.instance());
+    JDCLOUD("jdcloud", "京东云短信", JdCloudProviderFactory.instance(), JdCloudConfig.class);
 
     /**
      * 渠道编码
@@ -43,13 +47,20 @@ public enum SupplierTypeEnum implements CodeEnum<String> {
      */
     private final String message;
 
-
+    /**
+     * 建造者工厂
+     */
     private final ISmsProviderFactory<? extends IMultiSmsClient, ? extends ISupplierConfig> providerFactory;
+    /**
+     * 配置类
+     */
+    private final Class<? extends ISupplierConfig> configClass;
 
-    SupplierTypeEnum(String code, String message, ISmsProviderFactory<? extends IMultiSmsClient, ? extends ISupplierConfig> providerFactory) {
+    SupplierTypeEnum(String code, String message, ISmsProviderFactory<? extends IMultiSmsClient, ? extends ISupplierConfig> providerFactory, Class<? extends ISupplierConfig> configClass) {
         this.code = code;
         this.message = message;
         this.providerFactory = providerFactory;
+        this.configClass = configClass;
     }
 
     public static SupplierTypeEnum getSupplierType(String code) {

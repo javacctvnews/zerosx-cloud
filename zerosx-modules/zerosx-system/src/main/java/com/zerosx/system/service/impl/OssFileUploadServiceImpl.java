@@ -1,23 +1,27 @@
 package com.zerosx.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.zerosx.common.base.exception.BusinessException;
+import com.zerosx.common.base.utils.JacksonUtil;
 import com.zerosx.common.base.vo.OssObjectVO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
 import com.zerosx.common.core.utils.BeanCopierUtil;
-import com.zerosx.common.base.utils.JacksonUtil;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
-import com.zerosx.common.oss.properties.FileServerProperties;
-import com.zerosx.common.oss.templete.S3FileOpService;
-import com.zerosx.common.redis.templete.RedissonOpService;
+import com.zerosx.common.oss.core.client.IOssClientService;
+import com.zerosx.common.oss.properties.DefaultOssProperties;
+import com.zerosx.common.oss.core.config.IOssConfig;
 import com.zerosx.common.redis.enums.RedisKeyNameEnum;
+import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.system.dto.OssFileUploadDTO;
 import com.zerosx.system.entity.OssFileUpload;
 import com.zerosx.system.mapper.IOssFileUploadMapper;
 import com.zerosx.system.service.IOssFileUploadService;
+import com.zerosx.system.service.IOssSupplierService;
 import com.zerosx.system.utils.FileUploadUtils;
 import com.zerosx.system.vo.OssFileUploadPageVO;
 import lombok.SneakyThrows;
@@ -31,7 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Slf4j
@@ -40,21 +43,26 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
     private static final Long ONE_DAY_SEC = 3600L * 1000 * 24;
 
     @Autowired
-    private FileServerProperties fileServerProperties;
-    @Autowired
-    private S3FileOpService s3FileOpService;
+    private DefaultOssProperties defaultOssProperties;
     @Autowired
     private RedissonOpService redissonOpService;
+    @Autowired
+    private IOssSupplierService ossSupplierService;
 
     @Override
-    public boolean saveOssFile(String ossType, String originalFilename, OssObjectVO upload) {
+    public boolean saveOssFile(IOssConfig ossConfig, Long fileSize, String originalFilename, OssObjectVO upload) {
         OssFileUpload ossFileUpload = new OssFileUpload();
         ossFileUpload.setOperatorId(ZerosSecurityContextHolder.getOperatorIds());
-        ossFileUpload.setOssType(ossType);
+        ossFileUpload.setOssSupplierId(ossConfig.getOssSupplierId());
+        ossFileUpload.setOssType(ossConfig.getSupplierType());
+        ossFileUpload.setAccessKeyId(ossConfig.getAccessKeyId());
+        ossFileUpload.setBucketName(ossConfig.getBucketName());
         ossFileUpload.setOriginalFileName(originalFilename);
         ossFileUpload.setObjectName(upload.getObjectName());
+        ossFileUpload.setObjectSize(fileSize);
         ossFileUpload.setObjectUrl(upload.getObjectPath());
         ossFileUpload.setObjectViewUrl(upload.getObjectViewUrl());
+        ossFileUpload.setExpirationTime(upload.getExpiration());
         return save(ossFileUpload);
     }
 
@@ -69,14 +77,28 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
     @SneakyThrows
     @Override
     public OssObjectVO upload(MultipartFile multipartFile) {
-        String objectName = FileUploadUtils.extractFilename(multipartFile, fileServerProperties.getFilePrefix());
-        OssObjectVO upload = s3FileOpService.upload(objectName, multipartFile.getInputStream());
-        log.debug(JacksonUtil.toJSONString(upload));
+        String objectName = FileUploadUtils.extractFilename(multipartFile, defaultOssProperties.getFilePrefix());
+        //获取IOssClientService实例
+        IOssClientService ossClientService = getOssClientService(null);
+        //上传
+        OssObjectVO ossObjectVO = ossClientService.upload(objectName, multipartFile.getInputStream());
         //保存文件
-        if (upload != null) {
-            saveOssFile(fileServerProperties.getType(), multipartFile.getOriginalFilename(), upload);
+        saveOssFile(ossClientService.getConfig(), multipartFile.getSize(), multipartFile.getOriginalFilename(), ossObjectVO);
+        if (StringUtils.isBlank(ossObjectVO.getObjectViewUrl())) {
+            throw new BusinessException("上传失败");
         }
-        return upload;
+        //放入缓存
+        long expireTime = (ossObjectVO.getExpiration().getTime() - new Date().getTime()) / 1000;
+        redissonOpService.setExpire(RedisKeyNameEnum.key(RedisKeyNameEnum.OSS_FILE_URL, objectName), JacksonUtil.toJSONString(ossObjectVO), expireTime);
+        return ossObjectVO;
+    }
+
+    private IOssClientService getOssClientService(Long ossSupplierId) {
+        IOssClientService ossClientService = ossSupplierService.getClient(ossSupplierId);
+        if (ossClientService == null) {
+            throw new BusinessException("没有找到IOssClientService实例，上传失败");
+        }
+        return ossClientService;
     }
 
     @Override
@@ -97,48 +119,9 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
         if (StringUtils.isBlank(objectName)) {
             return StringUtils.EMPTY;
         }
-        String ossFileKey = RedisKeyNameEnum.key(RedisKeyNameEnum.OSS_FILE_URL, objectName);
-        //先从Redis获取
-        String cacheViewUrl = null;
-        try {
-            cacheViewUrl = redissonOpService.get(ossFileKey);
-        } catch (Exception e) {
-            redissonOpService.del(ossFileKey);
-        }
-        if (StringUtils.isNotBlank(cacheViewUrl)) {
-            return cacheViewUrl;
-        }
         OssFileUpload ossFile = getByObjectName(objectName);
-        if (ossFile == null) {
-            return "";
-        }
-        Integer expireDate = fileServerProperties.getS3().getExpireDate();
-        if (ossFile.getExpirationTime() == null || ossFile.getExpirationTime().getTime() - System.currentTimeMillis() < 10 * 60 * 1000) {
-            //有效期
-            Date expirationDate = new Date(System.currentTimeMillis() + ONE_DAY_SEC * expireDate);
-            String viewUrl = s3FileOpService.viewUrl(objectName, expirationDate);
-            log.debug("【{}】获取文件URL:{} URL:{}", fileServerProperties.getType(), objectName, viewUrl);
-            //更新有效期
-            ossFile.setExpirationTime(expirationDate);
-            ossFile.setObjectViewUrl(viewUrl);
-            boolean b = updateById(ossFile);
-            if (b) {
-                redissonOpService.setExpire(ossFileKey, viewUrl, ONE_DAY_SEC * expireDate);
-            }
-            return viewUrl;
-        }
-        redissonOpService.setExpire(ossFileKey, ossFile.getObjectViewUrl(), ONE_DAY_SEC * expireDate);
+        handleOssFileUpload(ossFile);
         return ossFile.getObjectViewUrl();
-    }
-
-    @Override
-    public List<String> getObjectViewUrls(String objectNames) {
-        return null;
-    }
-
-    @Override
-    public Map<String, String> getObjectViewUrlMap(List<String> objectNames) {
-        return null;
     }
 
     @Override
@@ -148,7 +131,12 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
 
     @Override
     public boolean deleteFile(String objectName) {
-        boolean deleted = s3FileOpService.deleteObject(objectName);
+        OssFileUpload ossFileUpload = getByObjectName(objectName);
+        if (ossFileUpload == null) {
+            return true;
+        }
+        IOssClientService ossClientService = getOssClientService(ossFileUpload.getOssSupplierId());
+        boolean deleted = ossClientService.delete(objectName);
         if (deleted) {
             LambdaQueryWrapper<OssFileUpload> ossfileRm = Wrappers.lambdaQuery(OssFileUpload.class);
             ossfileRm.eq(OssFileUpload::getObjectName, objectName);
@@ -165,11 +153,15 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
         OssFileUploadDTO t = requestVO.getT() == null ? new OssFileUploadDTO() : requestVO.getT();
         LambdaQueryWrapper<OssFileUpload> qw = Wrappers.lambdaQuery(OssFileUpload.class);
         qw.eq(StringUtils.isNotBlank(t.getOssType()), OssFileUpload::getOssType, t.getOssType());
+        qw.eq(t.getOssSupplierId() != null, OssFileUpload::getOssSupplierId, t.getOssSupplierId());
         qw.eq(StringUtils.isNotBlank(t.getOperatorId()), OssFileUpload::getOperatorId, t.getOperatorId());
+        qw.eq(StringUtils.isNotBlank(t.getBucketName()), OssFileUpload::getBucketName, t.getBucketName());
         qw.and(StringUtils.isNotBlank(t.getFileName()), wp -> wp.like(OssFileUpload::getOriginalFileName, t.getFileName()).or().like(OssFileUpload::getObjectName, t.getFileName()));
         qw.orderByDesc(OssFileUpload::getCreateTime);
         return PageUtils.of(baseMapper.selectPage(PageUtils.of(requestVO, true), qw).convert((e) -> {
-            return BeanCopierUtil.copyProperties(e, OssFileUploadPageVO.class);
+            OssFileUploadPageVO vo = BeanCopierUtil.copyProperties(e, OssFileUploadPageVO.class);
+            vo.setObjectSizeStr(FileUploadUtils.formatSize(e.getObjectSize()));
+            return vo;
         }));
     }
 
@@ -178,12 +170,55 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
         for (Long id : ids) {
             OssFileUpload ossFileUpload = getById(id);
             if (ossFileUpload != null) {
+                IOssClientService ossClientService = getOssClientService(ossFileUpload.getOssSupplierId());
                 String objectName = ossFileUpload.getObjectName();
-                s3FileOpService.deleteObject(objectName);
+                ossClientService.delete(objectName);
                 redissonOpService.del(RedisKeyNameEnum.key(RedisKeyNameEnum.OSS_FILE_URL, objectName));
                 removeById(id);
             }
         }
         return true;
     }
+
+    @Override
+    public OssFileUploadPageVO queryById(Long id) {
+        OssFileUpload fileUpload = getById(id);
+        handleOssFileUpload(fileUpload);
+        return BeanCopierUtil.copyProperties(fileUpload, OssFileUploadPageVO.class);
+    }
+
+    private void handleOssFileUpload(OssFileUpload fileUpload) {
+        String objectName = fileUpload.getObjectName();
+        String ossFileKey = RedisKeyNameEnum.key(RedisKeyNameEnum.OSS_FILE_URL, objectName);
+        //先从Redis获取
+        String cacheViewUrl = null;
+        try {
+            String ossObjectStr = redissonOpService.get(ossFileKey);
+            OssObjectVO ossObjectVO = JacksonUtil.toObject(ossObjectStr, OssObjectVO.class);
+            if (ossObjectVO != null && !ossObjectVO.expired()) {
+                cacheViewUrl = ossObjectVO.getObjectViewUrl();
+            }
+        } catch (Exception e) {
+            redissonOpService.del(ossFileKey);
+        }
+        if (StringUtils.isBlank(cacheViewUrl)) {
+            //查询访问url
+            IOssClientService ossClientService = ossSupplierService.getClient(fileUpload.getOssSupplierId());
+            OssObjectVO vo = ossClientService.viewUrl(objectName);
+            //更新db的过期时间
+            if (StringUtils.isNotBlank(vo.getObjectViewUrl())) {
+                cacheViewUrl = vo.getObjectViewUrl();
+                LambdaUpdateWrapper<OssFileUpload> uw = Wrappers.lambdaUpdate(OssFileUpload.class);
+                uw.set(OssFileUpload::getObjectViewUrl, vo.getObjectViewUrl());
+                uw.set(OssFileUpload::getExpirationTime, vo.getExpiration());
+                uw.eq(OssFileUpload::getObjectName, objectName);
+                update(null, uw);
+                //放入缓存
+                long expireTime = (vo.getExpiration().getTime() - new Date().getTime()) / 1000;
+                redissonOpService.setExpire(ossFileKey, JacksonUtil.toJSONString(vo), expireTime);
+            }
+        }
+        fileUpload.setObjectViewUrl(cacheViewUrl);
+    }
+
 }

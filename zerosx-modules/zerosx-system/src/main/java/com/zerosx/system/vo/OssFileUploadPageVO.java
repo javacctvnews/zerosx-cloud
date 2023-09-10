@@ -19,6 +19,10 @@ public class OssFileUploadPageVO {
 
     private String objectName;
 
+    private Long objectSize;
+
+    private String objectSizeStr;
+
     private String objectUrl;
 
     private String objectViewUrl;
@@ -40,5 +44,12 @@ public class OssFileUploadPageVO {
     private String createBy;
 
     private String updateBy;
+
+    //服务商ID
+    private Long ossSupplierId;
+    //AccessKey
+    private String accessKeyId;
+    //存储桶名称
+    private String bucketName;
 
 }

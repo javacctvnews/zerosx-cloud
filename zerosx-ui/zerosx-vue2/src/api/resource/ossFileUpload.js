@@ -9,6 +9,14 @@ export function pageList(query) {
   })
 }
 
+export function queryById(id) {
+  return request({
+    url: serviceConfig.system + '/oss_file/queryById/' + id,
+    method: 'get'
+  })
+}
+
+
 export function fullDelete(ids) {
   return request({
     url: serviceConfig.system + '/oss_file/full_delete/' + ids,

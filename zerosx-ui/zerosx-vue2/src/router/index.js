@@ -92,6 +92,20 @@ export const constantRoutes = [
 
 // 动态路由，基于用户权限动态去加载
 export const dynamicRoutes = [
+  {
+    path: '/resource/ossFileUpload',
+    component: Layout,
+    hidden: true,
+    permissions: ['resource:ossFileUpload:list'],
+    children: [
+      {
+        path: '/resource/ossFileUpload',
+        component: () => import('@/views/resource/ossFileUpload/index.vue'),
+        name: 'ossFileUpload',
+        meta: { title: '文件列表', activeMenu: '/resource/ossSupplier' }
+      }
+    ]
+  },
   // {
   //   path: '/system/user-auth',
   //   component: Layout,

@@ -8,6 +8,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -15,7 +16,6 @@ import java.util.Objects;
 
 /**
  * 文件上传工具类
- *
  */
 public class FileUploadUtils {
 
@@ -24,7 +24,6 @@ public class FileUploadUtils {
      */
     public static String extractFilename(MultipartFile file, String prefix) {
         String dateFormat = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyMMdd"));
-        //return MessageFormat.format("{0}_{1}_{2}.{3}", dateFormat, FilenameUtils.getBaseName(file.getOriginalFilename()), IdGenerator.getIdStr(), getExtension(file));
         if (StringUtils.isBlank(prefix)) {
             return MessageFormat.format("{0}_{1}.{2}", dateFormat, IdGenerator.getIdStr(), getExtension(file));
         }
@@ -74,5 +73,28 @@ public class FileUploadUtils {
         return extension;
     }
 
-
+    /**
+     * 文件大小
+     *
+     * @param fileS
+     * @return
+     */
+    public static String formatSize(Long fileS) {
+        DecimalFormat df = new DecimalFormat("#.00");
+        String fileSizeString;
+        String wrongSize = "0B";
+        if (fileS == null || fileS == 0) {
+            return wrongSize;
+        }
+        if (fileS < 1024) {
+            fileSizeString = df.format((double) fileS) + "B";
+        } else if (fileS < 1048576) {
+            fileSizeString = df.format((double) fileS / 1024) + "KB";
+        } else if (fileS < 1073741824) {
+            fileSizeString = df.format((double) fileS / 1048576) + "MB";
+        } else {
+            fileSizeString = df.format((double) fileS / 1073741824) + "GB";
+        }
+        return fileSizeString;
+    }
 }

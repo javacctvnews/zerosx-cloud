@@ -17,6 +17,10 @@
     <dependencies>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-oss</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-sms</artifactId>
         </dependency>
         <dependency>

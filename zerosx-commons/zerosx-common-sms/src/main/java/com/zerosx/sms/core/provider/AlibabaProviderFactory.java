@@ -17,7 +17,9 @@ import java.util.concurrent.ConcurrentHashMap;
  **/
 @Slf4j
 public class AlibabaProviderFactory implements ISmsProviderFactory<AlibabaSmsClient, AlibabaConfig> {
-
+    /**
+     * key 是 accessKey + regionId
+     */
     private static final Map<String, AlibabaSmsClient> clientMap = new ConcurrentHashMap<>();
 
     private static final AlibabaProviderFactory INSTANCE = new AlibabaProviderFactory();
@@ -26,7 +28,7 @@ public class AlibabaProviderFactory implements ISmsProviderFactory<AlibabaSmsCli
     }
 
     private static final class ConfigHolder {
-        private static AlibabaConfig config = AlibabaConfig.builder().build();
+        private static AlibabaConfig config = new AlibabaConfig();
     }
 
     /**
@@ -38,9 +40,15 @@ public class AlibabaProviderFactory implements ISmsProviderFactory<AlibabaSmsCli
         return INSTANCE;
     }
 
+    private String key(AlibabaConfig config) {
+        return config.getAccessKeyId() + config.getRegionId();
+    }
+
+
     @Override
     public AlibabaSmsClient createSms(AlibabaConfig config) {
-        AlibabaSmsClient client = clientMap.get(config.getOperatorId());
+        String key = key(config);
+        AlibabaSmsClient client = clientMap.get(key);
         if (client == null) {
             return createMultiSms(config);
         }
@@ -50,7 +58,7 @@ public class AlibabaProviderFactory implements ISmsProviderFactory<AlibabaSmsCli
     @Override
     public AlibabaSmsClient createMultiSms(AlibabaConfig config) {
         AlibabaSmsClient client = new AlibabaSmsClient(config);
-        clientMap.put(config.getOperatorId(), client);
+        clientMap.put(key(config), client);
         log.debug("[{}]创建【{}】实例, 当前{}个AlibabaSmsClient", config.getOperatorId(), SupplierTypeEnum.ALIBABA.getCode(), clientMap.size());
         return client;
     }

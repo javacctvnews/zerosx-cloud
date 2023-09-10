@@ -1,8 +1,7 @@
 package com.zerosx.sms.core.config;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.SuperBuilder;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * AlibabaConfig
@@ -11,19 +10,12 @@ import lombok.experimental.SuperBuilder;
  * @author: javacctvnews
  * @create: 2023-08-30 14:30
  **/
-@Data
-@SuperBuilder
-@EqualsAndHashCode(callSuper = true)
-public class AlibabaConfig extends BaseSupplierConfig implements ISupplierConfig {
+@Getter@Setter
+public class AlibabaConfig extends BaseSupplierConfig {
 
     /**
      * 地域信息默认为 cn-hangzhou
      */
     private String regionId = "";
-
-    /**
-     * endpoint
-     */
-    //private String endpoint = "";
 
 }

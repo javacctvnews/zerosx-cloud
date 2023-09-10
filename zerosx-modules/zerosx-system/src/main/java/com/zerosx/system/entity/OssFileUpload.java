@@ -13,11 +13,20 @@ import java.util.Date;
 @TableName(value = "t_oss_file_upload")
 public class OssFileUpload extends SuperEntity<OssFileUpload> {
 
+    //服务商ID
+    private Long ossSupplierId;
+    //AccessKey
+    private String accessKeyId;
+    //存储桶名称
+    private String bucketName;
+
     private String ossType;
 
     private String originalFileName;
 
     private String objectName;
+
+    private Long objectSize;
 
     private String objectUrl;
 

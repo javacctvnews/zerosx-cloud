@@ -15,7 +15,7 @@
 #elseif($column.columnName == "status")
       <el-form-item label="$column.comments" prop="status">
         <el-select v-model="queryParams.t.status" placeholder="$column.comments" clearable style="width: 220px;">
-          <el-option v-for="dict in dict.type.sys_normal_disable" :key="dict.value" :label="dict.label"
+          <el-option v-for="dict in dict.type.StatusEnum" :key="dict.value" :label="dict.label"
                    :value="dict.value" />
         </el-select>
       </el-form-item>
@@ -54,7 +54,7 @@
         @handleSelectionChange="handleSelectionChange" actionWidth="80px" @sort-change="handleSortChange"
         :defaultSort="defaultSort" >
         <template slot-scope="scope" slot="status">
-            <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status" />
+            <dict-tag :options="dict.type.StatusEnum" :value="scope.row.status" />
           </template>
       </TablePlus>
     </div>
@@ -79,7 +79,7 @@
 #elseif($column.columnName == "status")
         <el-form-item label="$column.comments" prop="status">
           <el-radio-group v-model="form.status">
-            <el-radio v-for="dict in dict.type.sys_normal_disable" :key="dict.value" :label="dict.value">{{ dict.label
+            <el-radio v-for="dict in dict.type.StatusEnum" :key="dict.value" :label="dict.value">{{ dict.label
               }}</el-radio>
           </el-radio-group>
         </el-form-item>
@@ -108,7 +108,7 @@ import { operators } from '@/api/common.js'
 
 export default {
   name: '${className}',
-  dicts: ['sys_normal_disable'],
+  dicts: ['StatusEnum'],
   data() {
     return {
       searching: false,

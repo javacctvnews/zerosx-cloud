@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 /**
  * oss统一返回的对象
  */
@@ -20,7 +22,7 @@ public class OssObjectVO {
     private String objectName;
 
     /**
-     * 对象查看路径
+     * 对象查看路径 eTag
      */
     private String objectPath;
 
@@ -28,5 +30,14 @@ public class OssObjectVO {
      * 文件查看URL
      */
     private String objectViewUrl;
+    /**
+     * 签名过期的时间
+     */
+    private Date expiration;
+
+    public Boolean expired() {
+        long diff = expiration.getTime() - System.currentTimeMillis();
+        return diff <= 0;
+    }
 
 }

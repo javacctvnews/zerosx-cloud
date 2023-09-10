@@ -24,8 +24,8 @@ public class SmsSupplierControllerFallbackFactory implements FallbackFactory<ISm
         return new ISmsSupplierControllerApi() {
             @Override
             public ResultVO<?> sendSms(SmsSendDTO smsSendDTO) {
-                log.error("短信发送失败：" + throwable.getMessage(), throwable.getMessage());
-                return ResultVOUtil.emptyData();
+                log.error("短信发送失败：" + throwable.getMessage(), throwable);
+                return ResultVOUtil.feignFail(throwable.getMessage());
             }
         };
     }

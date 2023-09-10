@@ -24,6 +24,9 @@
         <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
           v-hasPerms="['resource:ossfile:delete']">删除</el-button>
       </el-col>
+      <!-- <el-col :span="1.5">
+        <el-button type="warning" plain icon="el-icon-back" size="mini" @click="handleClose">返回</el-button>
+      </el-col> -->
       <right-toolbar :showSearch.sync="showSearch" :searching="searching" @handleQuery="getList"
         @resetQuery="resetQuery" />
     </el-row>
@@ -66,7 +69,7 @@
 </template>
 
 <script>
-import { pageList, fullDelete } from '@/api/resource/ossFileUpload.js'
+import { pageList, fullDelete,queryById } from '@/api/resource/ossFileUpload.js'
 import { operators } from '@/api/common.js'
 
 export default {
@@ -87,7 +90,7 @@ export default {
       ids: [],
       prewList: [],
       defaultSort: {
-        prop: 'createTime',
+        prop: 'updateTime',
         order: 'descending'
       },
       queryParams: {
@@ -119,15 +122,6 @@ export default {
         },
         {
           attrs: {
-            label: '源文件名',
-            prop: 'originalFileName',
-            minWidth: '240',
-            align: 'center',
-            sortable: 'custom',
-          },
-        },
-        {
-          attrs: {
             label: '存储标识',
             prop: 'objectName',
             minWidth: '320',
@@ -136,26 +130,43 @@ export default {
         },
         {
           attrs: {
-            label: '存储链接',
-            prop: 'objectUrl',
-            minWidth: '240',
-            showOverflowTooltip: true,
+            label: '文件大小',
+            prop: 'objectSizeStr',
+            minWidth: '120',
             align: 'center'
           },
         },
         {
           attrs: {
-            label: '访问链接',
-            prop: 'objectViewUrl',
+            label: '源文件名',
+            prop: 'originalFileName',
             minWidth: '240',
-            showOverflowTooltip: true,
-            align: 'center'
+            align: 'center',
+            sortable: 'custom',
           },
         },
+        // {
+        //   attrs: {
+        //     label: '存储链接',
+        //     prop: 'objectUrl',
+        //     minWidth: '240',
+        //     showOverflowTooltip: true,
+        //     align: 'center'
+        //   },
+        // },
+        // {
+        //   attrs: {
+        //     label: '访问链接',
+        //     prop: 'objectViewUrl',
+        //     minWidth: '240',
+        //     showOverflowTooltip: true,
+        //     align: 'center'
+        //   },
+        // },
         {
           attrs: {
-            label: '创建时间',
-            prop: 'createTime',
+            label: '更新时间',
+            prop: 'updateTime',
             minWidth: '140',
             align: 'center',
             sortable: 'custom',
@@ -165,6 +176,15 @@ export default {
           attrs: {
             label: '失效日期',
             prop: 'expirationTime',
+            minWidth: '140',
+            align: 'center',
+            sortable: 'custom',
+          },
+        },
+        {
+          attrs: {
+            label: '创建时间',
+            prop: 'createTime',
             minWidth: '140',
             align: 'center',
             sortable: 'custom',
@@ -213,6 +233,12 @@ export default {
     this.getOperators();
   },
   methods: {
+    /** 返回按钮操作 */
+    handleClose() {
+      const obj = { path: "/resource/ossFileUpload" };
+      console.log(this.$tab)
+      this.$tab.closeOpenPage(obj);
+    },
     getOperators() {
       operators().then((res) => {
         this.operators = res.data
@@ -266,9 +292,11 @@ export default {
       }).catch((error) => { });
     },
     handleView(row) {
-      this.open = true
-      this.form = row;
-      this.prewList = [row.objectViewUrl];
+      queryById(row.id).then((res) => {
+        this.open = true
+        this.form = res.data;
+        this.prewList = [res.data.objectViewUrl];
+      }).catch((err) => { })
     }
   },
 }

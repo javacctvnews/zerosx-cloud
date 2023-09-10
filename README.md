@@ -3,7 +3,6 @@
 </h1>
 
 
-
 <div style="text-align: center">逝者如斯夫，不舍昼夜！</div>
 <div style="text-align: center">
   <img src="https://img.shields.io/badge/Zerosx_Cloud-v1.1.0.Developer.Beta-critical" alt="">
@@ -15,6 +14,7 @@
   <img src="https://img.shields.io/badge/Spring_Cloud-2021.0.5-blue?logo=spring-boot" alt="">
   <img src="https://img.shields.io/badge/Spring_Cloud_Alibaba-2021.0.5.0-blue?logo=alibabadotcom" alt="">
   <img src="https://img.shields.io/badge/Nacos-2.2.0-critical?logo=alibabadotcom" alt="">
+  <img src="https://img.shields.io/badge/Seata-1.6.1-blue?logo=statamic" alt="">
 </div>
 <div style="text-align: center">
   <img src="https://img.shields.io/badge/Vue-2.x-green" alt="">
@@ -24,10 +24,12 @@
 </div>
 <h3 style="text-align:center;color:red;font-size:16px;">如果觉得对您有所帮助，请点右上角 "Star" 支持一下，谢谢啦</h3>
 
-<div style="border-bottom: 1px solid #dcdfe6;margin-top: 50px;"></div>
+------
 
 
-### 1. 简介
+
+
+### 简介
 
 此平台是由作者个人兴趣下搭建及开发，开源，免费，仅供学习参考。
 
@@ -38,13 +40,51 @@
 * 代码生成器一键生成基础CRUD功能，节约开发时间，更多注重业务开发；
 * 提供一套基于Vue2.x的前端项目[zerosx-vue2]，此项目是参考【若依】前端开源改造，感谢若依，作者前端刚开始学习，勿喷。
 
-### 2. 软件架构
+### 软件架构图
 
 <img style="width: 80%;text-align: center;" src="./doc/images/zerosx-cloud.png" alt="系统架构图"/>
 
 > 备注：图中灰色虚线块组件作者并未搭建（服务器资源有限），只做一个选型参考。
 
-### 3. 本地开发说明
+### 项目结构简介
+
+```shell
+├─zerosx-cloud								#顶级工程目录
+│ └─doc						              	#项目文档（组件、SQL、操作说明）
+│ └─zerosx-api				              	#Feign对内api
+│   └─zerosx-api-auth		              	#授权服务api
+│   └─zerosx-api-examples	              	#示例工程api
+│   └─zerosx-api-system		              	#系统服务api
+│ └─zerosx-auth			                  	#授权认证服务
+│ └─zerosx-commons		                  	#通用模块
+│   └─zerosx-common-base					#公共POJO、工具类
+│   └─zerosx-common-core					#公共核心模块
+│   └─zerosx-common-db						#数据权限
+│   └─zerosx-common-encrypt					#数据加解密
+│   └─zerosx-common-loadbalancer			#loadbalancer和feign封装
+│   └─zerosx-common-log						#日志记录
+│   └─zerosx-common-oss						#OSS对象存储
+│   └─zerosx-common-redis					#Redis封装
+│   └─zerosx-common-seata					#分布式事务Seata
+│   └─zerosx-common-security				#Spring Security封装
+│   └─zerosx-common-sentinel				#Sentinel
+│   └─zerosx-common-sms						#多家SMS短信集成
+│   └─zerosx-common-xxljob					#分布式任务调度XXL-JOB
+│ └─zerosx-examples		                  	#示例工程
+│ └─zerosx-gateway		                  	#网关服务
+│ └─zerosx-modules		                  	#业务模块
+│   └─zerosx-system							#System服务
+│ └─zerosx-tools			              	#工具工程
+│   └─code-generator				      	#项目的代码生成器
+│   └─zerosx-monitor						#SpringBootAdmin应用监控
+│ └─zerosx-ui				              	#前端
+│   └─zerosx-vue2			              	#前端-vue2版本
+│   └─zerosx-vue3			              	#前端-vue3版本(计划)
+│ └─pom.xml				                  	#公共依赖
+│ └─README.md				              	#项目简介文档
+```
+
+### 本地开发说明
 
 1. 组件安装教程及脚本请看【zerosx-cloud/doc/README.md】
 
@@ -57,11 +97,12 @@
 5. 调试接口文档：
 
    * 网关聚合入口：http://{gateway.host}:{gateway.port}/doc.html
+   
+   
+      * 单体微服务入口：http://{app1.host}:{app1.port}/doc.html (推荐，无token校验)
+   
 
-
-   * 单体微服务入口：http://{app1.host}:{app1.port}/doc.html (推荐，无token校验)
-
-### 4. 内置功能简介
+### 内置功能简介
 
 * 租户管理
     * 租户管理：接入系统的租户公司的管理
@@ -86,9 +127,7 @@
     * 接口文档：OpenAPI3聚合接口文档
     * 短信配置：短信服务商及短信业务模板的相关配置
 
-### 5. 打包部署（示例）
-
-
+### 打包部署（示例）
 
 1. 编译打包jar
 
@@ -133,52 +172,54 @@ docker push registry.cn-shenzhen.aliyuncs.com/zeros-cloud/zeros-gateway:v1.1.0
 > <img src="https://img.shields.io/badge/zerosx_auth-0.0.1-blue" alt="">
 > <img src="https://img.shields.io/badge/zerosx_system-0.0.1-blue" alt="">
 
-### 6. 在线体验
+### 在线体验
 
 * 演示地址：<a href="http://120.79.152.222/index"> http://120.79.152.222/index </a>
 
 > <span style="color:#666">目前版本只有基础功能，其他功能还在逐步完善中，敬请期待</span>
 
-### 7. 演示系统截图：
+### 演示系统截图：
 
 <table>
-    <tr>
-       <td><img src="./doc/images/img01.png" alt="登录页"/></td>
-       <td><img src="./doc/images/img02.png"/></td>
-    </tr>
-    <tr>
-       <td><img src="./doc/images/img03.png"/></td>
-       <td><img src="./doc/images/img04.png"/></td>
-    </tr>
-    <tr>
-       <td><img src="./doc/images/img05.png"/></td>
-       <td><img src="./doc/images/img06.png"/></td>
-    </tr>
-    <tr>
-       <td><img src="./doc/images/img07.png"/></td>
-       <td><img src="./doc/images/img08.png"/></td>
-    </tr>
-    <tr>
-       <td><img src="./doc/images/img09.png"/></td>
-       <td><img src="./doc/images/img10.png"/></td>
-    </tr>
-    <tr>
-       <td><img src="./doc/images/img11.png"/></td>
-       <td><img src="./doc/images/img12.png"/></td>
-    </tr>
-    <tr>
-       <td><img src="./doc/images/img13.png"/></td>
-       <td><img src="./doc/images/img14.png"/></td>
-    </tr>
-    <tr>
-       <td><img src="./doc/images/img15.png"/></td>
-       <td><img src="./doc/images/img16.png"/></td>
-    </tr>
-     <tr>
-       <td><img src="./doc/images/img17.png"/></td>
-       <td><img src="./doc/images/img18.png"/></td>
-    </tr>
-     <tr>
-       <td><img src="./doc/images/img19.png"/></td>
-    </tr>
+   <tr>
+      <td><img src="./doc/images/img01.png" alt="登录页" /></td>
+      <td><img src="./doc/images/img02.png" /></td>
+   </tr>
+   <tr>
+      <td><img src="./doc/images/img03.png" /></td>
+      <td><img src="./doc/images/img04.png" /></td>
+   </tr>
+   <tr>
+      <td><img src="./doc/images/img05.png" /></td>
+      <td><img src="./doc/images/img06.png" /></td>
+   </tr>
+   <tr>
+      <td><img src="./doc/images/img07.png" /></td>
+      <td><img src="./doc/images/img08.png" /></td>
+   </tr>
+   <tr>
+      <td><img src="./doc/images/img09.png" /></td>
+      <td><img src="./doc/images/img10.png" /></td>
+   </tr>
+   <tr>
+      <td><img src="./doc/images/img11.png" /></td>
+      <td><img src="./doc/images/img12.png" /></td>
+   </tr>
+   <tr>
+      <td><img src="./doc/images/img13.png" /></td>
+      <td><img src="./doc/images/img14.png" /></td>
+   </tr>
+   <tr>
+      <td><img src="./doc/images/img15.png" /></td>
+      <td><img src="./doc/images/img18.png" /></td>
+   </tr>
+   <tr>
+      <td><img src="./doc/images/img17.png" /></td>
+      <td><img src="./doc/images/img16.png" /></td>
+   </tr>
+   <tr>
+      <td><img src="./doc/images/seata.png" /></td>
+      <td><img src="./doc/images/xxl-job.png" /></td>
+   </tr>
 </table>
+

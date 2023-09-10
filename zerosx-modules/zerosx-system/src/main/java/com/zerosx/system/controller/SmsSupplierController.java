@@ -10,7 +10,6 @@ import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.log.annotation.SystemLog;
 import com.zerosx.common.log.enums.BusinessType;
-import com.zerosx.sms.model.SmsResponse;
 import com.zerosx.system.dto.SmsSupplierDTO;
 import com.zerosx.system.dto.SmsSupplierPageDTO;
 import com.zerosx.system.service.ISmsSupplierService;
@@ -36,7 +35,7 @@ import java.io.IOException;
 @Slf4j
 @RestController
 @Tag(name = "短信配置")
-public class ISmsSupplierController implements ISmsSupplierControllerApi {
+public class SmsSupplierController implements ISmsSupplierControllerApi {
 
     @Autowired
     private ISmsSupplierService smsSupplierService;

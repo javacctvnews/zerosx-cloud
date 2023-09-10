@@ -35,7 +35,6 @@ public abstract class AbsTranslationService<T> implements ITranslationService<T>
      */
     protected AsyncCache<String, String> cache = Caffeine.newBuilder()
             .expireAfterWrite(5, TimeUnit.SECONDS)//过期时间
-            //.executor(executor)
             .maximumSize(100)//最大条数1000
             .buildAsync();//定义cache
 

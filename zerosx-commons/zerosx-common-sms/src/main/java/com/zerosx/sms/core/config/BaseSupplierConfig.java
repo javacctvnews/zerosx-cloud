@@ -1,7 +1,7 @@
 package com.zerosx.sms.core.config;
 
-import lombok.Data;
-import lombok.experimental.SuperBuilder;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * BaseSupplierConfig
@@ -10,14 +10,17 @@ import lombok.experimental.SuperBuilder;
  * @author: javacctvnews
  * @create: 2023-08-30 14:29
  **/
-@Data
-@SuperBuilder
-public class BaseSupplierConfig {
+@Setter@Getter
+public abstract class BaseSupplierConfig implements ISupplierConfig{
 
     /**
      * 运营商ID，默认配置 "000000"
      */
     private String operatorId = "000000";
+    /**
+     * sms服务商编码
+     */
+    private String supplierType;
 
     /**
      * Access Key

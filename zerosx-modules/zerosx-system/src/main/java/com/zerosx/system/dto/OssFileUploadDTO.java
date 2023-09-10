@@ -13,4 +13,8 @@ public class OssFileUploadDTO {
 
     private String operatorId;
 
+    private String bucketName;
+
+    //服务商ID
+    private Long ossSupplierId;
 }

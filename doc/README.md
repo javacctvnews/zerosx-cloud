@@ -17,7 +17,7 @@
     docker-compose -f docker-compose.yaml up -d
     ```
 
-3. 推荐一款Redis客户端应用
+3. 推荐一款Redis可视化管理工具
 
     > [QuickRedis](https://sourceforge.net/projects/quickredis/files/)
 

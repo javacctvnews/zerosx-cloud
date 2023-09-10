@@ -1,9 +1,7 @@
 package com.zerosx.sms.core.config;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.SuperBuilder;
-import org.springframework.web.client.RestTemplate;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * AlibabaConfig
@@ -12,10 +10,8 @@ import org.springframework.web.client.RestTemplate;
  * @author: javacctvnews
  * @create: 2023-08-30 14:30
  **/
-@Data
-@SuperBuilder
-@EqualsAndHashCode(callSuper = true)
-public class JuheConfig extends BaseSupplierConfig implements ISupplierConfig {
+@Setter@Getter
+public class JuheConfig extends BaseSupplierConfig {
 
     private String key = "";
 

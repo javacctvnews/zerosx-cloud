@@ -15,6 +15,7 @@ import com.zerosx.sms.enums.SupplierTypeEnum;
 public abstract class SmsFactory {
 
     private SmsFactory() {
+
     }
 
     /**

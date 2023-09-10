@@ -9,4 +9,8 @@ package com.zerosx.sms.core.config;
  **/
 public interface ISupplierConfig {
 
+    String getSupplierType();
+
+    void setOperatorId(String operatorId);
+
 }

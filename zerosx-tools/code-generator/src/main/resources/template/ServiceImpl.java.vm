@@ -36,11 +36,7 @@ public class ${className}ServiceImpl extends SuperServiceImpl<I${className}Mappe
 
     @Override
     public CustomPageVO<${className}PageVO> pageList(RequestVO<${className}PageDTO> requestVO, boolean searchCount) {
-        return PageUtils.of(baseMapper.selectPage(PageUtils.of(requestVO, searchCount), getWrapper(requestVO.getT())).convert((e) -> {
-            ${className}PageVO tarVO = BeanCopierUtil.copyProperties(e, ${className}PageVO.class);
-            //todo
-            return tarVO;
-        }));
+        return PageUtils.of(baseMapper.selectPage(PageUtils.of(requestVO, searchCount), getWrapper(requestVO.getT())), ${className}PageVO.class);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.zerosx.system.controller;
 
-import com.zerosx.common.base.dto.ObjectNameQuery;
 import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.OssObjectVO;
 import com.zerosx.common.base.vo.RequestVO;
@@ -21,14 +20,20 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
-@Tag(name = "OSS文件操作")
+@Tag(name = "OSS文件")
 @RestController
 public class OssFileUploadController {
 
     @Autowired
     private IOssFileUploadService ossFileUploadService;
+
+    @Operation(summary = "分页列表")
+    @PostMapping("/oss_file/list_pages")
+    @SystemLog(title = "文件管理", btnName = "分页查询", businessType = BusinessType.QUERY)
+    public ResultVO<CustomPageVO<OssFileUploadPageVO>> listPages(@RequestBody RequestVO<OssFileUploadDTO> requestVO) {
+        return ResultVOUtil.success(ossFileUploadService.listPages(requestVO));
+    }
 
     /**
      * 单个文件上传
@@ -57,38 +62,14 @@ public class OssFileUploadController {
     @Operation(summary = "获取单个文件URL")
     @GetMapping(value = "/view_url/{objectName}")
     public ResultVO<String> getObjectViewUrl(@PathVariable("objectName") String objectName) {
-        String objectViewUrl = ossFileUploadService.getObjectViewUrl(objectName);
-        /*if(StringUtils.isBlank(objectViewUrl)){
-            throw new BusinessException(ResultEnum.FAIL.getCode(), "文件不存在或已删除");
-        }*/
-        return ResultVOUtil.success(objectViewUrl);
+        return ResultVOUtil.success(ossFileUploadService.getObjectViewUrl(objectName));
     }
 
-    /**
-     * 文件URL获取(批量)
-     *
-     * @param objectNames
-     * @return
-     */
-    @Operation(summary = "批量获取文件URL(逗号隔开)")
-    @GetMapping(value = "/view_urls/{objectNames}")
-    public ResultVO<List<String>> getObjectViewUrls(@PathVariable("objectNames") String objectNames) {
-        return ResultVOUtil.success(ossFileUploadService.getObjectViewUrls(objectNames));
-    }
-
-    /**
-     * 文件URL获取(批量)
-     *
-     * @param objectNameQuery
-     * @return
-     */
-    @Operation(summary = "批量获取文件URL")
-    @PostMapping(value = "/view_url_map/object_name_query")
-    public ResultVO<Map<String, String>> getObjectViewUrlMap(@RequestBody ObjectNameQuery objectNameQuery) {
-        if (objectNameQuery == null) {
-            return ResultVOUtil.emptyData();
-        }
-        return ResultVOUtil.success(ossFileUploadService.getObjectViewUrlMap(objectNameQuery.getObjectNames()));
+    @Operation(summary = "按id查询")
+    @SystemLog(title = "OSS文件", btnName = "按id查询", businessType = BusinessType.QUERY)
+    @GetMapping("/oss_file/queryById/{id}")
+    public ResultVO<OssFileUploadPageVO> queryById(@PathVariable Long id) {
+        return ResultVOUtil.success(ossFileUploadService.queryById(id));
     }
 
     /**
@@ -115,17 +96,11 @@ public class OssFileUploadController {
         return ResultVOUtil.success(ossFileUploadService.deleteFile(objectName));
     }
 
-    @Operation(summary = "分页列表")
-    @PostMapping("/oss_file/list_pages")
-    @SystemLog(title = "文件管理", btnName = "分页查询", businessType = BusinessType.QUERY)
-    public ResultVO<CustomPageVO<OssFileUploadPageVO>> listPages(@RequestBody RequestVO<OssFileUploadDTO> requestVO) {
-        return ResultVOUtil.success(ossFileUploadService.listPages(requestVO));
-    }
-
-    @Operation(summary = "分页列表")
+    @Operation(summary = "批量删除(物理删除)")
     @GetMapping("/oss_file/full_delete/{ids}")
-    @SystemLog(title = "文件管理", btnName = "批量彻底删除", businessType = BusinessType.DELETE)
+    @SystemLog(title = "文件管理", btnName = "批量删除(物理删除)", businessType = BusinessType.DELETE)
     public ResultVO<?> fullDelete(@PathVariable Long[] ids) {
         return ResultVOUtil.success(ossFileUploadService.fullDelete(ids));
     }
+
 }

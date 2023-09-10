@@ -12,8 +12,8 @@ import com.zerosx.auth.vo.AuthCaptchaVO;
 import com.zerosx.auth.vo.SmsCodeVO;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.ResultVO;
+import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.utils.IdGenerator;
-import com.zerosx.common.base.utils.JacksonUtil;
 import com.zerosx.common.redis.enums.RedisKeyNameEnum;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.sms.enums.SmsBusinessCodeEnum;
@@ -125,7 +125,7 @@ public class VerificationCodeServiceImpl implements IVerificationCodeService {
         map.put("code", randomStr);
         //发送短信
         SmsSendDTO smsSendDTO = new SmsSendDTO();
-        smsSendDTO.setOperatorId("000000");
+        smsSendDTO.setOperatorId(ZerosSecurityContextHolder.getOperatorIds());
         smsSendDTO.setBusinessCode(SmsBusinessCodeEnum.VERIFY_CODE.getCode());
         smsSendDTO.setPhoneNumbers(smsCodeDTO.getMobilePhone());
         smsSendDTO.setParams(map);

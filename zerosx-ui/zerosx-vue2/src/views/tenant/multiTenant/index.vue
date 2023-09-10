@@ -50,25 +50,26 @@
       @pagination="getList" />
 
     <!-- 新增or删除 -->
-    <el-dialog center :lock-scroll="true" :title="title" :visible.sync="open" width="900px" append-to-body
+    <el-dialog center :lock-scroll="true" :title="title" v-if="open" :visible.sync="open" width="900px" append-to-body
       :close-on-click-modal="false">
       <el-form ref="form" :model="form" label-width="110px" size="small" :rules="rules">
         <el-row>
           <el-col :span="24">
             <el-form-item label="公司全称" prop="tenantGroupName">
-              <el-input v-model="form.tenantGroupName" placeholder="请输入公司全称" maxlength="30" auto-complete="off" show-word-limit/>
+              <el-input v-model="form.tenantGroupName" placeholder="请输入公司全称" maxlength="30" auto-complete="off"
+                show-word-limit />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="公司简称" prop="tenantShortName">
-              <el-input v-model="form.tenantShortName" placeholder="请输入公司简称" maxlength="10" show-word-limit/>
+              <el-input v-model="form.tenantShortName" placeholder="请输入公司简称" maxlength="10" show-word-limit />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="社会信用代码" prop="socialCreditCode">
-              <el-input v-model="form.socialCreditCode" placeholder="请输入公司社会信用代码" maxlength="18" show-word-limit/>
+              <el-input v-model="form.socialCreditCode" placeholder="请输入公司社会信用代码" maxlength="18" show-word-limit />
             </el-form-item>
           </el-col>
         </el-row>
@@ -91,26 +92,26 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="详细地址" prop="street">
-              <el-input type="textarea" v-model="form.street" placeholder="请输入详细地址" maxlength="100" show-word-limit/>
+              <el-input type="textarea" v-model="form.street" placeholder="请输入详细地址" maxlength="100" show-word-limit />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="联系人名称" prop="contactName">
-              <el-input v-model="form.contactName" placeholder="请输入联系人名称" maxlength="30" show-word-limit/>
+              <el-input v-model="form.contactName" placeholder="请输入联系人名称" maxlength="30" show-word-limit />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="联系人号码" prop="contactMobilePhone">
-              <el-input v-model="form.contactMobilePhone" placeholder="请输入联系人号码" maxlength="11" show-word-limit/>
+              <el-input v-model="form.contactMobilePhone" placeholder="请输入联系人号码" maxlength="11" show-word-limit />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="公司电话" prop="telephone">
-              <el-input v-model="form.telephone" placeholder="请输入公司电话" maxlength="12" show-word-limit/>
+              <el-input v-model="form.telephone" placeholder="请输入公司电话" maxlength="12" show-word-limit />
             </el-form-item>
           </el-col>
         </el-row>
@@ -511,8 +512,11 @@ export default {
         province: '',
         city: '',
         area: '',
-        remarks: ''
+        remarks: '',
+
       };
+      this.businessLicenseFileList = [];
+      this.logoFileList = [];
       this.resetForm("form");
     },
   },

@@ -86,7 +86,8 @@ export default {
   watch: {
     fileListBack: {
       handler(list) {
-        console.log('图片',list)
+        console.log('图片：',list)
+
         this.fileLists = list.map(item => {
           return {
             url: item.url || item,

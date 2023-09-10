@@ -15,13 +15,12 @@ import com.zerosx.common.core.utils.BeanCopierUtil;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.sms.core.SmsFactory;
-import com.zerosx.sms.core.config.AlibabaConfig;
 import com.zerosx.sms.core.config.ISupplierConfig;
-import com.zerosx.sms.core.config.JuheConfig;
 import com.zerosx.sms.enums.SupplierTypeEnum;
 import com.zerosx.sms.model.SmsRequest;
 import com.zerosx.sms.model.SmsResponse;
 import com.zerosx.sms.properties.CustomSmsProperties;
+import com.zerosx.sms.properties.SmsBusinessProperties;
 import com.zerosx.system.dto.SmsSupplierDTO;
 import com.zerosx.system.dto.SmsSupplierPageDTO;
 import com.zerosx.system.entity.SmsSupplier;
@@ -32,6 +31,7 @@ import com.zerosx.system.service.ISmsSupplierService;
 import com.zerosx.system.vo.SmsSupplierPageVO;
 import com.zerosx.system.vo.SmsSupplierVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +39,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 短信配置
@@ -51,6 +54,8 @@ import java.util.List;
 @Service
 public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper, SmsSupplier> implements ISmsSupplierService {
 
+    @Autowired
+    private CustomSmsProperties customSmsProperties;
     @Autowired
     private ISmsSupplierBusinessService smsSupplierBusinessService;
 
@@ -160,51 +165,84 @@ public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper,
         ISupplierConfig smsConfig;
         SmsRequest smsRequest;
         String supplierType;
-        //运营商可用的短信配置
-        LambdaQueryWrapper<SmsSupplier> qwSs = Wrappers.lambdaQuery(SmsSupplier.class);
-        qwSs.eq(SmsSupplier::getOperatorId, smsSendDTO.getOperatorId());
-        qwSs.eq(SmsSupplier::getStatus, StatusEnum.NORMAL.getCode());
-        SmsSupplier supplier = getOne(qwSs);
-        if (supplier == null) {
-            throw new BusinessException("短信配置为空，请检查配置");
+        if (StringUtils.isBlank(smsSendDTO.getOperatorId())) {
+            Class<?extends ISupplierConfig> clz;
+            try {
+                clz = (Class<? extends ISupplierConfig>) Class.forName(customSmsProperties.getSmsConfigClass());
+            } catch (ClassNotFoundException e) {
+                log.error(e.getMessage(), e);
+                throw new BusinessException("短信配置错误，请检查配置");
+            }
+            smsConfig = BeanCopierUtil.copyProperties(customSmsProperties.getDefaultSms(), clz);
+            supplierType = smsConfig.getSupplierType();
+            List<SmsBusinessProperties> smsBusinessProperties = customSmsProperties.getSmsBusinesses();
+            if (CollectionUtils.isEmpty(smsBusinessProperties)) {
+                throw new BusinessException("短信配置的业务模板未配置，请检查配置");
+            }
+            Map<String, SmsBusinessProperties> businessPropertiesMap = smsBusinessProperties.stream().collect(Collectors.toMap(SmsBusinessProperties::getBusinessCode, Function.identity()));
+            SmsBusinessProperties smsBusiness = businessPropertiesMap.get(smsSendDTO.getBusinessCode());
+            if (smsBusiness == null) {
+                throw new BusinessException("短信配置的业务模板" + smsSendDTO.getBusinessCode() + "未配置，请检查配置");
+            }
+            String signature = StringUtils.isBlank(smsBusiness.getSignature()) ? customSmsProperties.getDefaultSms().getSignature() : smsBusiness.getSignature();
+            smsRequest = getSmsRequest(smsSendDTO, signature, smsBusiness.getTemplateCode());
+        } else {
+            //运营商可用的短信配置
+            LambdaQueryWrapper<SmsSupplier> qwSs = Wrappers.lambdaQuery(SmsSupplier.class);
+            qwSs.eq(SmsSupplier::getOperatorId, smsSendDTO.getOperatorId());
+            qwSs.eq(SmsSupplier::getStatus, StatusEnum.NORMAL.getCode());
+            SmsSupplier supplier = getOne(qwSs);
+            if (supplier == null) {
+                throw new BusinessException("短信配置为空，请检查配置");
+            }
+            if (!StatusEnum.NORMAL.getCode().equals(supplier.getStatus())) {
+                throw new BusinessException("短信配置已停用，请检查配置");
+            }
+            supplierType = supplier.getSupplierType();
+            smsConfig = getSmsConfig(supplier);
+            //查询业务记录
+            LambdaQueryWrapper<SmsSupplierBusiness> qwSsb = Wrappers.lambdaQuery(SmsSupplierBusiness.class);
+            qwSsb.eq(SmsSupplierBusiness::getOperatorId, smsSendDTO.getOperatorId());
+            qwSsb.eq(SmsSupplierBusiness::getBusinessCode, smsSendDTO.getBusinessCode());
+            qwSsb.eq(SmsSupplierBusiness::getSmsSupplierId, supplier.getId());
+            SmsSupplierBusiness ssb = smsSupplierBusinessService.getOne(qwSsb);
+            if (ssb == null) {
+                throw new BusinessException("没有可用的【" + smsSendDTO.getBusinessCode() + "】的短信业务模板，请检查配置");
+            }
+            if (!StatusEnum.NORMAL.getCode().equals(ssb.getStatus())) {
+                throw new BusinessException("【" + smsSendDTO.getBusinessCode() + "】的短信业务模板已停用，请检查配置");
+            }
+            String signature = StringUtils.isBlank(ssb.getSignature()) ? supplier.getSignature() : ssb.getSignature();
+            smsRequest = getSmsRequest(smsSendDTO, signature, ssb.getTemplateCode());
         }
-        if (!StatusEnum.NORMAL.getCode().equals(supplier.getStatus())) {
-            throw new BusinessException("短信配置已停用，请检查配置");
-        }
-        supplierType = supplier.getSupplierType();
-        smsConfig = getSmsConfig(supplier);
-        //查询业务记录
-        LambdaQueryWrapper<SmsSupplierBusiness> qwSsb = Wrappers.lambdaQuery(SmsSupplierBusiness.class);
-        qwSsb.eq(SmsSupplierBusiness::getOperatorId, smsSendDTO.getOperatorId());
-        qwSsb.eq(SmsSupplierBusiness::getBusinessCode, smsSendDTO.getBusinessCode());
-        qwSsb.eq(SmsSupplierBusiness::getSmsSupplierId, supplier.getId());
-        SmsSupplierBusiness ssb = smsSupplierBusinessService.getOne(qwSsb);
-        if (ssb == null) {
-            throw new BusinessException("没有可用的【" + smsSendDTO.getBusinessCode() + "】的短信业务模板，请检查配置");
-        }
-        if (!StatusEnum.NORMAL.getCode().equals(ssb.getStatus())) {
-            throw new BusinessException("【" + smsSendDTO.getBusinessCode() + "】的短信业务模板已停用，请检查配置");
-        }
-        smsRequest = new SmsRequest();
-        smsRequest.setSignature(StringUtils.isBlank(ssb.getSignature()) ? supplier.getSignature() : ssb.getSignature());
-        smsRequest.setTemplateParam(JacksonUtil.toJSONString(smsSendDTO.getParams()));
-        smsRequest.setTemplateCode(ssb.getTemplateCode());
-        smsRequest.setPhoneNumbers(smsSendDTO.getPhoneNumbers());
-        smsRequest.setOperatorId(smsSendDTO.getOperatorId());
-
         if (smsConfig == null) {
             throw new BusinessException("【ISupplierConfig】配置为空");
         }
-        SmsResponse smsResponse = SmsFactory.createSmsClient(SupplierTypeEnum.getSupplierType(supplierType), smsConfig)
-                .sendMessage(smsRequest);
+        //发送短信
+        SmsResponse smsResponse = SmsFactory.createSmsClient(SupplierTypeEnum.getSupplierType(supplierType), smsConfig).sendMessage(smsRequest);
         if (smsResponse.getSendCode() == 0) {
             return ResultVOUtil.success(smsResponse);
         }
         return ResultVOUtil.error(smsResponse.getSendCode(), smsResponse.getSendMsg());
     }
 
+    private SmsRequest getSmsRequest(SmsSendDTO smsSendDTO, String signature, String templateCode) {
+        SmsRequest smsRequest = new SmsRequest();
+        smsRequest.setSignature(signature);
+        smsRequest.setTemplateParam(JacksonUtil.toJSONString(smsSendDTO.getParams()));
+        smsRequest.setTemplateCode(templateCode);
+        smsRequest.setPhoneNumbers(smsSendDTO.getPhoneNumbers());
+        smsRequest.setOperatorId(smsSendDTO.getOperatorId());
+        return smsRequest;
+    }
+
     public ISupplierConfig getSmsConfig(SmsSupplier smsSupplier) {
-        if (SupplierTypeEnum.ALIBABA.getCode().equals(smsSupplier.getSupplierType())) {
+        SupplierTypeEnum supplierType = SupplierTypeEnum.getSupplierType(smsSupplier.getSupplierType());
+        Class<? extends ISupplierConfig> configClass = supplierType.getConfigClass();
+        ISupplierConfig supplierConfig = BeanCopierUtil.copyProperties(supplierType, configClass);
+        supplierConfig.setOperatorId(smsSupplier.getOperatorId());
+        return supplierConfig;
+        /*if (SupplierTypeEnum.ALIBABA.getCode().equals(smsSupplier.getSupplierType())) {
             AlibabaConfig alibabaConfig = AlibabaConfig.builder().build();
             alibabaConfig.setOperatorId(smsSupplier.getOperatorId());
             alibabaConfig.setRegionId(smsSupplier.getRegionId());
@@ -219,6 +257,6 @@ public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper,
             juheConfig.setOperatorId(smsSupplier.getOperatorId());
             return juheConfig;
         }
-        return null;
+        return null;*/
     }
 }
