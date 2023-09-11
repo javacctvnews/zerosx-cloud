@@ -242,7 +242,7 @@ export default {
     console.log(this.bucketData);
   },
   methods: {
-    uploadFile(){
+    uploadFile() {
       this.$modal.msgSuccess("敬请期待");
     },
     getOperators() {

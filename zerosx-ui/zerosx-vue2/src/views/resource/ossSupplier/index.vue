@@ -61,6 +61,10 @@
         <template slot-scope="scope" slot="bucketName">
           <el-link :underline="true" @click="queryFiles(scope.row)" type="primary">{{ scope.row.bucketName }}</el-link>
         </template>
+        <template slot-scope="scope" slot="accessKeySecret">
+          {{ scope.row.accessKeySecret }} <el-button class="view" type="text" @click.native.prevent="viewPwd(scope.$index, scope.row)"><i
+              class="el-icon-view"></i></el-button>
+        </template>
       </TablePlus>
     </div>
 
@@ -100,7 +104,7 @@
         <el-form-item label="AccessKey" prop="accessKeyId">
           <el-input v-model="form.accessKeyId" placeholder="请输入AccessKey" maxlength="100" show-word-limit clearable />
         </el-form-item>
-        <el-form-item label="AccessSecret" prop="accessKeySecret">
+        <el-form-item v-if="showPwd" label="AccessSecret" prop="accessKeySecret">
           <el-input v-model="form.accessKeySecret" placeholder="请输入AccessSecret" maxlength="100" show-word-limit
             clearable />
         </el-form-item>
@@ -110,7 +114,7 @@
         <el-form-item label="所属地域" prop="regionId">
           <el-input v-model="form.regionId" placeholder="请输入所属地域" maxlength="100" show-word-limit clearable />
         </el-form-item>
-        <el-form-item v-if="form.supplierType!=='qiniu'" label="endpoint" prop="endpoint">
+        <el-form-item v-if="form.supplierType !== 'qiniu'" label="endpoint" prop="endpoint">
           <el-input v-model="form.endpoint" placeholder="请输入endpoint" maxlength="100" show-word-limit clearable />
         </el-form-item>
         <el-form-item label="域名" prop="domainAddress">
@@ -129,8 +133,8 @@
     </el-dialog>
 
     <!-- 存储桶---弹窗 -->
-    <el-dialog center :lock-scroll="true" :title="title" :visible.sync="openBucket" width="80vw"
-      class="el-dialog-custom" append-to-body :close-on-click-modal="false">
+    <el-dialog center :lock-scroll="true" :title="title" :visible.sync="openBucket" width="80vw" class="el-dialog-custom"
+      append-to-body :close-on-click-modal="false">
       <ossFiles v-if="openBucket" :bucketData="bucketData"></ossFiles>
     </el-dialog>
   </div>
@@ -149,6 +153,7 @@ export default {
   data() {
     return {
       openBucket: false,
+      showPwd: true,
       bucketData: {},
       searching: false,
       uploading: false,
@@ -298,6 +303,7 @@ export default {
           },
         },
         {
+          slot: 'accessKeySecret',
           attrs: {
             label: "AccessSecret",
             prop: "accessKeySecret",
@@ -387,7 +393,10 @@ export default {
     this.getOperators();
   },
   methods: {
-    handleShowFiles(){
+    viewPwd(index, row) {
+      console.log(index, row)
+    },
+    handleShowFiles() {
       console.log(this);
       this.$router.push("/resource/ossFileUpload");
     },
@@ -441,12 +450,14 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
+      this.showPwd = true;
       this.title = '新增OSS配置'
     },
     handleUpdate(row) {
       this.reset();
       this.title = '编辑OSS配置'
       this.open = true
+      this.showPwd = false;
       let id = row.id || this.ids;
       queryById(id).then((res) => {
         this.form = res.data;

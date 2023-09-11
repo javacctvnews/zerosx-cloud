@@ -1,8 +1,11 @@
 package com.zerosx.system.vo;
 
+import com.zerosx.common.core.anno.Sensitive;
+import com.zerosx.common.core.enums.SensitiveStrategy;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -35,6 +38,7 @@ public class OssSupplierVO implements Serializable {
     private String accessKeyId;
 
     @Schema(description = "AccessSecret")
+    @Sensitive(strategy = SensitiveStrategy.PASSWORD)
     private String accessKeySecret;
 
     @Schema(description = "存储桶名称")

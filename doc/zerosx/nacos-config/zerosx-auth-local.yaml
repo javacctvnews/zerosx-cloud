@@ -7,7 +7,6 @@ spring:
     username: root
     password: zerosx@123456
     driver-class-name: com.mysql.cj.jdbc.Driver
-    #type: com.alibaba.druid.pool.DruidDataSource
     type: com.zaxxer.hikari.HikariDataSource
 
 

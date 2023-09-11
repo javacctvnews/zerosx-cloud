@@ -20,6 +20,10 @@ public enum SensitiveStrategy {
      * 手机号脱敏
      */
     PHONE(DesensitizedUtil::mobilePhone),
+    /**
+     * 密码类
+     */
+    PASSWORD(DesensitizedUtil::password),
 
     /**
      * 地址脱敏

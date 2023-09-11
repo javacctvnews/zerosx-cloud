@@ -1,9 +1,10 @@
+#docker-compose -f docker-compose-service.yaml up -d
 version: '3'
 
 services:
   #网关服务
   zerosx-gateway:
-    image: registry.cn-shenzhen.aliyuncs.com/zeros-cloud/zerosx-gateway:0.0.1
+    image: registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-gateway:0.0.1
     container_name: zerosx-gateway
     environment:
       # 时区上海
@@ -15,7 +16,7 @@ services:
       - /home/zerosx-cloud/logs/:/home/zerosx-cloud/logs/
   #认证服务
   zerosx-auth:
-    image: registry.cn-shenzhen.aliyuncs.com/zeros-cloud/zerosx-auth:0.0.1
+    image: registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-auth:0.0.1
     container_name: zerosx-auth
     environment:
       # 时区上海
@@ -27,7 +28,7 @@ services:
       - /home/zerosx-cloud/logs/:/home/zerosx-cloud/logs/
   #系统服务
   zerosx-system:
-    image: registry.cn-shenzhen.aliyuncs.com/zeros-cloud/zerosx-system:0.0.1
+    image: registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-system:0.0.1
     container_name: zerosx-system
     environment:
       # 时区上海
@@ -38,21 +39,21 @@ services:
       # 配置文件
       - /home/zerosx-cloud/logs/:/home/zerosx-cloud/logs/
   #监控服务
-  zerosx-monitor:
-    image: registry.cn-shenzhen.aliyuncs.com/zeros-cloud/zerosx-monitor:0.0.1
-    container_name: zerosx-monitor
-    environment:
-      # 时区上海
-      TZ: Asia/Shanghai
-    ports:
-      - "19120:19120"
-    volumes:
-      # 配置文件
-      - /home/zerosx-cloud/logs/:/home/zerosx-cloud/logs/
+#  zerosx-monitor:
+#    image: registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-monitor:0.0.1
+#    container_name: zerosx-monitor
+#    environment:
+#      # 时区上海
+#      TZ: Asia/Shanghai
+#    ports:
+#      - "19120:19120"
+#    volumes:
+#      # 配置文件
+#      - /home/zerosx-cloud/logs/:/home/zerosx-cloud/logs/
   #zerosx-ui
   zerosx-ui:
-    image: registry.cn-shenzhen.aliyuncs.com/zeros-cloud/zerosx-ui:0.0.1
-    container_name: zerosx-ui
+    image: registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-vue2:0.0.1
+    container_name: zerosx-vue2
     environment:
       # 时区上海
       TZ: Asia/Shanghai

@@ -1,6 +1,6 @@
 package com.zerosx.common.core.translation;
 
-import com.zerosx.common.core.utils.SpringUtils;
+import com.zerosx.common.base.utils.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;

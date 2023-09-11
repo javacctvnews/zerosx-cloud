@@ -1,14 +1,18 @@
 package com.zerosx.system.vo;
 
-import lombok.Getter;
-import lombok.Setter;
-import java.io.Serializable;
-import java.util.Date;
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.zerosx.common.base.anno.Trans;
 import com.zerosx.common.base.constants.CommonConstants;
+import com.zerosx.common.core.anno.Sensitive;
+import com.zerosx.common.core.enums.SensitiveStrategy;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * OSS配置
@@ -44,7 +48,8 @@ public class OssSupplierPageVO implements Serializable {
     private String accessKeyId;
 
     @Schema(description = "AccessSecret")
-    @ExcelProperty(value = {"AccessSecret"})
+    @ExcelIgnore
+    @Sensitive(strategy = SensitiveStrategy.PASSWORD)
     private String accessKeySecret;
 
     @Schema(description = "存储桶名称")

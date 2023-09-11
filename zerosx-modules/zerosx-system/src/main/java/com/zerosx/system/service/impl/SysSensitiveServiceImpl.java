@@ -1,7 +1,5 @@
 package com.zerosx.system.service.impl;
 
-import com.zerosx.common.core.enums.UserTypeEnum;
-import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.service.ISensitiveService;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +16,8 @@ public class SysSensitiveServiceImpl implements ISensitiveService {
      */
     @Override
     public boolean isSensitive() {
-        return !UserTypeEnum.SUPER_ADMIN.getCode().equals(ZerosSecurityContextHolder.getUserType());
+        return true;
+        //return !UserTypeEnum.SUPER_ADMIN.getCode().equals(ZerosSecurityContextHolder.getUserType());
     }
 
 }

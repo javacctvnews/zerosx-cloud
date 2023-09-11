@@ -40,7 +40,7 @@ public class JuheProviderFactory implements ISmsProviderFactory<JuheSmsClient, J
 
     @Override
     public JuheSmsClient createSms(JuheConfig config) {
-        JuheSmsClient client = clientMap.get(config.getKey());
+        JuheSmsClient client = clientMap.get(config.getKeyValue());
         if (client == null) {
             return createMultiSms(config);
         }
@@ -50,7 +50,7 @@ public class JuheProviderFactory implements ISmsProviderFactory<JuheSmsClient, J
     @Override
     public JuheSmsClient createMultiSms(JuheConfig config) {
         JuheSmsClient client = new JuheSmsClient(config);
-        clientMap.put(config.getKey(), client);
+        clientMap.put(config.getKeyValue(), client);
         log.debug("[{}]创建【{}】实例, 当前{}个JuheSmsClient", config.getOperatorId(), SupplierTypeEnum.JUHE.getCode(), clientMap.size());
         return client;
     }

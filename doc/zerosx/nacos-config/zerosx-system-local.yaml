@@ -17,22 +17,14 @@ logging:
 
 mybatis-plus:
   configuration:
-    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     #关闭打印
-    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+    #log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
 
 zerosx:
-  file-server:
-    type: s3
-    filePrefix: zerosx_cloud
-    s3:
-      accessKey: LTAI5tLbF7vT83t8jU9pX6xm
-      accessKeySecret: KDsnhLztTelgK14WO008lqL0Obh6dX
-      endpoint: oss-cn-shenzhen.aliyuncs.com
-      bucketName: zeros-cloud-oss
 
   tenant:
-    enable: false
+    enable: true
     ignoreTables:
       - t_area_city_source
       - t_sys_dict_data
@@ -41,16 +33,15 @@ zerosx:
       - t_sys_role_menu
       - t_sys_user_role
       - t_sys_role_dept
-      - t_sys_role_menu
       - t_sys_user_post
-      - t_sys_user_role
       - undo_log
     ignoreSqls:
       - com.zerosx.system.mapper.IMutiTenancyGroupMapper.selectTenancyExist
       - com.zerosx.system.mapper.ISysUserMapper.selectLoginSysUser
       - com.zerosx.system.mapper.ISysRoleMapper.selectRoleByUserId
       - com.zerosx.system.mapper.IMutiTenancyGroupMapper.selectTenancy
-  
+      - com.zerosx.system.mapper.ISysMenuMapper.findByRoleCodes
+
 # knife4j-openapi3
 knife4j:
   # 开启增强配置

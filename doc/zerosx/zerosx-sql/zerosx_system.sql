@@ -347,25 +347,52 @@ CREATE TABLE `t_muti_tenancy_group` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='多租户集体公司';
 
 
+DROP TABLE IF EXISTS `t_oss_supplier`;
+CREATE TABLE `t_oss_supplier` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `supplier_type` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '服务商编码',
+  `supplier_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '服务商名称',
+  `status` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '状态，0：正常；1：停用',
+  `access_key_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'AccessKey',
+  `access_key_secret` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'AccessSecret',
+  `bucket_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '存储桶名称',
+  `region_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '所属地域',
+  `endpoint` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'endpoint',
+  `domain_address` varchar(100) DEFAULT NULL COMMENT '域名',
+  `create_by` varchar(50) DEFAULT NULL COMMENT '创建者',
+  `create_time` datetime(6) NOT NULL COMMENT '创建时间',
+  `update_by` varchar(50) DEFAULT NULL COMMENT '更新者',
+  `update_time` datetime(6) NOT NULL COMMENT '更新时间',
+  `remarks` varchar(200) DEFAULT NULL COMMENT '备注',
+  `operator_id` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '租户标识',
+  `deleted` tinyint unsigned NOT NULL DEFAULT '0' COMMENT '逻辑删除，0：未删除；1：已删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='OSS配置';
+
 DROP TABLE IF EXISTS `t_oss_file_upload`;
 CREATE TABLE `t_oss_file_upload` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `oss_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'oss类型',
+  `oss_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'oss厂商编码',
   `original_file_name` varchar(1000) NOT NULL COMMENT '原文件名称',
   `object_name` varchar(200) NOT NULL COMMENT '文件名的key',
   `object_url` varchar(1000) DEFAULT NULL COMMENT '文件查看路径',
   `object_view_url` varchar(1000) DEFAULT NULL COMMENT '文件访问URL',
   `expiration_time` datetime(6) DEFAULT NULL COMMENT '失效时刻',
+  `remark` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '备注',
+  `oss_supplier_id` bigint DEFAULT NULL COMMENT 'oss服务商ID',
+  `bucket_name` varchar(100) NOT NULL COMMENT '存储桶名称',
+  `access_key_id` varchar(100) NOT NULL COMMENT 'accessKeyId',
+  `object_size` bigint DEFAULT NULL COMMENT '文件大小',
+  `operator_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '运营商id',
   `create_time` datetime(6) NOT NULL COMMENT '创建时间',
   `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '创建者',
   `update_time` datetime(6) NOT NULL COMMENT '更新时间',
-  `update_by` varchar(50) DEFAULT NULL COMMENT '更新者',
-  `remark` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '备注',
-  `operator_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '运营商id',
+  `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '更新者',
   `deleted` tinyint NOT NULL DEFAULT '0' COMMENT '逻辑删除',
   PRIMARY KEY (`id`),
   UNIQUE KEY `key_UN` (`object_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='文件上传记录';
+
 
 /* 系统菜单初始数据 */
 INSERT INTO zerosx_system.t_sys_menu (menu_id,menu_name,parent_id,order_num,`path`,component,query_param,is_frame,is_cache,menu_type,visible,status,perms,icon,create_by,create_time,update_by,update_time,request_method,request_url,remark,deleted) VALUES
@@ -385,8 +412,8 @@ INSERT INTO zerosx_system.t_sys_menu (menu_id,menu_name,parent_id,order_num,`pat
 	 (1610,'租户管理',0,0,'tenant',NULL,NULL,1,0,'M','0','0',NULL,'international','','2023-07-24 13:10:54','','2023-07-24 13:35:25','','','',0),
 	 (1611,'租户管理',1610,1,'/tenant/multiTenant/index','tenant/multiTenant/index',NULL,1,0,'C','0','0','tenant:tenant:pageList','peoples','','2023-07-24 13:12:47','admin123','2023-07-31 11:36:04','','','',0),
 	 (1612,'行政区域',1613,2,'area','resource/area/index',NULL,1,0,'C','0','0','resource:area:list','drag','','2023-07-24 22:47:10','admin123','2023-08-14 13:45:56','','','',0),
-	 (1613,'资源管理',0,5,'resource',NULL,NULL,1,0,'M','0','0',NULL,'documentation','','2023-07-25 23:57:47','','2023-07-25 23:57:47','','','',0),
-	 (1614,'文件管理',1613,1,'ossFileUpload','resource/ossFileUpload/index',NULL,1,0,'C','0','0','resource:ossFileUpload:list','clipboard','','2023-07-25 23:59:07','admin','2023-07-27 15:04:44','','','',0),
+	 (1613,'资源管理',0,5,'resource',NULL,NULL,1,0,'M','0','0',NULL,'documentation','','2023-07-25 23:57:47','admin123','2023-09-06 23:55:26','','','',0),
+	 (1614,'文件管理',1613,1,'ossFileUpload','resource/ossFileUpload/index',NULL,1,0,'C','1','0','resource:ossFileUpload:list','clipboard','','2023-07-25 23:59:07','admin123','2023-09-09 17:53:08','','','',0),
 	 (1616,'角色管理',1617,2,'sysRole','perms/sysRole/index',NULL,1,0,'C','0','0','perms:sysRole:list','lock','admin','2023-07-27 17:40:18','admin123','2023-08-19 00:29:21','','','',0),
 	 (1617,'权限管理',0,1,'perms',NULL,NULL,1,0,'M','0','0',NULL,'tree-table','admin','2023-07-28 11:38:54','admin','2023-07-28 11:39:54','','','',0),
 	 (1619,'岗位管理',1617,8,'sysPost','perms/sysPost/index',NULL,1,0,'C','0','0','perms:sysPost:list','post','admin','2023-07-28 13:54:18','admin123','2023-07-31 14:45:20','','','',0);
@@ -455,13 +482,17 @@ INSERT INTO zerosx_system.t_sys_menu (menu_id,menu_name,parent_id,order_num,`pat
 	 (1676,'个人中心-更新',1621,7,'',NULL,NULL,1,0,'F','0','0','perms:sysUser:updateProfile','#','admin123','2023-08-02 00:03:53','admin123','2023-08-02 00:04:52','put','/api-system/sys_user/update_profile','',0),
 	 (1677,'个人中心-更换头像',1621,8,'',NULL,NULL,1,0,'F','0','0','perms:sysUser:updateavatar','#','admin123','2023-08-02 00:04:40','','2023-08-02 00:04:40','post','/api-system/sys_user/profile/avatar','',0),
 	 (1678,'个人中心-查看',1621,9,'',NULL,NULL,1,0,'F','0','0','perms:sysUser:query','#','admin123','2023-08-03 00:07:32','','2023-08-03 00:07:32','get','/api-system/sys_user/profile','',0),
-	 (1679,'接口文档',1613,4,'openapi3','resource/openapi3/index',NULL,1,0,'C','0','0','resource:openapi3:index','swagger','','2023-08-14 13:45:40','','2023-08-14 13:45:40','','','',0);
+	 (1679,'接口文档',1686,4,'openapi3','monitor/openapi3/index',NULL,1,0,'C','0','0','monitor:openapi3:index','swagger','','2023-08-14 13:45:40','admin123','2023-09-07 23:37:24','','','',0);
 INSERT INTO zerosx_system.t_sys_menu (menu_id,menu_name,parent_id,order_num,`path`,component,query_param,is_frame,is_cache,menu_type,visible,status,perms,icon,create_by,create_time,update_by,update_time,request_method,request_url,remark,deleted) VALUES
-	 (1680,'系统监控',1613,3,'monitor','resource/monitor/index',NULL,1,0,'C','0','0','resource:monitor:index','eye-open','','2023-08-14 13:46:50','','2023-08-14 13:46:50','','','',0),
+	 (1680,'系统监控',1686,3,'monitor','monitor/monitor/index',NULL,1,0,'C','0','0','monitor:monitor:index','eye-open','','2023-08-14 13:46:50','admin123','2023-09-07 23:37:16','','','',0),
 	 (1681,'客户端管理',1682,102,'oauthClientDetails','system/oauthClientDetails/index',NULL,1,0,'C','0','0','system:oauthClientDetails:index','client','','2023-08-14 13:54:15','admin123','2023-08-18 20:27:28','','','',0),
 	 (1682,'客户端管理',1,16,'oauth',NULL,NULL,1,0,'M','0','0',NULL,'client','','2023-08-18 14:19:36','admin123','2023-08-18 14:21:31','','','',0),
 	 (1683,'令牌管理',1682,2,'oauthOnline','system/oauthOnline/index',NULL,1,0,'C','0','0','system:oauthOnline:index','logininfor','','2023-08-18 14:22:55','admin123','2023-08-19 16:55:24','','','',0),
-	 (1684,'短信配置',1613,7,'smsSupplier','resource/smsSupplier/index',NULL,1,0,'C','0','0','resource:smsSupplier:index','message','admin123','2023-08-30 18:39:12','admin123','2023-08-30 18:40:44','','','',0);
+	 (1684,'短信配置',1613,7,'smsSupplier','resource/smsSupplier/index',NULL,1,0,'C','0','0','resource:smsSupplier:index','message','admin123','2023-08-30 18:39:12','admin123','2023-08-30 18:40:44','','','',0),
+	 (1685,'任务调度中心',1686,9,'job','monitor/job/index',NULL,1,0,'C','0','0','monitor:xxljob:list','job','admin123','2023-09-07 18:42:45','admin123','2023-09-07 23:37:51','','','',0),
+	 (1686,'系统工具',0,6,'monitor',NULL,NULL,1,0,'M','0','0',NULL,'monitor','admin123','2023-09-07 23:33:34','admin123','2023-09-07 23:33:34','','','',0),
+	 (1687,'对象存储',1613,5,'ossSupplier','resource/ossSupplier/index',NULL,1,0,'C','0','0','resource:ossSupplier:list','upload','admin123','2023-09-08 18:28:03','admin123','2023-09-08 22:09:18','','','',0),
+	 (1688,'对象存储',1613,32,'oss',NULL,NULL,1,0,'M','0','0',NULL,'upload','admin123','2023-09-08 22:04:40','admin123','2023-09-09 17:52:56','','','',1);
 
 /*初始用户（超级管理员）用户名：admin123 密码：Admin123 */
 INSERT INTO zerosx_system.t_sys_user (dept_id,user_name,user_code,nick_name,user_type,email,phone_number,sex,avatar,password,status,login_ip,login_date,create_by,create_time,update_by,update_time,remark,operator_id,deleted) VALUES

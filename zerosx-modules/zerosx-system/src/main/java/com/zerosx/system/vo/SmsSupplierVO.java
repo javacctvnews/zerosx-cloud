@@ -1,8 +1,11 @@
 package com.zerosx.system.vo;
 
+import com.zerosx.common.core.anno.Sensitive;
+import com.zerosx.common.core.enums.SensitiveStrategy;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -35,6 +38,7 @@ public class SmsSupplierVO implements Serializable {
     private String accessKeyId;
 
     @Schema(description = "accessKeySecret")
+    @Sensitive(strategy = SensitiveStrategy.PASSWORD)
     private String accessKeySecret;
 
     @Schema(description = "短信签名")
@@ -62,6 +66,7 @@ public class SmsSupplierVO implements Serializable {
     private String domainAddress;
 
     @Schema(description ="key值")
+    @Sensitive(strategy = SensitiveStrategy.PASSWORD)
     private String keyValue;
 
     @Schema(description = "备注")

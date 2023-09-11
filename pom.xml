@@ -34,12 +34,13 @@
         <spring-boot-admin-starter-server.version>2.7.10</spring-boot-admin-starter-server.version>
 
         <mybatis-plus-boot-starter.version>3.5.3.1</mybatis-plus-boot-starter.version>
-        <mysql-connector-java.version>8.0.29</mysql-connector-java.version>
+        <mysql-connector-java.version>8.0.33</mysql-connector-java.version>
         <druid-spring-boot-starter.version>1.2.6</druid-spring-boot-starter.version>
         <mybatis-spring-boot-starter.version>2.2.2</mybatis-spring-boot-starter.version>
         <pagehelper.version>5.3.3</pagehelper.version>
 
-        <commons-io.version>2.6</commons-io.version>
+        <commons-io.version>2.11.0</commons-io.version>
+        <commons-collections4.verison>4.4</commons-collections4.verison>
 
         <nacos.client.version>1.4.6</nacos.client.version>
 
@@ -56,7 +57,7 @@
         <jackson-core-asl.version>1.9.13</jackson-core-asl.version>
         <userAgent.version>1.21</userAgent.version>
         <velocity.version>1.7</velocity.version>
-        <commons-configuration2.version>2.7</commons-configuration2.version>
+        <commons-configuration2.version>2.9.0</commons-configuration2.version>
         <commons-configuration.version>1.10</commons-configuration.version>
 
         <reflections.version>0.10.2</reflections.version>
@@ -134,11 +135,17 @@
                 <artifactId>pagehelper</artifactId>
                 <version>${pagehelper.version}</version>
             </dependency>-->
+            <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
             <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql-connector-java.version}</version>
+            </dependency>
+            <!--<dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql-connector-java.version}</version>
-            </dependency>
+            </dependency>-->
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
@@ -300,6 +307,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
+            <version>${commons-collections4.verison}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

@@ -6,7 +6,7 @@ import com.zerosx.common.base.utils.JacksonUtil;
 import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.core.feign.AsyncFeignService;
 import com.zerosx.common.core.translation.ITranslationService;
-import com.zerosx.common.core.utils.SpringUtils;
+import com.zerosx.common.base.utils.SpringUtils;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

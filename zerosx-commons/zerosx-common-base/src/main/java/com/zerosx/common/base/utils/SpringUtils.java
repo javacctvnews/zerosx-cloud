@@ -1,6 +1,6 @@
-package com.zerosx.common.core.utils;
+package com.zerosx.common.base.utils;
 
-import com.sun.xml.internal.ws.util.UtilException;
+import com.zerosx.common.base.exception.BusinessException;
 import lombok.Getter;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.BeansException;
@@ -32,7 +32,7 @@ public final class SpringUtils implements BeanFactoryPostProcessor, ApplicationC
     public static ListableBeanFactory getBeanFactory() {
         ListableBeanFactory factory = null == beanFactory ? applicationContext : beanFactory;
         if (null == factory) {
-            throw new UtilException("No ConfigurableListableBeanFactory or ApplicationContext injected, maybe not in the Spring environment?");
+            throw new BusinessException("No ConfigurableListableBeanFactory or ApplicationContext injected, maybe not in the Spring environment?");
         } else {
             return factory;
         }

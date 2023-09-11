@@ -38,7 +38,7 @@ public class JuheSmsClient extends AbsMultiSmsClient {
         paramMap.put("mobile", smsRequest.getPhoneNumbers());
         paramMap.put("tpl_id", smsRequest.getTemplateCode());
         paramMap.put("vars", smsRequest.getTemplateParam());
-        paramMap.put("key", juheConfig.getKey());
+        paramMap.put("key", juheConfig.getKeyValue());
         paramMap.put("dtype", "json");
         try {
             String httpClientResult = HttpClientUtils.doPost(juheConfig.getDomainAddress(), headers, paramMap);

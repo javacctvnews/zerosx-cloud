@@ -102,6 +102,10 @@
       * 单体微服务入口：http://{app1.host}:{app1.port}/doc.html (推荐，无token校验)
    
 
+### 系统部署
+
+​	系统部署请看文档 **【zerosx-cloud/doc/README.md】**
+
 ### 内置功能简介
 
 * 租户管理
@@ -120,61 +124,18 @@
         * 操作日志：操作记录日志
         * 登录日志：OAuth2授权登录日志
 * 资源管理
-    * 文件管理：OSS存储的文件管理，主要是维护所有文件上传到OSS服务器的记录
     * 行政区域：中华人民共和国行政区域的维护
+    * 对象存储：集成多家对象存储，配置管理及上传文件管理
+    * 短信配置：集成多家短信服务商及短信业务模板的配置
+* 系统工具
     * 系统监控：SpringBootAdmin系统监控
-    * 任务调度中心：XXL-JOB任务调度中心
     * 接口文档：OpenAPI3聚合接口文档
-    * 短信配置：短信服务商及短信业务模板的相关配置
+    * 任务调度中心：XXL-JOB任务调度中心
 
-### 打包部署（示例）
-
-1. 编译打包jar
-
-```shell
-mvn clean package -DskipTests -Pprod
-```
-
-2. 打包镜像
-
-```shell 
-# 网关服务
-docker build -t zeros-cloud/zeros-gateway:v1.0.0 .
-# 系统服务
-docker build -t zeros-cloud/zerosx-modules/zerosx-system:v1.0.0 .
-# 授权服务
-docker build -t zeros-cloud/zeros-auth:v1.0.0 .
-```
-
-3. 推送远程仓库
-
-   远程仓库使用的是阿里云的[容器镜像服务](https://cr.console.aliyun.com/cn-shenzhen/instances?spm=5176.8351553.0.0.4aec1991d9BtJE)（个人版），将第2步打包的镜像推送到远程仓库，在部署主机上拉取镜像进行部署，示例如下：
-
-```shell
-#推送远程仓库 示例
-#登录
-docker login --username=841****20@qq.com registry.cn-shenzhen.aliyuncs.com
-#tag
-docker tag [imageId] registry.cn-shenzhen.aliyuncs.com/zeros-cloud/zerosx-gateway:v1.1.0
-#push
-docker push registry.cn-shenzhen.aliyuncs.com/zeros-cloud/zeros-gateway:v1.1.0
-```
-
-* 部署说明（体验系统）
-
-> 因服务器资源有限，组件均采用 **Docker** 单节点方式部署，使用 **Docker Compose** 进行编排，安装的组件及版本如下：<br>
-> <img src="https://img.shields.io/badge/Nacos-2.2.0-critical?logo=alibabadotcom" alt="">
-> <img src="https://img.shields.io/badge/Redis-6.2.13-blue?logo=redis" alt="">
-> <img src="https://img.shields.io/badge/MySQL-8.0.x-green?logo=mysql" alt="">
-> <img src="https://img.shields.io/badge/Seata-1.6.1-blue?logo=statamic&logoColor=#87CEEB" alt=""><br>
-> 部署应用如下：<br>
-> <img src="https://img.shields.io/badge/zerosx_gateway-0.0.1-blue" alt="">
-> <img src="https://img.shields.io/badge/zerosx_auth-0.0.1-blue" alt="">
-> <img src="https://img.shields.io/badge/zerosx_system-0.0.1-blue" alt="">
 
 ### 在线体验
 
-* 演示地址：<a href="http://120.79.152.222/index"> http://120.79.152.222/index </a>
+* 演示地址：<a href="http://120.79.152.222/login"> http://120.79.152.222/login </a>
 
 > <span style="color:#666">目前版本只有基础功能，其他功能还在逐步完善中，敬请期待</span>
 
@@ -207,19 +168,23 @@ docker push registry.cn-shenzhen.aliyuncs.com/zeros-cloud/zeros-gateway:v1.1.0
    </tr>
    <tr>
       <td><img src="./doc/images/img13.png" /></td>
-      <td><img src="./doc/images/img14.png" /></td>
-   </tr>
-   <tr>
       <td><img src="./doc/images/img15.png" /></td>
-      <td><img src="./doc/images/img18.png" /></td>
    </tr>
    <tr>
-      <td><img src="./doc/images/img17.png" /></td>
-      <td><img src="./doc/images/img16.png" /></td>
+      <td><img src="./doc/images/img15-1.png" /></td>
+      <td><img src="./doc/images/img15-2.png" /></td>
    </tr>
    <tr>
+      <td><img src="./doc/images/img16-1.png" /></td>
+      <td><img src="./doc/images/img16-2.png" /></td>
+   </tr>
+   <tr>
+      <td><img src="./doc/images/img17-1.png" /></td>
+      <td><img src="./doc/images/img17-2.png" /></td>
+   </tr>
+    <tr>
+      <td><img src="./doc/images/img17-3.png" /></td>
       <td><img src="./doc/images/seata.png" /></td>
-      <td><img src="./doc/images/xxl-job.png" /></td>
    </tr>
 </table>
 

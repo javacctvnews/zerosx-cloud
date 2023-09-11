@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter@Getter
 public class JuheConfig extends BaseSupplierConfig {
 
-    private String key = "";
+    private String keyValue = "";
 
     /**
      * http://v.juhe.cn/sms/send

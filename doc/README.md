@@ -1,12 +1,15 @@
-<h2 style="text-align:center">组件安装部署操作说明</h2>
+# 系统部署说明
 
 > <a href="https://docs.docker.com/compose/install/">Docker Desktop安装可参考官网：https://docs.docker.com/compose/install </a>
 
+## 组件部署
+
 > 建议：初学者按文档介绍的组件顺序执行脚本进行安装，比较不容易出错，即Redis、MySql、Nacos、Seata的顺序
->
+
 > 如果完全按照文档安装，只需要改IP（192.168.3.6）即可
 
 ### 1. Redis
+
 1. 版本：6.2.13，配置文件中的密码：zerosx@123456，端口：6479（可自行修改）
 
 2. 执行安装：
@@ -143,6 +146,8 @@
    > 访问地址：http://192.168.3.6:7091/#/login  
    >
    > 用户名：seata  密码：seata，在文件【zerosx-cloud/doc/seata/seata-server/resources/application.yml】中配置
+   
+   ![Image text](./images/seata.png)
 
 ### 5. 服务库表SQL
 
@@ -155,3 +160,86 @@
 # t_area_city_source.sql	#行政区域初始数据
 ```
 
+## 微服务部署(示例)
+
+> * 采用的是阿里云服务器部署作为案例，配置是：2vCPU/4GiB-高效云盘/60GiB
+>
+> * Docker仓库采用阿里云的[容器镜像服务（个人版）](https://cr.console.aliyun.com/cn-shenzhen/instances)
+
+### 1. 编译打包
+
+```shell
+# 进入项目根目录
+cd zerosx-cloud
+# 编译打包所有jar
+mvn clean package -DskipTests -Pprod
+```
+
+### 2. 打包docker镜像
+
+```shell 
+### 这里以 zerosx-gateway 作为示例，cd命令是在项目根路径下
+
+# 1. 网关服务(zerosx-gateway)
+cd zerosx-gateway
+docker build -t zerosx-cloud/zerosx-gateway:0.0.1 .
+# 推送容器仓库
+# 登录 替换[username] 按enter输入密码
+docker login --username=[username] registry.cn-shenzhen.aliyuncs.com
+# tag 替换[imageId]即可。备注：zerosx-cloud是命名空间（需要在阿里云自行创建）
+docker tag [imageId] registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-gateway:0.0.1
+# push
+docker push registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-gateway:0.0.1
+
+
+# 2. zerosx-auth
+cd zerosx-auth
+docker build -t zerosx-cloud/zerosx-auth:0.0.1 .
+# 推送容器仓库
+# 登录 替换[username] 按enter输入密码
+docker login --username=[username] registry.cn-shenzhen.aliyuncs.com
+# tag 替换[imageId]即可。备注：zerosx-cloud是命名空间（需要在阿里云自行创建）
+docker tag [imageId] registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-auth:0.0.1
+# push
+docker push registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-auth:0.0.1
+
+# 3.zerosx-system
+cd zerosx-modules/zerosx-system
+docker build -t zerosx-cloud/zerosx-system:0.0.1 .
+
+# 推送容器仓库
+# 登录 替换[username] 按enter输入密码
+docker login --username=[username] registry.cn-shenzhen.aliyuncs.com
+# tag 替换[imageId]即可。备注：zerosx-cloud是命名空间（需要在阿里云自行创建）
+docker tag [imageId] registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-system:0.0.1
+# push
+docker push registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-system:0.0.1
+
+# 4.前端vue项目部署
+cd zerosx-ui/zerosx-vue2
+# 构建生产环境
+npm run build:prod
+# 打包镜像
+cd zerosx-ui/zerosx-vue2/docker
+docker build -t zerosx-cloud/zerosx-vue2:0.0.1 .
+
+# 推送容器仓库
+# 登录 替换[username] 按enter输入密码
+docker login --username=[username] registry.cn-shenzhen.aliyuncs.com
+# tag 替换[imageId]即可。备注：zerosx-cloud是命名空间（需要在阿里云自行创建）
+docker tag [imageId] registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-vue2:0.0.1
+# push
+docker push registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-vue:0.0.1
+
+```
+
+### 拉取镜像并部署
+
+> 采用docker-compose方式进行编排部署，文件：doc/zerosx/docker-compose-service.yaml
+
+```shell
+# 进入文件夹
+cd doc/zerosx
+# 执行部署
+docker-compose -f docker-compose-service.yaml up -d
+```

@@ -6,6 +6,10 @@ logging:
 spring:
   main:
     allow-bean-definition-overriding: true
+    allow-circular-references: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   cloud:
     gateway:
       discovery:
@@ -46,13 +50,13 @@ spring:
           filters:
             - StripPrefix=1
             - PreserveHostHeader
-        - id: zerosx-order
-          uri: lb://zerosx-order
-          predicates:
-            - Path=/api-order/**
-          filters:
-            - StripPrefix=1
-            - PreserveHostHeader
+        # - id: zerosx-order
+        #   uri: lb://zerosx-order
+        #   predicates:
+        #     - Path=/api-order/**
+        #   filters:
+        #     - StripPrefix=1
+        #     - PreserveHostHeader
 
 # #knife4j-openapi3
 knife4j:

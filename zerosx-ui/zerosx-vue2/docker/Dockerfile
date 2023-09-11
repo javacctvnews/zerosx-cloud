@@ -17,4 +17,4 @@ EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 
 #build镜像
-#docker build -t zeros-cloud/zerosx-ui:0.0.1 .
+#docker build -t zerosx-cloud/zerosx-vue2:0.0.1 .

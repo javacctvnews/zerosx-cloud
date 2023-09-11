@@ -2,10 +2,10 @@
 
 ```bash
 # 克隆项目
-git clone https://xxxx
+git clone https://gitee.com/javacctvnews/zerosx-cloud
 
 # 进入项目目录
-cd zeros-ui-v2
+cd zerosx-ui/zerosx-vue2
 
 # 安装依赖
 npm install

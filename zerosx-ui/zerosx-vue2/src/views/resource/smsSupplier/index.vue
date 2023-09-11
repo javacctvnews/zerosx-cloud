@@ -88,7 +88,7 @@
           <el-form-item label="服务器URL" prop="domainAddress">
             <el-input v-model="form.domainAddress" placeholder="请输入服务器URL" maxlength="100" show-word-limit clearable />
           </el-form-item>
-          <el-form-item label="key值" prop="keyValue">
+          <el-form-item v-if="showPwd" label="key值" prop="keyValue">
             <el-input v-model="form.keyValue" placeholder="请输入key值" maxlength="100" show-word-limit clearable />
           </el-form-item>
         </div>
@@ -96,7 +96,7 @@
           <el-form-item label="Access Key" prop="accessKeyId">
             <el-input v-model="form.accessKeyId" placeholder="请输入Access Key" maxlength="100" show-word-limit clearable />
           </el-form-item>
-          <el-form-item label="AccessKeySecret" prop="accessKeySecret">
+          <el-form-item v-if="showPwd" label="AccessKeySecret" prop="accessKeySecret">
             <el-input v-model="form.accessKeySecret" placeholder="请输入AccessKeySecret" maxlength="100" show-word-limit
               clearable />
           </el-form-item>
@@ -139,6 +139,7 @@ export default {
   data() {
     return {
       //表单显隐
+      showPwd: true,
       showJuhe: false,
       showAccess: false,
       //短信业务模板
@@ -374,7 +375,7 @@ export default {
               type: 'edit',
               name: '短信模板',
               fcn: 'handleTemplate',
-              //show: () => this.checkPermi(['system:dict:dictdata'])
+              show: () => this.checkPermi(['system:sms_supplier_business:page_list'])
             }
           ]
         }
@@ -440,12 +441,14 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
+      this.showPwd = true
       this.title = '新增SMS配置'
     },
     handleUpdate(row) {
       this.reset();
       this.title = '编辑SMS配置'
       this.open = true
+      this.showPwd = false
       let id = row.id || this.ids;
       queryById(id).then((res) => {
         this.form = res.data;

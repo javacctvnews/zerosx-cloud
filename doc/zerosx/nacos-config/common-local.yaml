@@ -13,7 +13,7 @@ server:
       io: 8
       # 阻塞任务线程池, 当执行类似servlet请求阻塞操作, undertow会从这个线程池中取得线程,它的值设置取决于系统的负载
       worker: 256
-      
+
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -51,7 +51,7 @@ spring:
   redis:
     keyPrefix: zerosx-cloud
     database: 0
-    host: 192.168.3.6
+    host: 127.0.0.1
     port: 6479
     password: zerosx@123456
     #ssl:
@@ -88,34 +88,34 @@ spring:
           #数据库
           database: 0
           #dnsMonitoringInterval: 5000
-#        clusterServersConfig:
-#          idleConnectionTimeout: 10000
-#          connectTimeout: 10000
-#          timeout: 3000
-#          retryAttempts: 3
-#          retryInterval: 1500
-#          failedSlaveReconnectionInterval: 3000
-#          failedSlaveCheckInterval: 60000
-#          password: null
-#          subscriptionsPerConnection: 5
-#          clientName: null
-#          loadBalancer: !<org.redisson.connection.balancer.RoundRobinLoadBalancer> {}
-#          subscriptionConnectionMinimumIdleSize: 1
-#          subscriptionConnectionPoolSize: 50
-#          slaveConnectionMinimumIdleSize: 24
-#          slaveConnectionPoolSize: 64
-#          masterConnectionMinimumIdleSize: 24
-#          masterConnectionPoolSize: 64
-#          readMode: "SLAVE"
-#          subscriptionMode: "SLAVE"
-#          nodeAddresses:
-#          - "redis://127.0.0.1:7004"
-#          - "redis://127.0.0.1:7001"
-#          - "redis://127.0.0.1:7000"
-#          scanInterval: 1000
-#          pingConnectionInterval: 0
-#          keepAlive: false
-#          tcpNoDelay: false
+  #        clusterServersConfig:
+  #          idleConnectionTimeout: 10000
+  #          connectTimeout: 10000
+  #          timeout: 3000
+  #          retryAttempts: 3
+  #          retryInterval: 1500
+  #          failedSlaveReconnectionInterval: 3000
+  #          failedSlaveCheckInterval: 60000
+  #          password: null
+  #          subscriptionsPerConnection: 5
+  #          clientName: null
+  #          loadBalancer: !<org.redisson.connection.balancer.RoundRobinLoadBalancer> {}
+  #          subscriptionConnectionMinimumIdleSize: 1
+  #          subscriptionConnectionPoolSize: 50
+  #          slaveConnectionMinimumIdleSize: 24
+  #          slaveConnectionPoolSize: 64
+  #          masterConnectionMinimumIdleSize: 24
+  #          masterConnectionPoolSize: 64
+  #          readMode: "SLAVE"
+  #          subscriptionMode: "SLAVE"
+  #          nodeAddresses:
+  #          - "redis://127.0.0.1:7004"
+  #          - "redis://127.0.0.1:7001"
+  #          - "redis://127.0.0.1:7000"
+  #          scanInterval: 1000
+  #          pingConnectionInterval: 0
+  #          keepAlive: false
+  #          tcpNoDelay: false
 
 
   task:
@@ -149,12 +149,11 @@ spring:
         ttl: 5S
 
 logging:
-  #config: classpath:logback-spring.xml
-  config: D:\chenyanhui\OpenSource\zerosx-cloud\zerosx-commons\zerosx-common-log\src\main\resources\logback-spring.xml
-    
+  config: classpath:logback-spring.xml
+
   level:
     com.alibaba.nacos.client.naming: warn
-    #com.zerosx: debug
+    com.zerosx: debug
     #com.alibaba.nacos.client: warn
   file:
     path: /home/zerosx-cloud/logs/${spring.application.name}
@@ -222,21 +221,23 @@ mybatis-plus:
 
 xxl:
   job:
-    adminAddresses: http://192.168.170.11:8082/xxl-job-admin/
+    admin:
+      addresses: http://192.168.3.6:8808/xxl-job-admin/
     ### 执行器通讯TOKEN [选填]：非空时启用；
-    accessToken: ""
-    #addresses: ${xxl-job-admin-addr}
-    ### 调度中心部署跟地址 [选填]：如调度中心集群部署存在多个地址则用逗号分隔。执行器将会使用该地址进行"执行器心跳注册"和"任务结果回调"；为空则关闭自动注册；
-    ### 执行器AppName [选填]：执行器心跳注册分组依据；为空则关闭自动注册
-    appname: ${spring.application.name}
-    address: ""
-    ip: ""
-    ### 执行器端口号 [选填]：小于等于0则自动获取；默认端口为9999，单机部署多个执行器时，注意要配置不同执行器端口；
-    port: 1${server.port}
-    ### xxl-job log path
-    logpath: /Users/lunay/logs/${spring.application.name}/jobhandler
-    ### xxl-job log retention days
-    logretentiondays: 7
+    accessToken: 8888888888888888
+    executor:
+      ### 调度中心部署跟地址 [选填]：如调度中心集群部署存在多个地址则用逗号分隔。执行器将会使用该地址进行"执行器心跳注册"和"任务结果回调"；为空则关闭自动注册；
+      ### 执行器AppName [选填]：执行器心跳注册分组依据；为空则关闭自动注册
+      appname: ${spring.application.name}
+      address: ""
+      ip: ""
+      ### 执行器端口号 [选填]：小于等于0则自动获取；默认端口为9999，单机部署多个执行器时，注意要配置不同执行器端口；
+      #应用日志+1000 代码里加了1000
+      port: ${server.port}
+      ### xxl-job log path
+      logpath: ${user.home}/zerosx-cloud/logs/${spring.application.name}/jobhandler
+      ### xxl-job log retention days
+      logretentiondays: 30
 
 zerosx:
   #日志链路追踪
@@ -244,10 +245,27 @@ zerosx:
     enable: true
   #短信服务器
   sms:
-    enabled: true
-    default-sms:
+    yamlConfig: true
+    smsConfigClass: com.zerosx.sms.core.config.AlibabaConfig
+    defaultSms:
+      supplierType: alibaba
       accessKeyId: LTAI5tLbF7vT83t8jU9pX6xm
       accessKeySecret: KDsnhLztTelgK14WO008lqL0Obh6dX
+      regionId: dysmsapi.aliyuncs.com
+      signature: zerosx
+      #juhe
+      key:
+      domainAddress:
+    #短信业务模板
+    smsBusinesses:
+      - businessCode: "verify_code"
+        templateCode: "SMS_462805087"
+        templateContent: "您的验证码为 ${code} ，该验证码5分钟内有效，请勿泄露于他人。"
+        signature: ""
+      - businessCode: "tenant_expire_notice"
+        templateCode: "123"
+        templateContent: "123"
+        signature: ""
   #mybatis敏感字段加解密
   mybatis-crypto:
     enabled: true
@@ -290,10 +308,7 @@ zerosx:
       - /v2/api-docs
       - /swagger-ui.html
       - /swagger-resources/configuration/security
-      # - /api-auth/v3/api-docs/default
-      # - /api-system/v3/api-docs/default
-      # - /api-order/v3/api-docs/default
-      - /api-order/**
+      - /*/v3/api-docs
 
     perms:
       urlPermissionEnable: true
@@ -320,6 +335,19 @@ zerosx:
         - /api-system/sys_menu/roleMenuTree
         - /api-system/upload_file
 
+  oss:
+    filePrefix: zerosx-cloud
+    ossType: alibaba
+    ossConfigClz: com.zerosx.common.oss.core.config.AliyunOssConfig
+    ossConfig:
+      supplierType: alibaba
+      accessKeyId: LTAI5tLbF7vT83t8jU9pX6xm
+      accessKeySecret: KDsnhLztTelgK14WO008lqL0Obh6dX
+      bucketName: zeros-cloud-oss
+      regionId: oss-cn-shenzhen
+      endpoint: oss-cn-shenzhen.aliyuncs.com
+      domainAddress:
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -331,9 +359,8 @@ springdoc:
   group-configs:
     - group: 'default'
       paths-to-match: '/**'
-      packages-to-scan: 
+      packages-to-scan:
         - com.zerosx
-        - com.github.knife4j
   default-flat-param-object: false
 
 

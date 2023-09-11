@@ -1,9 +1,12 @@
 package com.zerosx.system.vo;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.zerosx.common.base.anno.Trans;
 import com.zerosx.common.base.constants.CommonConstants;
+import com.zerosx.common.core.anno.Sensitive;
+import com.zerosx.common.core.enums.SensitiveStrategy;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,7 +48,8 @@ public class SmsSupplierPageVO implements Serializable {
     private String accessKeyId;
 
     @Schema(description = "accessKeySecret")
-    @ExcelProperty(value = {"accessKeySecret"})
+    @ExcelIgnore
+    @Sensitive(strategy = SensitiveStrategy.PASSWORD)
     private String accessKeySecret;
 
     @Schema(description = "短信签名")
@@ -86,6 +90,7 @@ public class SmsSupplierPageVO implements Serializable {
 
     @Schema(description ="key值")
     @ExcelProperty(value = {"key值"})
+    @Sensitive(strategy = SensitiveStrategy.PASSWORD)
     private String keyValue;
 
     @Schema(description = "备注")

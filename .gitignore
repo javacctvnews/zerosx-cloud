@@ -6,6 +6,8 @@ doc/mysql8/mysql8.0.34/logs
 doc/nacos/logs
 doc/redis/data
 doc/seata/logs
+doc/nginx/nginx/log
+doc/nginx
 .DS_store
 
 # Compiled class file
