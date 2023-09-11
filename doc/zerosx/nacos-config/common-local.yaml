@@ -249,8 +249,8 @@ zerosx:
     smsConfigClass: com.zerosx.sms.core.config.AlibabaConfig
     defaultSms:
       supplierType: alibaba
-      accessKeyId: LTAI5tLbF7vT83t8jU9pX6xm
-      accessKeySecret: KDsnhLztTelgK14WO008lqL0Obh6dX
+      accessKeyId: ${yours accessKey}
+      accessKeySecret: ${yours accessKeySecret}
       regionId: dysmsapi.aliyuncs.com
       signature: zerosx
       #juhe
@@ -341,8 +341,8 @@ zerosx:
     ossConfigClz: com.zerosx.common.oss.core.config.AliyunOssConfig
     ossConfig:
       supplierType: alibaba
-      accessKeyId: LTAI5tLbF7vT83t8jU9pX6xm
-      accessKeySecret: KDsnhLztTelgK14WO008lqL0Obh6dX
+      accessKeyId: ${yours accessKey}
+      accessKeySecret: ${yours accessKeySecret}
       bucketName: zeros-cloud-oss
       regionId: oss-cn-shenzhen
       endpoint: oss-cn-shenzhen.aliyuncs.com
