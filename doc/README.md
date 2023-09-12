@@ -229,7 +229,7 @@ docker login --username=[username] registry.cn-shenzhen.aliyuncs.com
 # tag 替换[imageId]即可。备注：zerosx-cloud是命名空间（需要在阿里云自行创建）
 docker tag [imageId] registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-vue2:0.0.1
 # push
-docker push registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-vue:0.0.1
+docker push registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-vue2:0.0.1
 
 ```
 

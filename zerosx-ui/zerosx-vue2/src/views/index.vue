@@ -16,7 +16,6 @@
                   <img style="display: inline-block;"
                     src="https://img.shields.io/badge/copyright-javacctvnews@163.com-blue" alt="">
                 </div>
-
                 <div class="imgs">
                   <img src="https://img.shields.io/badge/JDK-1.8+-blue?logo=openjdk" alt="">
                   <img src="https://img.shields.io/badge/Spring_Boot-2.7.14-blue?logo=spring-boot" alt="">
@@ -63,7 +62,9 @@
         <el-col :span="8">
           <el-col :span="24">
             <basic-container>
-              <div style="height: 1000px;text-align:center;">内容区域2</div>
+              <div style="height: 1000px;text-align:center;">
+                
+              </div>
             </basic-container>
           </el-col>
         </el-col>

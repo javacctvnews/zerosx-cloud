@@ -22,11 +22,11 @@
       </el-col>
       <el-col :span="1.5">
         <el-button type="danger" plain icon="el-icon-delete" size="mini" @click="handleDeleteAll"
-          v-hasPerms="['auth:oauthClientDetails:delete']">强退所有</el-button>
+          v-hasPerms="['auth:oauthClientDetails:deleteAll']">强退所有</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="info" plain icon="el-icon-delete" size="mini" @click="handleDeleteExpire"
-          v-hasPerms="['auth:oauthClientDetails:delete']">清空过期TOKEN</el-button>
+          v-hasPerms="['auth:oauthClientDetails:deleteExpire']">清空过期TOKEN</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport"
