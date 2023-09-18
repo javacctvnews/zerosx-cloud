@@ -71,7 +71,6 @@ public class SysDictTypeController {
     }
 
     @Operation(summary = "按id查询")
-    @SystemLog(title = "字典类型", btnName = "按id查询", businessType = BusinessType.DELETE)
     @GetMapping(value = "/getDictTypeById/{dictId}")
     public ResultVO<SysDictTypeVO> getDictTypeById(@PathVariable("dictId") Long dictId) {
         return ResultVOUtil.success(sysDictTypeService.getDictTypeById(dictId));

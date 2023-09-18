@@ -19,6 +19,7 @@ services:
       # 前面宿主机目录，后面容器内目录
       # 配置
       - ./mysql8.0.34/conf:/etc/mysql/conf.d
+      #- ./mysql8.0.34/my.cnf:/etc/my.cnf
       # 数据
       - ./mysql8.0.34/data:/var/lib/mysql
       # 日志
@@ -27,3 +28,8 @@ services:
       # 前面宿主机目录，后面容器内目录
       - 13306:3306
     restart: unless-stopped
+    #设置ulimit
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536

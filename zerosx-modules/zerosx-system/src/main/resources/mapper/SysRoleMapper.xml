@@ -8,7 +8,7 @@
         SELECT sr.*
         FROM t_sys_user_role sur
                  LEFT JOIN t_sys_role sr ON sur.role_id = sr.id
-        where sur.user_id = #{userId}
+        where 1=1 and sr.deleted = 0 and sur.user_id = #{userId}
     </select>
 
 </mapper>

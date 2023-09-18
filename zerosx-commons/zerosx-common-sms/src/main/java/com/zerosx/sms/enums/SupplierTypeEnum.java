@@ -1,8 +1,6 @@
 package com.zerosx.sms.enums;
 
 
-import com.zerosx.common.base.anno.AutoDictData;
-import com.zerosx.common.base.enums.CodeEnum;
 import com.zerosx.sms.core.client.IMultiSmsClient;
 import com.zerosx.sms.core.config.AlibabaConfig;
 import com.zerosx.sms.core.config.ISupplierConfig;
@@ -22,15 +20,16 @@ import lombok.Getter;
  * @create: 2023-08-30 14:03
  **/
 @Getter
-@AutoDictData(name = "短信服务商")
-public enum SupplierTypeEnum implements CodeEnum<String> {
+//@AutoDictData(name = "短信服务商")
+public enum SupplierTypeEnum /*implements CodeEnum<String>*/ {
 
     /**
      * 阿里云
      */
     ALIBABA("alibaba", "阿里云短信", AlibabaProviderFactory.instance(), AlibabaConfig.class),
     /**
-     * 聚合，<a href="https://www.juhe.cn/docs/api/id/54">聚合短信</a>
+     * 聚合
+     * 官网：<a href="https://www.juhe.cn/docs/api/id/54">聚合短信</a>
      */
     JUHE("juhe", "聚合短信", JuheProviderFactory.instance(), JuheConfig.class),
     /**
@@ -63,6 +62,12 @@ public enum SupplierTypeEnum implements CodeEnum<String> {
         this.configClass = configClass;
     }
 
+    /**
+     * 通过编码获取
+     *
+     * @param code
+     * @return
+     */
     public static SupplierTypeEnum getSupplierType(String code) {
         SupplierTypeEnum[] values = SupplierTypeEnum.values();
         for (SupplierTypeEnum value : values) {
@@ -73,6 +78,12 @@ public enum SupplierTypeEnum implements CodeEnum<String> {
         throw new RuntimeException("非法的SMS服务商：" + code);
     }
 
+    /**
+     * 通过编码获取名称
+     *
+     * @param code
+     * @return
+     */
     public static String getSupplierName(String code) {
         SupplierTypeEnum[] values = SupplierTypeEnum.values();
         for (SupplierTypeEnum value : values) {
@@ -82,4 +93,5 @@ public enum SupplierTypeEnum implements CodeEnum<String> {
         }
         return "";
     }
+
 }

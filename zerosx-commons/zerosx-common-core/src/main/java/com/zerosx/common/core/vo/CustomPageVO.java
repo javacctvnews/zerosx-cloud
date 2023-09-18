@@ -31,7 +31,6 @@ public class CustomPageVO<T> implements Serializable {
     //@Schema(description = "当前页")
     //protected long current = 1;
 
-    @Getter
     @Schema(description = "总数")
     protected long total;
 

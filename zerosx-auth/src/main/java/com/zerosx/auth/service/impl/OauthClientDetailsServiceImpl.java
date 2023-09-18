@@ -4,6 +4,7 @@ import cn.hutool.core.util.PageUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zerosx.common.base.vo.OauthClientDetailsBO;
 import com.zerosx.auth.dto.OauthClientDetailsDTO;
 import com.zerosx.auth.dto.OauthClientDetailsPageDTO;
 import com.zerosx.auth.entity.OauthClientDetails;
@@ -20,16 +21,15 @@ import com.zerosx.common.base.constants.TokenStoreConstants;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.SelectOptionVO;
+import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.utils.BeanCopierUtil;
 import com.zerosx.common.core.utils.EasyTransUtils;
-import com.zerosx.common.base.utils.JacksonUtil;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
+import com.zerosx.common.redis.properties.CustomRedissonProperties;
 import com.zerosx.common.redis.templete.RedisOpService;
 import com.zerosx.common.redis.templete.RedissonOpService;
-import com.zerosx.common.redis.enums.RedisKeyNameEnum;
-import com.zerosx.common.redis.properties.CustomRedissonProperties;
 import com.zerosx.common.security.utils.JdkSerializationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -104,6 +104,13 @@ public class OauthClientDetailsServiceImpl extends ServiceImpl<IOauthClientDetai
     }
 
     @Override
+    public OauthClientDetailsBO getClient(String clientId) {
+        OauthClientDetailsBO oauthClientDetailsBO = BeanCopierUtil.copyProperties(getByClientId(clientId), OauthClientDetailsBO.class);
+        customJdbcClientDetailsService.loadClientByClientId(clientId);
+        return oauthClientDetailsBO;
+    }
+
+    @Override
     public boolean saveOauthClient(OauthClientDetailsDTO oauthClientDetailsDTO) {
         OauthClientDetails clientDetails = getByClientId(oauthClientDetailsDTO.getClientId());
         if (clientDetails != null) {
@@ -165,7 +172,6 @@ public class OauthClientDetailsServiceImpl extends ServiceImpl<IOauthClientDetai
     public boolean deleteRecord(Long[] ids) {
         for (Long id : ids) {
             OauthClientDetails clientDetails = getById(id);
-            log.debug("删除客户端:{}", JacksonUtil.toJSONString(clientDetails));
             redissonOpService.del(clientRedisKey(clientDetails.getClientId()));
             removeById(id);
         }

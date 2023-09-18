@@ -52,7 +52,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.zerosx.order.OrderApplication</mainClass>
+                    <mainClass>com.zerosx.business.BusinessApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>

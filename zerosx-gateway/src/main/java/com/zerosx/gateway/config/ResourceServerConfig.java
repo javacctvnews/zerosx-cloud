@@ -1,12 +1,12 @@
 package com.zerosx.gateway.config;
 
 
-import com.zerosx.common.base.utils.JacksonUtil;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.security.properties.CustomSecurityProperties;
 import com.zerosx.gateway.auth.*;
 import com.zerosx.gateway.feign.AsyncSysUserService;
 import com.zerosx.gateway.filter.CustomServerWebExchangeContextFilter;
+import com.zerosx.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

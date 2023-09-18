@@ -2,8 +2,8 @@ package com.zerosx.common.security.store;
 
 import com.zerosx.common.base.constants.SecurityConstants;
 import com.zerosx.common.base.constants.TokenStoreConstants;
+import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.redis.templete.RedissonOpService;
-import com.zerosx.common.redis.enums.RedisKeyNameEnum;
 import com.zerosx.common.security.properties.CustomSecurityProperties;
 import com.zerosx.common.security.utils.JdkSerializationUtils;
 import lombok.extern.slf4j.Slf4j;

@@ -9,11 +9,9 @@ import com.qcloud.cos.http.HttpMethodName;
 import com.qcloud.cos.http.HttpProtocol;
 import com.qcloud.cos.model.PutObjectResult;
 import com.qcloud.cos.region.Region;
-import com.zerosx.common.base.enums.ResultEnum;
-import com.zerosx.common.base.exception.BusinessException;
-import com.zerosx.common.base.vo.OssObjectVO;
 import com.zerosx.common.oss.core.config.IOssConfig;
 import com.zerosx.common.oss.core.config.TencentOssConfig;
+import com.zerosx.common.oss.model.OssObjectVO;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStream;
@@ -56,7 +54,7 @@ public class TencentClientService extends AbsOssClientService {
             return new OssObjectVO(objectName, putObjectResult.getETag(), vo.getObjectViewUrl(), vo.getExpiration());
         } catch (CosClientException e) {
             log.error(e.getMessage(), e);
-            throw new BusinessException(ResultEnum.FAIL.getCode(), "文件查上传异常：" + e.getMessage());
+            throw new RuntimeException("文件查上传异常：" + e.getMessage());
         }
     }
 
@@ -78,7 +76,7 @@ public class TencentClientService extends AbsOssClientService {
             url = cosClient.generatePresignedUrl(tencentOssConfig.getBucketName(), objectName, expirationDate, method, headers, params);
         } catch (CosClientException e) {
             log.error(e.getMessage(), e);
-            throw new BusinessException(ResultEnum.FAIL.getCode(), "文件查查询异常：" + e.getMessage());
+            throw new RuntimeException("文件查查询异常：" + e.getMessage());
         }
         OssObjectVO vo = new OssObjectVO();
         vo.setObjectName(objectName);
@@ -94,7 +92,7 @@ public class TencentClientService extends AbsOssClientService {
             return true;
         } catch (CosClientException e) {
             log.error(e.getMessage(), e);
-            throw new BusinessException(ResultEnum.FAIL.getCode(), "文件查查询异常：" + e.getMessage());
+            throw new RuntimeException("文件查查询异常：" + e.getMessage());
         }
     }
 

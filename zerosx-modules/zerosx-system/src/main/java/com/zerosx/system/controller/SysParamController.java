@@ -60,7 +60,6 @@ public class SysParamController {
     }
 
     @Operation(summary = "按id查询")
-    @SystemLog(title = "系统参数", btnName = "按id查询", businessType = BusinessType.QUERY)
     @GetMapping("/sys_param/queryById/{id}")
     public ResultVO<SysParamVO> queryById(@PathVariable Long id) {
         return ResultVOUtil.success(sysParamService.queryById(id));

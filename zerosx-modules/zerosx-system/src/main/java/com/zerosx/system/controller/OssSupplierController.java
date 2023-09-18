@@ -59,7 +59,6 @@ public class OssSupplierController {
     }
 
     @Operation(summary ="按id查询")
-    @SystemLog(title = "OSS配置", btnName = "按id查询", businessType= BusinessType.QUERY)
     @GetMapping("/oss_supplier/queryById/{id}")
     public ResultVO<OssSupplierVO> queryById(@PathVariable Long id) {
         return ResultVOUtil.success(ossSupplierService.queryById(id));

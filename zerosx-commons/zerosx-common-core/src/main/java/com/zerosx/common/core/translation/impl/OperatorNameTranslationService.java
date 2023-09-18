@@ -2,7 +2,7 @@ package com.zerosx.common.core.translation.impl;
 
 import com.zerosx.common.base.constants.CommonConstants;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.redis.enums.RedisKeyNameEnum;
+import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -27,7 +27,7 @@ public class OperatorNameTranslationService extends AbsTranslationService<String
 
     @Override
     protected String getRedissonCache(String key) {
-        return getRedissonOpService().getHashValue(RedisKeyNameEnum.key(RedisKeyNameEnum.OPERATOR, key), "operatorId");
+        return getRedissonOpService().hGet(RedisKeyNameEnum.key(RedisKeyNameEnum.OPERATOR, key), "operatorId");
     }
 
     @Override

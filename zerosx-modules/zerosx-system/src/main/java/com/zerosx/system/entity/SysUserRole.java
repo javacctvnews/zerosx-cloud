@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 /**
  * 用户与角色关联 t_sys_user_role
  */
@@ -15,7 +17,9 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @TableName(value = "t_sys_user_role")
-public class SysUserRole {
+public class SysUserRole implements Serializable {
+
+    private static final long serialVersionUID = -1440388362847712453L;
 
     @TableId(type = IdType.AUTO)
     private Long id;

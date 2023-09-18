@@ -1,12 +1,12 @@
 package com.zerosx.system.controller;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.api.auth.IAuthFeignServiceApi;
 import com.zerosx.api.system.dto.UserLoginDTO;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.LoginUserTenantsBO;
-import com.zerosx.common.base.vo.OssObjectVO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.core.easyexcel.EasyExcelUtil;
@@ -17,6 +17,7 @@ import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.core.vo.CustomUserDetails;
 import com.zerosx.common.log.annotation.SystemLog;
 import com.zerosx.common.log.enums.BusinessType;
+import com.zerosx.common.oss.model.OssObjectVO;
 import com.zerosx.system.dto.SysUserDTO;
 import com.zerosx.system.dto.SysUserPageDTO;
 import com.zerosx.system.entity.SysUser;
@@ -84,7 +85,6 @@ public class SysUserController {
     }
 
     @Operation(summary = "按id查询")
-    @SystemLog(title = "系统用户", btnName = "按id查询", businessType = BusinessType.QUERY)
     @GetMapping("/sys_user/queryById/{id}")
     public ResultVO<SysUserVO> queryById(@PathVariable Long id) {
         return ResultVOUtil.success(sysUserService.queryById(id));
@@ -134,7 +134,7 @@ public class SysUserController {
         }
         Map<String, Object> map = new HashMap<>();
         map.put("imgUrl", ossObjectVO.getObjectViewUrl());
-        LambdaUpdateWrapper<SysUser> upqw = new LambdaUpdateWrapper<>();
+        LambdaUpdateWrapper<SysUser> upqw = Wrappers.lambdaUpdate(SysUser.class);
         upqw.eq(SysUser::getUserName, ZerosSecurityContextHolder.getUserName());
         upqw.set(SysUser::getAvatar, ossObjectVO.getObjectName());
         sysUserService.update(upqw);

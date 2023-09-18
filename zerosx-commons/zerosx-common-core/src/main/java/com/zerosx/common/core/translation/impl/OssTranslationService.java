@@ -1,10 +1,10 @@
 package com.zerosx.common.core.translation.impl;
 
 import com.zerosx.common.base.constants.CommonConstants;
-import com.zerosx.common.base.utils.JacksonUtil;
-import com.zerosx.common.base.vo.OssObjectVO;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.redis.enums.RedisKeyNameEnum;
+import com.zerosx.common.core.enums.RedisKeyNameEnum;
+import com.zerosx.common.oss.model.OssObjectVO;
+import com.zerosx.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 
 /**

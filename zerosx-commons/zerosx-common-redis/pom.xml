@@ -15,14 +15,6 @@
     <description>Redis通用组件</description>
 
     <dependencies>
-        <!--<dependency>
-            <groupId>com.zerosx.cloud</groupId>
-            <artifactId>zerosx-common-core</artifactId>
-        </dependency>-->
-        <dependency>
-            <groupId>com.zerosx.cloud</groupId>
-            <artifactId>zerosx-common-base</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson-spring-boot-starter</artifactId>
@@ -38,6 +30,10 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

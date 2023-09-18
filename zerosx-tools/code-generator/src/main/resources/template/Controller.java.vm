@@ -63,7 +63,6 @@ public class ${className}Controller {
     }
 
     @Operation(summary ="按id查询")
-    @SystemLog(title = "${comments}", btnName = "按id查询", businessType= BusinessType.QUERY)
     @GetMapping("/${pathName}/queryById/{id}")
     public ResultVO<${className}VO> queryById(@PathVariable Long id) {
         return ResultVOUtil.success(${classname}Service.queryById(id));

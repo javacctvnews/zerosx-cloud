@@ -27,3 +27,10 @@
 # http://dev.mysql.com/doc/mysql/en/server-system-variables.html
 
 [mysql]
+
+
+[mysqld]
+#将缓存池大小设置为40％的可用系统内存
+innodb_buffer_pool_size = 2G
+#将最大连接数限制为1000
+max_connections = 1000

@@ -8,11 +8,9 @@ import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
-import com.zerosx.common.base.enums.ResultEnum;
-import com.zerosx.common.base.exception.BusinessException;
-import com.zerosx.common.base.vo.OssObjectVO;
 import com.zerosx.common.oss.core.config.IOssConfig;
 import com.zerosx.common.oss.core.config.QiniuOssConfig;
+import com.zerosx.common.oss.model.OssObjectVO;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStream;
@@ -56,7 +54,7 @@ public class QiniuClientService extends AbsOssClientService {
             return new OssObjectVO(objectName, putRet.key, viewUrl.getObjectViewUrl(), viewUrl.getExpiration());
         } catch (QiniuException e) {
             log.error(e.getMessage(), e);
-            throw new BusinessException(ResultEnum.FAIL.getCode(), "文件上传异常：" + e.getMessage());
+            throw new RuntimeException("文件上传异常：" + e.getMessage());
         }
     }
 
@@ -74,7 +72,7 @@ public class QiniuClientService extends AbsOssClientService {
             return new OssObjectVO(objectName, "", downloadUrl, expireDate);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new BusinessException(ResultEnum.FAIL.getCode(), "文件查询异常：" + e.getMessage());
+            throw new RuntimeException("文件查询异常：" + e.getMessage());
         }
     }
 
@@ -85,7 +83,7 @@ public class QiniuClientService extends AbsOssClientService {
             return response.isOK();
         } catch (QiniuException e) {
             log.error(e.getMessage(), e);
-            throw new BusinessException(ResultEnum.FAIL.getCode(), "文件查询异常：" + e.getMessage());
+            throw new RuntimeException("文件查询异常：" + e.getMessage());
         }
     }
 

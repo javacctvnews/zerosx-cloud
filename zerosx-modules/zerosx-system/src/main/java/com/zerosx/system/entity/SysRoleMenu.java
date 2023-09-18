@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 /**
  * 角色和菜单关联 sys_role_menu
  */
@@ -15,7 +17,9 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @TableName(value = "t_sys_role_menu")
-public class SysRoleMenu {
+public class SysRoleMenu implements Serializable {
+
+    private static final long serialVersionUID = 6648565544147666447L;
 
     @TableId(type = IdType.AUTO)
     private Long id;

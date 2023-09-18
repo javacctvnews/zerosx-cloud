@@ -1,6 +1,6 @@
 package com.zerosx.auth.service.auth;
 
-import com.zerosx.common.redis.enums.RedisKeyNameEnum;
+import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

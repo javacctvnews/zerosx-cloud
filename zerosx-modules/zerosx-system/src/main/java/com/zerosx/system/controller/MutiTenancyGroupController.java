@@ -79,7 +79,6 @@ public class MutiTenancyGroupController {
     }
 
     @Operation(summary = "按id查询")
-    @SystemLog(title = "多租户集团", btnName = "按id查询", businessType = BusinessType.QUERY)
     @GetMapping("/muti_tenancy/getById/{id}")
     public ResultVO<MutiTenancyGroupVO> getById(@PathVariable("id") Long id) {
         return ResultVOUtil.success(mutiTenancyGroupService.getTenantById(id));

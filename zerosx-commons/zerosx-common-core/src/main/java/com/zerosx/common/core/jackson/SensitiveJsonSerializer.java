@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.zerosx.common.core.anno.Sensitive;
 import com.zerosx.common.core.enums.SensitiveStrategy;
 import com.zerosx.common.core.service.ISensitiveService;
-import com.zerosx.common.base.utils.SpringUtils;
+import com.zerosx.utils.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 

@@ -28,7 +28,8 @@
 
     <sql id="BaseMenuColumns">
         distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.query_param, m.visible,
-        m.status, m.perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time
+        m.status, m.perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time,
+        m.request_method, m.request_url
     </sql>
 
 
@@ -39,7 +40,7 @@
                  left join t_sys_user_role sur on rm.role_id = sur.role_id
                  left join t_sys_role ro on sur.role_id = ro.id
                  left join t_sys_user u on sur.user_id = u.id
-        where u.id = #{userId}
+        where 1=1 and deleted = 0 and u.id = #{userId}
           and m.menu_type in ('M', 'C')
           and m.status = '0'
           AND ro.status = '0'
@@ -51,7 +52,7 @@
         from t_sys_menu m
                  left join t_sys_role_menu rm on m.menu_id = rm.menu_id
                  left join t_sys_role ro on rm.role_id = ro.id
-        where 1=1 and ro.id in
+        where 1=1 and deleted = 0 and ro.id in
             <foreach collection="roleIds" item="item" open="(" close=")" separator=",">
                 #{item}
             </foreach>
@@ -66,7 +67,7 @@
         from t_sys_menu m
                  left join t_sys_role_menu rm on m.menu_id = rm.menu_id
                  left join t_sys_role ro on rm.role_id = ro.id
-        where 1=1 and ro.id in
+        where 1=1 and deleted = 0 and ro.id in
         <foreach collection="roleIds" item="item" open="(" close=")" separator=",">
             #{item}
         </foreach>
@@ -79,7 +80,7 @@
         SELECT sm.menu_id
         FROM t_sys_menu sm
                  LEFT JOIN t_sys_role_menu srm ON sm.menu_id = srm.menu_id
-        WHERE srm.role_id = #{roleId}
+        WHERE 1=1 and deleted = 0 and srm.role_id = #{roleId}
         ORDER BY sm.parent_id, sm.order_num
     </select>
 
@@ -87,7 +88,7 @@
         SELECT sm.request_method, sm.request_url
         FROM t_sys_menu sm
         left join t_sys_role_menu srm on sm.menu_id = srm.menu_id
-        where 1 = 1
+        where 1=1 and deleted = 0
         and srm.role_id in
         <foreach collection="roleIds" item="item" open="(" close=")" separator=",">
             #{item}
@@ -103,7 +104,7 @@
         SELECT sm.perms
         FROM t_sys_menu sm
         left join t_sys_role_menu srm on sm.menu_id = srm.menu_id
-        where 1=1 and srm.role_id in
+        where 1=1 and deleted = 0 and srm.role_id in
         <foreach collection="roles" item="item" open="(" close=")" separator=",">
             #{item}
         </foreach>

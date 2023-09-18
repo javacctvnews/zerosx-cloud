@@ -1,6 +1,6 @@
 package com.zerosx.test01;
 
-import com.zerosx.common.base.vo.OssObjectVO;
+import com.zerosx.common.oss.model.OssObjectVO;
 import com.zerosx.common.core.utils.IdGenerator;
 import com.zerosx.common.oss.core.OSSFactory;
 import com.zerosx.common.oss.core.client.IOssClientService;

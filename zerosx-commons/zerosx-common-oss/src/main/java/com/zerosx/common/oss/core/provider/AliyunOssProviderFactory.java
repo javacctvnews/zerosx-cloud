@@ -2,12 +2,12 @@ package com.zerosx.common.oss.core.provider;
 
 import com.zerosx.common.oss.core.client.AliyunClientService;
 import com.zerosx.common.oss.core.client.IOssClientService;
-import com.zerosx.common.oss.enums.OssTypeEnum;
 import com.zerosx.common.oss.core.config.AliyunOssConfig;
+import com.zerosx.common.oss.enums.OssTypeEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.ehcache.impl.internal.concurrent.ConcurrentHashMap;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * AliyunOssProviderFactory

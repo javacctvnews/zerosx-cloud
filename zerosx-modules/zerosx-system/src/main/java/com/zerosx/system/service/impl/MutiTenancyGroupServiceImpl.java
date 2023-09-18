@@ -11,7 +11,7 @@ import com.zerosx.common.core.utils.BeanCopierUtil;
 import com.zerosx.common.core.utils.IdGenerator;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
-import com.zerosx.common.redis.enums.RedisKeyNameEnum;
+import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.system.dto.MutiTenancyGroupEditDTO;
 import com.zerosx.system.dto.MutiTenancyGroupQueryDTO;
@@ -83,7 +83,7 @@ public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGr
             }
         }
         MutiTenancyGroup mutiTenancyGroup = BeanCopierUtil.copyProperties(editDTO, MutiTenancyGroup.class);
-        redissonOpService.delHashValues(RedisKeyNameEnum.key(RedisKeyNameEnum.OPERATOR, dbGroup.getOperatorId()), "operatorId");
+        redissonOpService.hRemove(RedisKeyNameEnum.key(RedisKeyNameEnum.OPERATOR, dbGroup.getOperatorId()), "operatorId");
         return updateById(mutiTenancyGroup);
     }
 
@@ -145,7 +145,7 @@ public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGr
         if (mutiTenancyGroup == null) {
             return StringUtils.EMPTY;
         }
-        redissonOpService.putHashValue(RedisKeyNameEnum.key(RedisKeyNameEnum.OPERATOR, operatorId), "operatorId", mutiTenancyGroup.getTenantGroupName());
+        redissonOpService.hPut(RedisKeyNameEnum.key(RedisKeyNameEnum.OPERATOR, operatorId), "operatorId", mutiTenancyGroup.getTenantGroupName());
         return mutiTenancyGroup.getTenantGroupName();
     }
 }

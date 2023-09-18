@@ -70,7 +70,6 @@ public class SysDeptController {
     }
 
     @Operation(summary = "按id查询")
-    @SystemLog(title = "部门管理", btnName = "按id查询", businessType = BusinessType.QUERY)
     @GetMapping("/sys_dept/queryById/{id}")
     public ResultVO<SysDeptVO> queryById(@PathVariable Long id) {
         return ResultVOUtil.success(sysDeptService.queryById(id));

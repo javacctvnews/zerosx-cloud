@@ -5,14 +5,16 @@ import com.zerosx.common.base.constants.CommonConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 /**
  * 系统用户
- * @Description
+ *
  * @author javacctvnews
+ * @Description
  * @date 2023-07-20 13:48:04
  */
 @Getter
@@ -47,8 +49,11 @@ public class SysUserVO implements Serializable {
     private String sex;
 
     @Schema(description = "头像地址")
-    @Trans(type = CommonConstants.TRANS_OSS, ref = "avatar")
+    @Trans(type = CommonConstants.TRANS_OSS, ref = "avatarUrl")
     private String avatar;
+
+    @Schema(description = "头像地址")
+    private String avatarUrl;
 
     @Schema(description = "密码")
     private String password;

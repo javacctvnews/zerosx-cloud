@@ -17,6 +17,10 @@
     <dependencies>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-core</artifactId>
         </dependency>
         <dependency>
@@ -46,6 +50,7 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 </project>

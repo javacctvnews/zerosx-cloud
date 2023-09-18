@@ -19,7 +19,6 @@
         <module>zerosx-tools</module>
     </modules>
 
-
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,8 +37,11 @@
         <druid-spring-boot-starter.version>1.2.6</druid-spring-boot-starter.version>
         <mybatis-spring-boot-starter.version>2.2.2</mybatis-spring-boot-starter.version>
         <pagehelper.version>5.3.3</pagehelper.version>
+        <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
+        <mybatis.version>3.5.10</mybatis.version>
+        <bcprov-jdk15to18.version>1.75</bcprov-jdk15to18.version>
 
-        <commons-io.version>2.11.0</commons-io.version>
+        <commons-io.version>2.12.0</commons-io.version>
         <commons-collections4.verison>4.4</commons-collections4.verison>
 
         <nacos.client.version>1.4.6</nacos.client.version>
@@ -59,6 +61,8 @@
         <velocity.version>1.7</velocity.version>
         <commons-configuration2.version>2.9.0</commons-configuration2.version>
         <commons-configuration.version>1.10</commons-configuration.version>
+
+        <knife4j.version>4.3.0</knife4j.version>
 
         <reflections.version>0.10.2</reflections.version>
         <cglib.version>3.3.0</cglib.version>
@@ -95,7 +99,7 @@
             <dependency>
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>knife4j-dependencies</artifactId>
-                <version>4.3.0</version>
+                <version>${knife4j.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -107,6 +111,32 @@
                 <!-- 注意这里是import -->
                 <scope>import</scope>
             </dependency>
+            <!-- common 的依赖配置-->
+            <dependency>
+                <groupId>com.zerosx.cloud</groupId>
+                <artifactId>zerosx-common-bom</artifactId>
+                <version>0.0.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!--feign api-->
+            <dependency>
+                <groupId>com.zerosx.cloud</groupId>
+                <artifactId>zerosx-api-system</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zerosx.cloud</groupId>
+                <artifactId>zerosx-api-auth</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zerosx.cloud</groupId>
+                <artifactId>zerosx-api-examples</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <!-- SpringBoot Admin -->
             <dependency>
                 <groupId>de.codecentric</groupId>
@@ -129,7 +159,16 @@
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>${mybatis-plus-boot-starter.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus</artifactId>
+                <version>${mybatis-plus-boot-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk15to18</artifactId>
+                <version>${bcprov-jdk15to18.version}</version>
+            </dependency>
             <!--<dependency>
                 <groupId>com.github.pagehelper</groupId>
                 <artifactId>pagehelper</artifactId>
@@ -141,11 +180,6 @@
                 <artifactId>mysql-connector-j</artifactId>
                 <version>${mysql-connector-java.version}</version>
             </dependency>
-            <!--<dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql-connector-java.version}</version>
-            </dependency>-->
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
@@ -199,93 +233,10 @@
                 <version>${redisson.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.zerosx.cloud</groupId>
-                <artifactId>zerosx-common-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zerosx.cloud</groupId>
-                <artifactId>zerosx-common-base</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zerosx.cloud</groupId>
-                <artifactId>zerosx-common-sentinel</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zerosx.cloud</groupId>
-                <artifactId>zerosx-common-loadbalancer</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zerosx.cloud</groupId>
-                <artifactId>zerosx-common-redis</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zerosx.cloud</groupId>
-                <artifactId>zerosx-common-security</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zerosx.cloud</groupId>
-                <artifactId>zerosx-common-oss</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zerosx.cloud</groupId>
-                <artifactId>zerosx-common-log</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zerosx.cloud</groupId>
-                <artifactId>zerosx-common-db</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zerosx.cloud</groupId>
-                <artifactId>zerosx-common-seata</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zerosx.cloud</groupId>
-                <artifactId>zerosx-common-encrypt</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zerosx.cloud</groupId>
-                <artifactId>zerosx-common-xxljob</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zerosx.cloud</groupId>
-                <artifactId>zerosx-common-sms</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.zerosx.cloud</groupId>
-                <artifactId>zerosx-api-system</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zerosx.cloud</groupId>
-                <artifactId>zerosx-api-auth</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zerosx.cloud</groupId>
-                <artifactId>zerosx-api-examples</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-starter-oauth2</artifactId>
                 <version>${spring-cloud-starter-oauth2.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.reflections</groupId>
                 <artifactId>reflections</artifactId>
@@ -313,18 +264,22 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
+    <developers>
+        <developer>
+            <name>javacctvnews</name>
+            <email>javacctvnews@163.com</email>
+        </developer>
+    </developers>
+
     <profiles>
+
         <profile>
             <id>local</id>
             <properties>
                 <!-- 环境标识，需要与配置文件的名称相对应 -->
+                <project>local</project>
                 <profiles.active>local</profiles.active>
                 <nacos.server>127.0.0.1:8848</nacos.server>
                 <nacos.namespace>32c6d87e-c726-44c5-a87b-a89b0f91c63d</nacos.namespace>
@@ -340,6 +295,7 @@
         <profile>
             <id>prod</id>
             <properties>
+                <project>prod</project>
                 <profiles.active>prod</profiles.active>
                 <nacos.server>172.19.54.164:8848</nacos.server>
                 <nacos.namespace>477f012f-f553-4754-bf64-ee0db8907b8e</nacos.namespace>
@@ -363,6 +319,36 @@
                 </includes>
             </resource>
         </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>oss</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Javadoc -->
+            <!--<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>-->
+        </plugins>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -370,6 +356,21 @@
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <version>${spring-boot.version}</version>
                 </plugin>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <compilerArgument>-Xlint:unchecked</compilerArgument>
+                        <compilerArguments>
+                            <extdirs>libs</extdirs>
+                            <bootclasspath>${java.home}/lib/rt.jar${path.separator}${java.home}/lib/jce.jar
+                            </bootclasspath>
+                        </compilerArguments>
+                    </configuration>
+                </plugin>
+
                 <!--<plugin>
                     <groupId>com.spotify</groupId>
                     <artifactId>docker-maven-plugin</artifactId>

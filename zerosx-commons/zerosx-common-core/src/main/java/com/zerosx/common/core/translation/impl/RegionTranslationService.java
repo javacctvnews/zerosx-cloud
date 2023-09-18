@@ -2,9 +2,9 @@ package com.zerosx.common.core.translation.impl;
 
 import com.zerosx.common.base.constants.CommonConstants;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.base.utils.SpringUtils;
-import com.zerosx.common.redis.enums.RedisKeyNameEnum;
+import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.redis.templete.RedissonOpService;
+import com.zerosx.utils.SpringUtils;
 
 /**
  * OssTranslationService
@@ -27,7 +27,7 @@ public class RegionTranslationService extends AbsTranslationService<String> {
 
     @Override
     protected String getRedissonCache(String key) {
-        return SpringUtils.getBean(RedissonOpService.class).getHashValue(RedisKeyNameEnum.key(RedisKeyNameEnum.REGION_HASH), key);
+        return SpringUtils.getBean(RedissonOpService.class).hGet(RedisKeyNameEnum.key(RedisKeyNameEnum.REGION_HASH), key);
     }
 
     @Override

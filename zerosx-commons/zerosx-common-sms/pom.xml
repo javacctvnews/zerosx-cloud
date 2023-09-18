@@ -14,19 +14,28 @@
     <name>zerosx-common-sms</name>
     <packaging>jar</packaging>
 
+    <properties>
+        <dysmsapi20170525.version>2.0.24</dysmsapi20170525.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
-            <artifactId>zerosx-common-base</artifactId>
+            <artifactId>zerosx-common-utils</artifactId>
         </dependency>
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>dysmsapi20170525</artifactId>
-            <version>2.0.24</version>
+            <version>${dysmsapi20170525.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

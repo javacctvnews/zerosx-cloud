@@ -3,15 +3,15 @@
 
 <mapper namespace="com.zerosx.system.mapper.ISysUserMapper">
 
-    <select id="selectLoginSysUser" resultType="com.zerosx.system.entity.SysUser">
+    <select id="selectLoginSysUser" resultType="com.zerosx.system.entity.SysUser" parameterType="com.zerosx.system.entity.SysUser">
         select *
         from t_sys_user
-        where 1 = 1
-        <if test="username!=null and username!=''">
-            and user_name = #{username}
+        where 1 = 1 and deleted = 0
+        <if test="userName!=null and userName!=''">
+            and user_name = #{userName}
         </if>
-        <if test="mobilePhone!=null and mobilePhone!=''">
-            and phone_number = #{mobilePhone}
+        <if test="phoneNumber!=null and phoneNumber!=''">
+            and phone_number = #{phoneNumber}
         </if>
     </select>
 
