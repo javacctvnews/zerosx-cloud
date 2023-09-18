@@ -4,18 +4,17 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.common.base.exception.BusinessException;
-import com.zerosx.common.base.utils.JacksonUtil;
-import com.zerosx.common.base.vo.OssObjectVO;
 import com.zerosx.common.base.vo.RequestVO;
+import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
 import com.zerosx.common.core.utils.BeanCopierUtil;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.oss.core.client.IOssClientService;
-import com.zerosx.common.oss.properties.DefaultOssProperties;
 import com.zerosx.common.oss.core.config.IOssConfig;
-import com.zerosx.common.redis.enums.RedisKeyNameEnum;
+import com.zerosx.common.oss.model.OssObjectVO;
+import com.zerosx.common.oss.properties.DefaultOssProperties;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.system.dto.OssFileUploadDTO;
 import com.zerosx.system.entity.OssFileUpload;
@@ -24,6 +23,7 @@ import com.zerosx.system.service.IOssFileUploadService;
 import com.zerosx.system.service.IOssSupplierService;
 import com.zerosx.system.utils.FileUploadUtils;
 import com.zerosx.system.vo.OssFileUploadPageVO;
+import com.zerosx.utils.JacksonUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -89,7 +89,7 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
         }
         //放入缓存
         long expireTime = (ossObjectVO.getExpiration().getTime() - new Date().getTime()) / 1000;
-        redissonOpService.setExpire(RedisKeyNameEnum.key(RedisKeyNameEnum.OSS_FILE_URL, objectName), JacksonUtil.toJSONString(ossObjectVO), expireTime);
+        redissonOpService.set(RedisKeyNameEnum.key(RedisKeyNameEnum.OSS_FILE_URL, objectName), JacksonUtil.toJSONString(ossObjectVO), expireTime);
         return ossObjectVO;
     }
 
@@ -188,6 +188,9 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
     }
 
     private void handleOssFileUpload(OssFileUpload fileUpload) {
+        if (fileUpload == null) {
+            return;
+        }
         String objectName = fileUpload.getObjectName();
         String ossFileKey = RedisKeyNameEnum.key(RedisKeyNameEnum.OSS_FILE_URL, objectName);
         //先从Redis获取
@@ -215,7 +218,7 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
                 update(null, uw);
                 //放入缓存
                 long expireTime = (vo.getExpiration().getTime() - new Date().getTime()) / 1000;
-                redissonOpService.setExpire(ossFileKey, JacksonUtil.toJSONString(vo), expireTime);
+                redissonOpService.set(ossFileKey, JacksonUtil.toJSONString(vo), expireTime);
             }
         }
         fileUpload.setObjectViewUrl(cacheViewUrl);

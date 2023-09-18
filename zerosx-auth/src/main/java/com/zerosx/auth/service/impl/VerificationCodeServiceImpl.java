@@ -14,9 +14,9 @@ import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.utils.IdGenerator;
-import com.zerosx.common.redis.enums.RedisKeyNameEnum;
+import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.redis.templete.RedissonOpService;
-import com.zerosx.sms.enums.SmsBusinessCodeEnum;
+import com.zerosx.common.core.enums.sms.SmsBusinessCodeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +79,7 @@ public class VerificationCodeServiceImpl implements IVerificationCodeService {
      */
     @Override
     public void saveImageCode(String requestId, String imgCode) {
-        redissonOpService.setExpire(RedisKeyNameEnum.key(RedisKeyNameEnum.IMAGE_CODE, requestId), imgCode, DEFAULT_IMAGE_EXPIRE);
+        redissonOpService.set(RedisKeyNameEnum.key(RedisKeyNameEnum.IMAGE_CODE, requestId), imgCode, DEFAULT_IMAGE_EXPIRE);
     }
 
     @Override
@@ -131,7 +131,7 @@ public class VerificationCodeServiceImpl implements IVerificationCodeService {
         smsSendDTO.setParams(map);
         ResultVO<?> resultVO = smsSupplierControllerApi.sendSms(smsSendDTO);
         if (resultVO.success()) {
-            redissonOpService.setExpire(RedisKeyNameEnum.key(RedisKeyNameEnum.SMS_CODE, smsCodeDTO.getMobilePhone()), randomStr, DEFAULT_SMS_EXPIRE);
+            redissonOpService.set(RedisKeyNameEnum.key(RedisKeyNameEnum.SMS_CODE, smsCodeDTO.getMobilePhone()), randomStr, DEFAULT_SMS_EXPIRE);
             SmsCodeVO vo = new SmsCodeVO();
             vo.setSmsAuthCode(IdGenerator.getRandomStr(6));
             return vo;

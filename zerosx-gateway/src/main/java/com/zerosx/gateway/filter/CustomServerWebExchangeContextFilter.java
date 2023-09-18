@@ -4,15 +4,16 @@ import com.zerosx.common.base.constants.CommonConstants;
 import com.zerosx.common.base.constants.HeadersConstants;
 import com.zerosx.common.base.constants.SecurityConstants;
 import com.zerosx.common.base.exception.BusinessException;
-import com.zerosx.common.base.utils.JacksonUtil;
 import com.zerosx.common.base.vo.LoginUserTenantsBO;
+import com.zerosx.common.base.vo.OauthClientDetailsBO;
 import com.zerosx.common.base.vo.ResultVO;
+import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.core.utils.AntPathMatcherUtils;
 import com.zerosx.common.core.utils.MDCTraceUtils;
 import com.zerosx.common.core.vo.CustomUserDetails;
-import com.zerosx.common.redis.enums.RedisKeyNameEnum;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.gateway.feign.AsyncSysUserService;
+import com.zerosx.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
@@ -30,6 +31,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 /**
@@ -80,12 +82,7 @@ public class CustomServerWebExchangeContextFilter extends ServerWebExchangeConte
         Map<String, String> map = new HashMap<>();
         map.put(SecurityConstants.SECURITY_CONTEXT, JacksonUtil.toJSONString(loginUserTenantsBO));
         ServerWebExchangeUtils.putUriTemplateVariables(exchange, map);
-        //改从缓存中获取
-        String clientDetailsClientId = RedisKeyNameEnum.key(RedisKeyNameEnum.OAUTH_CLIENT_DETAILS, oAuth2Authentication.getOAuth2Request().getClientId());
-        ClientDetails clientDetails = redissonOpService.get(clientDetailsClientId);
-        Set<String> resourceIds = clientDetails.getResourceIds();
-        String[] split = path.split("/");
-        if (!resourceIds.contains(split[1])) {
+        if (!hasResourcesPerms(oAuth2Authentication.getOAuth2Request().getClientId(), path)) {
             return Mono.error(new BusinessException("您没有此资源权限！"));
         }
         headerValues.add(HeadersConstants.CLIENT_ID, oAuth2Authentication.getOAuth2Request().getClientId());
@@ -96,6 +93,42 @@ public class CustomServerWebExchangeContextFilter extends ServerWebExchangeConte
         headerValues.add(HeadersConstants.TOKEN, token);
         log.debug("添加secretary上下文数据,耗时{}ms", System.currentTimeMillis() - t1);
         return buildExchange(exchange, chain, headerValues);
+    }
+
+    /**
+     * 检查是否拥有resourceId资源访问权限
+     *
+     * @param clientId
+     * @param path
+     * @return
+     */
+    private boolean hasResourcesPerms(String clientId, String path) {
+        String clientDetailsClientId = RedisKeyNameEnum.key(RedisKeyNameEnum.OAUTH_CLIENT_DETAILS, clientId);
+        ClientDetails clientDetails = redissonOpService.get(clientDetailsClientId);
+        Set<String> resourceIds;
+        if (clientDetails == null) {
+            Future<ResultVO<OauthClientDetailsBO>> client = asyncLoginUserService.getClient(clientId);
+            ResultVO<OauthClientDetailsBO> oauthClientDetailsBOResultVO;
+            try {
+                oauthClientDetailsBOResultVO = client.get();
+            } catch (InterruptedException | ExecutionException e) {
+                return false;
+            }
+            OauthClientDetailsBO detailsBO = oauthClientDetailsBOResultVO.getData();
+            if (detailsBO == null) {
+                return false;
+            }
+            String dbResourceIds = detailsBO.getResourceIds();
+            if (StringUtils.isBlank(dbResourceIds)) {
+                return false;
+            }
+            String[] split = dbResourceIds.split(",");
+            resourceIds = Arrays.stream(split).collect(Collectors.toSet());
+        } else {
+            resourceIds = clientDetails.getResourceIds();
+        }
+        String[] split = path.split("/");
+        return resourceIds.contains(split[1]);
     }
 
     private static Mono<Void> buildExchange(ServerWebExchange exchange, WebFilterChain chain, MultiValueMap<String, String> headerValues) {

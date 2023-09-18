@@ -13,7 +13,7 @@
         <el-input v-model="queryParams.t.userKeyword" placeholder="用户账号或昵称关键字" clearable style="width: 200px;" />
       </el-form-item>
       <el-form-item label="手机号码" prop="phoneNumber">
-        <el-input v-model="queryParams.t.phoneNumber" placeholder="请输入手机号码关键字" clearable style="width: 200px;" />
+        <el-input v-model="queryParams.t.phoneNumber" placeholder="请输入手机号码" clearable style="width: 200px;" />
       </el-form-item>
       <el-form-item label="帐号状态" prop="status">
         <el-select v-model="queryParams.t.status" placeholder="帐号状态" clearable style="width: 200px;">

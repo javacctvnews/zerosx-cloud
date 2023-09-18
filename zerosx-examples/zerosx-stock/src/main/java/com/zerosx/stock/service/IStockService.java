@@ -8,4 +8,6 @@ public interface IStockService extends IService<Stock> {
 
     boolean decreaseStock(CommodityDTO commodityDTO);
 
+    String decreaseStockRedis();
+
 }

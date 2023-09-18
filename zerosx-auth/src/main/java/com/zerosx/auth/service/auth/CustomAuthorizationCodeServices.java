@@ -26,7 +26,7 @@ public class CustomAuthorizationCodeServices extends RandomValueAuthorizationCod
      */
     @Override
     protected void store(String code, OAuth2Authentication authentication) {
-        redissonOpService.setExpire(codeKey(code), authentication, VALID_SECONDS);
+        redissonOpService.set(codeKey(code), authentication, VALID_SECONDS);
     }
 
     @Override

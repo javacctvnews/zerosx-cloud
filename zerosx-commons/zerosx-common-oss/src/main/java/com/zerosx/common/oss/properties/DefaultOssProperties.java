@@ -3,14 +3,12 @@ package com.zerosx.common.oss.properties;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 /**
  * 系统默认的oss配置
  */
 @Setter
 @Getter
-@RefreshScope
 @ConfigurationProperties(prefix = "zerosx.oss")
 public class DefaultOssProperties {
 

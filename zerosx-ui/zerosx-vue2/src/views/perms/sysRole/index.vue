@@ -133,6 +133,7 @@ export default {
   dicts: ['StatusEnum'],
   data() {
     return {
+      searching: false,
       dialogLoading: false,
       uploading: false,
       loading: false,

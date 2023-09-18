@@ -25,10 +25,6 @@ public class JdCloudProviderFactory implements ISmsProviderFactory<JdCloudSmsCli
     private JdCloudProviderFactory() {
     }
 
-    private static final class ConfigHolder {
-        private static JdCloudConfig config = new JdCloudConfig();
-    }
-
     /**
      * 获取建造者实例
      *
@@ -63,16 +59,6 @@ public class JdCloudProviderFactory implements ISmsProviderFactory<JdCloudSmsCli
     @Override
     public JdCloudSmsClient refresh(JdCloudConfig config) {
         return createMultiSms(config);
-    }
-
-    @Override
-    public JdCloudConfig getConfig() {
-        return JdCloudProviderFactory.ConfigHolder.config;
-    }
-
-    @Override
-    public void setConfig(JdCloudConfig config) {
-        JdCloudProviderFactory.ConfigHolder.config = config;
     }
 
     @Override

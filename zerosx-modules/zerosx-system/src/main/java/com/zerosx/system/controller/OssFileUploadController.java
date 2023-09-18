@@ -1,7 +1,7 @@
 package com.zerosx.system.controller;
 
 import com.zerosx.common.base.utils.ResultVOUtil;
-import com.zerosx.common.base.vo.OssObjectVO;
+import com.zerosx.common.oss.model.OssObjectVO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.core.vo.CustomPageVO;
@@ -60,13 +60,12 @@ public class OssFileUploadController {
      * @return
      */
     @Operation(summary = "获取单个文件URL")
-    @GetMapping(value = "/view_url/{objectName}")
-    public ResultVO<String> getObjectViewUrl(@PathVariable("objectName") String objectName) {
+    @PostMapping(value = "/view_url")
+    public ResultVO<String> getObjectViewUrl(@RequestParam("objectName") String objectName) {
         return ResultVOUtil.success(ossFileUploadService.getObjectViewUrl(objectName));
     }
 
     @Operation(summary = "按id查询")
-    @SystemLog(title = "OSS文件", btnName = "按id查询", businessType = BusinessType.QUERY)
     @GetMapping("/oss_file/queryById/{id}")
     public ResultVO<OssFileUploadPageVO> queryById(@PathVariable Long id) {
         return ResultVOUtil.success(ossFileUploadService.queryById(id));

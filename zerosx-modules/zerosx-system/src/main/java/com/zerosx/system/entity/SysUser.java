@@ -3,8 +3,8 @@ package com.zerosx.system.entity;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zerosx.common.core.model.SuperEntity;
-import com.zerosx.common.encrypt.anno.EncryptClass;
-import com.zerosx.common.encrypt.anno.EncryptField;
+import com.zerosx.encrypt2.anno.EncryptClass;
+import com.zerosx.encrypt2.anno.EncryptField;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -107,5 +107,5 @@ public class SysUser extends SuperEntity<SysUser> {
      * 删除标志（0代表存在 2代表删除）
      */
     @TableLogic
-    private String deleted;
+    private Integer deleted;
 }

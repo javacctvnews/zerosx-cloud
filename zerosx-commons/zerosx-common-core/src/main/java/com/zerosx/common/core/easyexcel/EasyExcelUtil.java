@@ -6,7 +6,7 @@ import com.zerosx.common.base.enums.ResultEnum;
 import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.core.utils.DateTimeUtil;
-import com.zerosx.common.base.utils.JacksonUtil;
+import com.zerosx.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletResponse;

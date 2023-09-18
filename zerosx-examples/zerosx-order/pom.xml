@@ -17,6 +17,10 @@
     <dependencies>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-encrypt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-seata</artifactId>
         </dependency>
         <dependency>
@@ -33,6 +37,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-undertow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-crypto</artifactId>
         </dependency>
     </dependencies>
 

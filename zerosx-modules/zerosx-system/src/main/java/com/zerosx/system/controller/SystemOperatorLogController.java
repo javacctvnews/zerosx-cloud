@@ -62,7 +62,6 @@ public class SystemOperatorLogController {
     }
 
     @Operation(summary = "按id查询")
-    @SystemLog(title = "操作日志", btnName = "按id查询", businessType = BusinessType.QUERY)
     @GetMapping("/system_operator_log/queryById/{id}")
     public ResultVO<SystemOperatorLogPageVO> queryById(@PathVariable Long id) {
         return ResultVOUtil.success(systemOperatorLogService.queryById(id));

@@ -43,7 +43,6 @@
             <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-api-system</artifactId>
         </dependency>
-        <!-- SpringBoot Web -->
         <!-- SpringBoot Web容器 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -55,7 +54,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- web 容器使用 undertow 性能更强 -->
+        <!-- web 容器使用 undertow -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-undertow</artifactId>

@@ -28,13 +28,4 @@ public interface ISysUserService {
     @PostMapping("/sys_user/current_login_user")
     ResultVO<LoginUserTenantsBO> currentLoginUser(@RequestParam("userName") String userName);
 
-    /**
-     * 查询角色对应的权限
-     *
-     * @param rolePermissionDTO
-     * @return
-     */
-    @PostMapping("/sys/menu/role_permissions")
-    ResultVO<SysPermissionBO> findByRoleCodes(@RequestBody RolePermissionDTO rolePermissionDTO);
-
 }

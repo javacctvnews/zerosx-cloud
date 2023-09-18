@@ -1,6 +1,6 @@
 package com.zerosx.common.oss.core.client;
 
-import com.zerosx.common.base.vo.OssObjectVO;
+import com.zerosx.common.oss.model.OssObjectVO;
 import com.zerosx.common.oss.core.config.IOssConfig;
 
 import java.io.InputStream;

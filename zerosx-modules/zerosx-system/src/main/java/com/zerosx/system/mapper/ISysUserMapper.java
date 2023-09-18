@@ -1,7 +1,8 @@
 package com.zerosx.system.mapper;
 
 import com.zerosx.common.core.service.SuperMapper;
-import com.zerosx.common.encrypt.anno.EncryptField;
+import com.zerosx.encrypt2.anno.EncryptField;
+import com.zerosx.encrypt2.anno.EncryptFields;
 import com.zerosx.system.entity.SysUser;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -15,6 +16,7 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface ISysUserMapper extends SuperMapper<SysUser> {
 
-    SysUser selectLoginSysUser(@Param("username") String username, @EncryptField @Param("mobilePhone") String mobilePhone);
+    @EncryptFields({@EncryptField(field = "phoneNumber")})
+    SysUser selectLoginSysUser(@Param("userName") String userName, @Param("phoneNumber") String phoneNumber);
 
 }

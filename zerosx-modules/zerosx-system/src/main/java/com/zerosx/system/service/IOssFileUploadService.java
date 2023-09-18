@@ -1,6 +1,6 @@
 package com.zerosx.system.service;
 
-import com.zerosx.common.base.vo.OssObjectVO;
+import com.zerosx.common.oss.model.OssObjectVO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.core.service.ISuperService;
 import com.zerosx.common.core.vo.CustomPageVO;

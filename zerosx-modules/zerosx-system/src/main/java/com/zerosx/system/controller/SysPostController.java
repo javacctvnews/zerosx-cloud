@@ -62,7 +62,6 @@ public class SysPostController {
     }
 
     @Operation(summary = "按id查询")
-    @SystemLog(title = "岗位管理", btnName = "按id查询", businessType = BusinessType.QUERY)
     @GetMapping("/sys_post/queryById/{id}")
     public ResultVO<SysPostVO> queryById(@PathVariable Long id) {
         return ResultVOUtil.success(sysPostService.queryById(id));

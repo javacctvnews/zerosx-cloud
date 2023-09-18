@@ -2,6 +2,7 @@ package com.zerosx.auth.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zerosx.common.base.vo.OauthClientDetailsBO;
 import com.zerosx.auth.dto.OauthClientDetailsDTO;
 import com.zerosx.auth.dto.OauthClientDetailsPageDTO;
 import com.zerosx.auth.entity.OauthClientDetails;
@@ -97,4 +98,12 @@ public interface IOauthClientDetailsService extends IService<OauthClientDetails>
      * @return
      */
     boolean cleanTokenData(TokenQueryVO tokenQueryVO);
+
+    /**
+     * 按clientId查询
+     * @param clientId
+     * @return
+     */
+    OauthClientDetailsBO getClient(String clientId);
+
 }

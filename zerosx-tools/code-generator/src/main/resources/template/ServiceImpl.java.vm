@@ -50,7 +50,6 @@ public class ${className}ServiceImpl extends SuperServiceImpl<I${className}Mappe
             return qw;
         }
         //todo
-
         return qw;
     }
 

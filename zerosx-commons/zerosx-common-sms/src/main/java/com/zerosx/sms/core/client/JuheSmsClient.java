@@ -1,11 +1,11 @@
 package com.zerosx.sms.core.client;
 
-import com.zerosx.common.base.utils.HttpClientUtils;
-import com.zerosx.common.base.utils.JacksonUtil;
 import com.zerosx.sms.core.config.JuheConfig;
 import com.zerosx.sms.model.SmsRequest;
 import com.zerosx.sms.model.SmsResponse;
+import com.zerosx.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
+import com.zerosx.utils.HttpClientUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +41,7 @@ public class JuheSmsClient extends AbsMultiSmsClient {
         paramMap.put("key", juheConfig.getKeyValue());
         paramMap.put("dtype", "json");
         try {
-            String httpClientResult = HttpClientUtils.doPost(juheConfig.getDomainAddress(), headers, paramMap);
+            String httpClientResult = HttpClientUtils.post(juheConfig.getDomainAddress(), headers, paramMap);
             Map<Object, Object> objectMap = JacksonUtil.toMap(httpClientResult);
             Integer errorCode = (Integer) objectMap.get("error_code");
             String reason = (String) objectMap.get("reason");

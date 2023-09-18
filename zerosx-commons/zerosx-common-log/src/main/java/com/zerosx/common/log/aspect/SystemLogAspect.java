@@ -1,11 +1,11 @@
 package com.zerosx.common.log.aspect;
 
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
-import com.zerosx.common.core.utils.IpUtils;
-import com.zerosx.common.base.utils.JacksonUtil;
 import com.zerosx.common.log.annotation.SystemLog;
 import com.zerosx.common.log.feign.AsyncSysOperatorLogService;
 import com.zerosx.common.log.vo.SystemOperatorLogBO;
+import com.zerosx.utils.IpUtils;
+import com.zerosx.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;

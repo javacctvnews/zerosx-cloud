@@ -1,6 +1,6 @@
 package com.zerosx.test01;
 
-import com.zerosx.common.base.vo.OssObjectVO;
+import com.zerosx.common.oss.model.OssObjectVO;
 import com.zerosx.common.core.utils.IdGenerator;
 import com.zerosx.common.oss.core.OSSFactory;
 import com.zerosx.common.oss.core.client.IOssClientService;
@@ -27,8 +27,8 @@ public class MultiSmsTest {
     @Test
     public void testAliyun() throws Exception {
         AliyunOssConfig config = new AliyunOssConfig();
-        config.setAccessKeyId("LTAI5tLbF7vT83t8jU9pX6xm");
-        config.setAccessKeySecret("KDsnhLztTelgK14WO008lqL0Obh6dX");
+        config.setAccessKeyId("***************************");
+        config.setAccessKeySecret("***************************");
         config.setBucketName("zeros-cloud-oss");
         config.setRegionId("oss-cn-shenzhen");
         config.setEndpoint("oss-cn-shenzhen.aliyuncs.com");
@@ -46,8 +46,8 @@ public class MultiSmsTest {
     @Test
     public void testTent() throws Exception {
         TencentOssConfig config = new TencentOssConfig();
-        config.setAccessKeyId("AKIDb3GLey97tTqyunZEnKjw6HMzdDsNo8II");
-        config.setAccessKeySecret("vPkstiIl5Y2Wpwy2tY4Qk5GHAvuwtpeK");
+        config.setAccessKeyId("***************************");
+        config.setAccessKeySecret("***************************");
         config.setBucketName("zerosx-cloud-1317712784");
         config.setRegionId("ap-guangzhou");
         IOssClientService ossClientService = OSSFactory.createClient(OssTypeEnum.TENCENT, config);
@@ -65,8 +65,8 @@ public class MultiSmsTest {
     @Test
     public void testQiniu() throws Exception {
         QiniuOssConfig config = new QiniuOssConfig();
-        config.setAccessKeyId("HufDcZNuhqWi10aV1_mcE_80LK8oGLwQ4XN1lZsV");
-        config.setAccessKeySecret("3i_WurZ4knmvdFt30ZdpsoXbaXQGkz-Xq780tc47");
+        config.setAccessKeyId("***************************");
+        config.setAccessKeySecret("***************************-Xq780tc47");
         config.setBucketName("zerosx-cloud");
         config.setRegionId("");
         config.setDomainAddress("http://s0nc9ljee.hn-bkt.clouddn.com");

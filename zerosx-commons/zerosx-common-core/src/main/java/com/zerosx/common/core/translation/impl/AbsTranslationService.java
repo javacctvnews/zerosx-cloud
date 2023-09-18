@@ -2,12 +2,12 @@ package com.zerosx.common.core.translation.impl;
 
 import com.github.benmanes.caffeine.cache.AsyncCache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.zerosx.common.base.utils.JacksonUtil;
 import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.core.feign.AsyncFeignService;
 import com.zerosx.common.core.translation.ITranslationService;
-import com.zerosx.common.base.utils.SpringUtils;
 import com.zerosx.common.redis.templete.RedissonOpService;
+import com.zerosx.utils.JacksonUtil;
+import com.zerosx.utils.SpringUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

@@ -14,7 +14,7 @@
     <select id="selectTenancy" resultType="com.zerosx.system.entity.MutiTenancyGroup">
         select *
         from t_muti_tenancy_group
-        where operator_id = #{operatorId}
+        where 1=1 and deleted = 0 and operator_id = #{operatorId}
     </select>
 
 </mapper>

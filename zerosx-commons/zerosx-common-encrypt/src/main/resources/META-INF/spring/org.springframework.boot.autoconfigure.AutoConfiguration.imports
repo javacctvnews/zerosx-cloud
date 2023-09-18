@@ -1,1 +1,2 @@
-com.zerosx.common.encrypt.config.MybatisEncryptConfiguration
+com.zerosx.encrypt2.config.MybatisAutoConfiguration
+com.zerosx.encrypt2.core.interceptor.DecryptInterceptor

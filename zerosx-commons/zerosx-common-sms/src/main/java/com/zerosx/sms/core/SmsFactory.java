@@ -15,18 +15,6 @@ import com.zerosx.sms.enums.SupplierTypeEnum;
 public abstract class SmsFactory {
 
     private SmsFactory() {
-
-    }
-
-    /**
-     * 获取各个厂商的实现类
-     *
-     * @param supplierTypeEnum
-     * @return
-     */
-    public static IMultiSmsClient createSmsClient(SupplierTypeEnum supplierTypeEnum) {
-        ISmsProviderFactory providerFactory = supplierTypeEnum.getProviderFactory();
-        return providerFactory.createSms(providerFactory.getConfig());
     }
 
     /**
@@ -45,7 +33,7 @@ public abstract class SmsFactory {
      *
      * @param supplierTypeEnum
      * @param config
-     * @param refresh      是否刷新实例
+     * @param refresh          是否刷新实例
      * @return
      */
     public static IMultiSmsClient createSmsClient(SupplierTypeEnum supplierTypeEnum, ISupplierConfig config, boolean refresh) {
@@ -53,15 +41,6 @@ public abstract class SmsFactory {
         return refresh ? providerFactory.createMultiSms(config) : providerFactory.createSms(config);
     }
 
-    /**
-     * 刷新sms实例
-     *
-     * @param supplierTypeEnum
-     */
-    public static void refreshClient(SupplierTypeEnum supplierTypeEnum) {
-        ISmsProviderFactory providerFactory = supplierTypeEnum.getProviderFactory();
-        providerFactory.refresh(providerFactory.getConfig());
-    }
 
     /**
      * 刷新sms实例

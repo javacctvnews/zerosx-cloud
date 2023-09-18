@@ -46,8 +46,8 @@ public interface ISystemFeignService {
      * @param objectName
      * @return
      */
-    @GetMapping(value = "/view_url/{objectName}")
-    ResultVO<String> getObjectViewUrl(@PathVariable("objectName") String objectName);
+    @PostMapping(value = "/view_url")
+    ResultVO<String> getObjectViewUrl(@RequestParam("objectName") String objectName);
 
     /**
      * 按行政区域码获取名称

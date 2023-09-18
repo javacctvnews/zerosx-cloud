@@ -62,7 +62,6 @@ public class SysRoleController {
     }
 
     @Operation(summary = "按id查询")
-    @SystemLog(title = "角色管理", btnName = "按id查询", businessType = BusinessType.QUERY)
     @GetMapping("/sys_role/queryById/{id}")
     public ResultVO<SysRoleVO> queryById(@PathVariable Long id) {
         return ResultVOUtil.success(sysRoleService.queryById(id));

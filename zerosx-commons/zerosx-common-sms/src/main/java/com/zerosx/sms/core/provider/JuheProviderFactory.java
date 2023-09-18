@@ -25,10 +25,6 @@ public class JuheProviderFactory implements ISmsProviderFactory<JuheSmsClient, J
     private JuheProviderFactory() {
     }
 
-    private static final class ConfigHolder {
-        private static JuheConfig config = new JuheConfig();
-    }
-
     /**
      * 获取建造者实例
      *
@@ -58,16 +54,6 @@ public class JuheProviderFactory implements ISmsProviderFactory<JuheSmsClient, J
     @Override
     public JuheSmsClient refresh(JuheConfig config) {
         return createMultiSms(config);
-    }
-
-    @Override
-    public JuheConfig getConfig() {
-        return JuheProviderFactory.ConfigHolder.config;
-    }
-
-    @Override
-    public void setConfig(JuheConfig config) {
-        JuheProviderFactory.ConfigHolder.config = config;
     }
 
     @Override

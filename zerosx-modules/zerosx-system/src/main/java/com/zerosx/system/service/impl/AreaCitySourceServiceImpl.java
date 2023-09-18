@@ -6,14 +6,13 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.RegionSelectVO;
 import com.zerosx.common.base.vo.RequestVO;
+import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
 import com.zerosx.common.core.utils.BeanCopierUtil;
 import com.zerosx.common.core.utils.IdGenerator;
-import com.zerosx.common.base.utils.JacksonUtil;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.redis.templete.RedissonOpService;
-import com.zerosx.common.redis.enums.RedisKeyNameEnum;
 import com.zerosx.system.dto.AreaCitySourceDTO;
 import com.zerosx.system.dto.AreaCitySourcePageDTO;
 import com.zerosx.system.entity.AreaCitySource;
@@ -21,6 +20,7 @@ import com.zerosx.system.mapper.IAreaCitySourceMapper;
 import com.zerosx.system.service.IAreaCitySourceService;
 import com.zerosx.system.vo.AreaCitySourcePageVO;
 import com.zerosx.system.vo.AreaCitySourceTreeVO;
+import com.zerosx.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -174,7 +174,7 @@ public class AreaCitySourceServiceImpl extends SuperServiceImpl<IAreaCitySourceM
         if (StringUtils.isNotBlank(cacheName)) {
             return cacheName;
         }
-        String redisCacheName = redissonOpService.getHashValue(RedisKeyNameEnum.key(RedisKeyNameEnum.REGION_HASH), regionCode);
+        String redisCacheName = redissonOpService.hGet(RedisKeyNameEnum.key(RedisKeyNameEnum.REGION_HASH), regionCode);
         if (StringUtils.isNotBlank(redisCacheName)) {
             return redisCacheName;
         }
@@ -185,7 +185,7 @@ public class AreaCitySourceServiceImpl extends SuperServiceImpl<IAreaCitySourceM
             return StringUtils.EMPTY;
         }
         regionMap.put(regionCode, region.getAreaName());
-        redissonOpService.putHashValue(RedisKeyNameEnum.key(RedisKeyNameEnum.REGION_HASH), regionCode, region.getAreaName());
+        redissonOpService.hPut(RedisKeyNameEnum.key(RedisKeyNameEnum.REGION_HASH), regionCode, region.getAreaName());
         return region.getAreaName();
     }
 }

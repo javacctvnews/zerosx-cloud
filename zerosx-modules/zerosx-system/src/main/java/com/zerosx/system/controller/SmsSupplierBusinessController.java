@@ -63,7 +63,6 @@ public class SmsSupplierBusinessController {
     }
 
     @Operation(summary ="按id查询")
-    @SystemLog(title = "短信业务模板", btnName = "按id查询", businessType= BusinessType.QUERY)
     @GetMapping("/sms_supplier_business/queryById/{id}")
     public ResultVO<SmsSupplierBusinessVO> queryById(@PathVariable Long id) {
         return ResultVOUtil.success(smsSupplierBusinessService.queryById(id));

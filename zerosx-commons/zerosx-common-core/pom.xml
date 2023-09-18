@@ -17,6 +17,14 @@
     <dependencies>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-oss</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-redis</artifactId>
         </dependency>
         <dependency>
@@ -26,10 +34,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-context</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -100,10 +104,6 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.esotericsoftware</groupId>
-            <artifactId>reflectasm</artifactId>
         </dependency>
         <dependency>
             <groupId>com.esotericsoftware</groupId>

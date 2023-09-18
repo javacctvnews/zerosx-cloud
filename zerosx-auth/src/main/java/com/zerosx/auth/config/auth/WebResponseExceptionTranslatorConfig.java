@@ -1,7 +1,7 @@
 package com.zerosx.auth.config.auth;
 
 import com.zerosx.auth.service.IOauthTokenRecordService;
-import com.zerosx.common.base.utils.SpringUtils;
+import com.zerosx.utils.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

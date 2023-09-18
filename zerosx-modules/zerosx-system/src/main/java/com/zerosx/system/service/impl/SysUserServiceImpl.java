@@ -5,11 +5,11 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.api.system.dto.UserLoginDTO;
 import com.zerosx.common.base.exception.BusinessException;
-import com.zerosx.common.base.utils.JacksonUtil;
 import com.zerosx.common.base.vo.LoginUserTenantsBO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.SysMenuBO;
 import com.zerosx.common.base.vo.SysRoleBO;
+import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.core.enums.UserTypeEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
@@ -18,8 +18,6 @@ import com.zerosx.common.core.utils.IdGenerator;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.core.vo.CustomUserDetails;
-import com.zerosx.common.encrypt.core.ICustomEncryptor;
-import com.zerosx.common.redis.enums.RedisKeyNameEnum;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.system.dto.SysUserDTO;
 import com.zerosx.system.dto.SysUserPageDTO;
@@ -30,6 +28,7 @@ import com.zerosx.system.task.SystemAsyncTask;
 import com.zerosx.system.vo.SysRoleVO;
 import com.zerosx.system.vo.SysUserPageVO;
 import com.zerosx.system.vo.SysUserVO;
+import com.zerosx.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -72,8 +71,6 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     private ISysPostService sysPostService;
     @Autowired
     private ISysDeptService sysDeptService;
-    @Autowired
-    private ICustomEncryptor customEncryptor;
 
     @Override
     public CustomPageVO<SysUserPageVO> pageList(RequestVO<SysUserPageDTO> requestVO, boolean searchCount) {
@@ -102,7 +99,7 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
         LambdaQueryWrapper<SysUser> qw = Wrappers.lambdaQuery(SysUser.class);
         qw.eq(StringUtils.isNotBlank(query.getOperatorId()), SysUser::getOperatorId, query.getOperatorId());
         qw.eq(StringUtils.isNotBlank(query.getStatus()), SysUser::getStatus, query.getStatus());
-        qw.like(StringUtils.isNotBlank(query.getPhoneNumber()), SysUser::getPhoneNumber, customEncryptor.encrypt(query.getPhoneNumber()));
+        qw.like(StringUtils.isNotBlank(query.getPhoneNumber()), SysUser::getPhoneNumber, query.getPhoneNumber());
         qw.and(StringUtils.isNotBlank(query.getUserKeyword()), wq -> wq.like(SysUser::getUserName, query.getUserKeyword()).or().like(SysUser::getNickName, query.getUserKeyword()));
         qw.orderByDesc(SysUser::getCreateTime);
         //SysUser sysUser = BeanCopierUtil.copyProperties(query, SysUser.class);
@@ -179,7 +176,6 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
 
     @Override
     public CustomUserDetails queryLoginUser(UserLoginDTO userLoginDTO) {
-        //String mobilePhone = customEncryptor.encrypt(userLoginDTO.getMobilePhone());
         SysUser sysUser = sysUserMapper.selectLoginSysUser(userLoginDTO.getUsername(), userLoginDTO.getMobilePhone());
         if (sysUser == null) {
             return null;
@@ -277,12 +273,12 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
             if (!passwordEncoder.matches(sysUserDTO.getOldPassword(), sysUserVO.getPassword())) {
                 throw new BusinessException("原密码输入错误");
             }
-            LambdaUpdateWrapper<SysUser> suuw = new LambdaUpdateWrapper<>();
+            LambdaUpdateWrapper<SysUser> suuw = Wrappers.lambdaUpdate(SysUser.class);
             suuw.set(SysUser::getPassword, passwordEncoder.encode(sysUserDTO.getNewPassword()));
             suuw.eq(SysUser::getUserName, ZerosSecurityContextHolder.getUserName());
             return update(suuw);
         }
-        LambdaUpdateWrapper<SysUser> suuw = new LambdaUpdateWrapper<>();
+        LambdaUpdateWrapper<SysUser> suuw = Wrappers.lambdaUpdate(SysUser.class);
         suuw.set(SysUser::getNickName, sysUserDTO.getNickName());
         suuw.set(SysUser::getEmail, sysUserDTO.getEmail());
         suuw.set(SysUser::getPhoneNumber, sysUserDTO.getPhoneNumber());

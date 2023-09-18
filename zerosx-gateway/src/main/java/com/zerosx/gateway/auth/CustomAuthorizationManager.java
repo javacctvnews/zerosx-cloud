@@ -1,16 +1,14 @@
 package com.zerosx.gateway.auth;
 
 import com.zerosx.common.base.constants.SecurityConstants;
-import com.zerosx.common.base.utils.JacksonUtil;
 import com.zerosx.common.base.vo.LoginUserTenantsBO;
 import com.zerosx.common.base.vo.SysMenuBO;
 import com.zerosx.common.core.enums.UserTypeEnum;
 import com.zerosx.common.core.utils.AntPathMatcherUtils;
 import com.zerosx.common.core.vo.CustomUserDetails;
-import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.security.properties.CustomSecurityProperties;
 import com.zerosx.common.security.properties.PermissionProperties;
-import com.zerosx.gateway.feign.AsyncSysUserService;
+import com.zerosx.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

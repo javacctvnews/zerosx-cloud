@@ -3,7 +3,8 @@ package com.zerosx.sms.core.provider;
 import com.zerosx.sms.core.client.AlibabaSmsClient;
 import com.zerosx.sms.core.config.AlibabaConfig;
 import com.zerosx.sms.enums.SupplierTypeEnum;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,8 +16,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author: javacctvnews
  * @create: 2023-08-30 14:36
  **/
-@Slf4j
 public class AlibabaProviderFactory implements ISmsProviderFactory<AlibabaSmsClient, AlibabaConfig> {
+
+    private static final Logger log = LoggerFactory.getLogger(AlibabaProviderFactory.class);
+
     /**
      * key 是 accessKey + regionId
      */
@@ -25,10 +28,7 @@ public class AlibabaProviderFactory implements ISmsProviderFactory<AlibabaSmsCli
     private static final AlibabaProviderFactory INSTANCE = new AlibabaProviderFactory();
 
     private AlibabaProviderFactory() {
-    }
 
-    private static final class ConfigHolder {
-        private static AlibabaConfig config = new AlibabaConfig();
     }
 
     /**
@@ -40,10 +40,15 @@ public class AlibabaProviderFactory implements ISmsProviderFactory<AlibabaSmsCli
         return INSTANCE;
     }
 
+    /**
+     * 缓存实例的key
+     *
+     * @param config
+     * @return
+     */
     private String key(AlibabaConfig config) {
         return config.getAccessKeyId() + config.getRegionId();
     }
-
 
     @Override
     public AlibabaSmsClient createSms(AlibabaConfig config) {
@@ -59,23 +64,13 @@ public class AlibabaProviderFactory implements ISmsProviderFactory<AlibabaSmsCli
     public AlibabaSmsClient createMultiSms(AlibabaConfig config) {
         AlibabaSmsClient client = new AlibabaSmsClient(config);
         clientMap.put(key(config), client);
-        log.debug("[{}]创建【{}】实例, 当前{}个AlibabaSmsClient", config.getOperatorId(), SupplierTypeEnum.ALIBABA.getCode(), clientMap.size());
+        log.debug("创建【{}】实例, 当前{}个AlibabaSmsClient", SupplierTypeEnum.ALIBABA.getCode(), clientMap.size());
         return client;
     }
 
     @Override
     public AlibabaSmsClient refresh(AlibabaConfig config) {
         return createMultiSms(config);
-    }
-
-    @Override
-    public AlibabaConfig getConfig() {
-        return ConfigHolder.config;
-    }
-
-    @Override
-    public void setConfig(AlibabaConfig config) {
-        ConfigHolder.config = config;
     }
 
     @Override

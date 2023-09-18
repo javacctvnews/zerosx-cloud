@@ -62,7 +62,6 @@ public class SmsSupplierController implements ISmsSupplierControllerApi {
     }
 
     @Operation(summary = "按id查询")
-    @SystemLog(title = "短信配置", btnName = "按id查询", businessType = BusinessType.QUERY)
     @GetMapping("/sms_supplier/queryById/{id}")
     public ResultVO<SmsSupplierVO> queryById(@PathVariable Long id) {
         return ResultVOUtil.success(smsSupplierService.queryById(id));

@@ -36,20 +36,6 @@ public interface ISmsProviderFactory<T extends IMultiSmsClient, R extends ISuppl
     T refresh(R c);
 
     /**
-     * 设置配置
-     *
-     * @param config 配置对象
-     */
-    void setConfig(R config);
-
-    /**
-     * 获取配置
-     *
-     * @return
-     */
-    R getConfig();
-
-    /**
      * 移除client
      * @param operatorId
      */

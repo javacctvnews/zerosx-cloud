@@ -46,7 +46,7 @@
           <el-button icon="el-icon-refresh-right" size="small" @click="rotateRight()"></el-button>
         </el-col>
         <el-col :lg="{span: 2, offset: 6}" :sm="2" :xs="2">
-          <el-button type="primary" size="small" @click="uploadImg()">提 交</el-button>
+          <el-button type="primary" :loading="uploading" size="small" @click="uploadImg()">提 交</el-button>
         </el-col>
       </el-row>
     </el-dialog>
@@ -68,6 +68,7 @@ export default {
   },
   data() {
     return {
+      uploading:false,
       // 是否显示弹出层
       open: false,
       // 是否显示cropper
@@ -138,12 +139,16 @@ export default {
       this.$refs.cropper.getCropBlob(data => {
         let formData = new FormData();
         formData.append("avatarfile", data);
+        this.uploading = true;
         uploadAvatar(formData).then(response => {
           this.open = false;
           this.options.img = response.data.imgUrl;
           store.commit('SET_AVATAR', this.options.img);
           this.$modal.msgSuccess("修改成功");
           this.visible = false;
+          this.uploading = false;
+        }).catch(err=>{
+          this.uploading = false;
         });
       });
     },

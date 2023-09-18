@@ -1,5 +1,6 @@
 package com.zerosx.auth.controller;
 
+import com.zerosx.common.base.vo.OauthClientDetailsBO;
 import com.zerosx.auth.dto.OauthClientDetailsDTO;
 import com.zerosx.auth.dto.OauthClientDetailsPageDTO;
 import com.zerosx.auth.service.IOauthClientDetailsService;
@@ -63,7 +64,6 @@ public class OauthClientDetailsController {
     }
 
     @Operation(summary = "按id查询")
-    @SystemLog(title = "客户端管理", btnName = "按id查询", businessType = BusinessType.QUERY)
     @GetMapping("/oauth_client_details/queryById/{id}")
     public ResultVO<OauthClientDetailsVO> queryById(@PathVariable Long id) {
         return ResultVOUtil.success(oauthClientDetailsService.queryById(id));
@@ -90,6 +90,12 @@ public class OauthClientDetailsController {
     @PostMapping("/oauth_client_details/select")
     public ResultVO<List<SelectOptionVO>> selectList() {
         return ResultVOUtil.success(oauthClientDetailsService.selectList());
+    }
+
+    @Operation(summary = "按clientId查询")
+    @GetMapping("/oauth_client_details/{clientId}")
+    public ResultVO<OauthClientDetailsBO> getClient(@PathVariable("clientId") String clientId) {
+        return ResultVOUtil.success(oauthClientDetailsService.getClient(clientId));
     }
 
 }

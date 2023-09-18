@@ -2,7 +2,6 @@ package com.zerosx.common.oss.core;
 
 import com.zerosx.common.oss.core.client.IOssClientService;
 import com.zerosx.common.oss.core.config.IOssConfig;
-import com.zerosx.common.oss.core.provider.TencentOssProviderFactory;
 import com.zerosx.common.oss.enums.OssTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 

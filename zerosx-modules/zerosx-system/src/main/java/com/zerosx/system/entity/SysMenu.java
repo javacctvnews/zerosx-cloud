@@ -5,21 +5,23 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
  * 菜单权限表
- * @Description
+ *
  * @author javacctvnews
+ * @Description
  * @date 2023-07-20 14:49:30
  */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
 @TableName(value = "t_sys_menu")
-public class SysMenu {
+public class SysMenu implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

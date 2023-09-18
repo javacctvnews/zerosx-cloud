@@ -10,7 +10,7 @@ import com.zerosx.common.core.utils.IdGenerator;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.redis.templete.RedissonOpService;
-import com.zerosx.common.redis.enums.RedisKeyNameEnum;
+import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.system.dto.SysRoleDTO;
 import com.zerosx.system.dto.SysRoleMenuQueryDTO;
 import com.zerosx.system.dto.SysRolePageDTO;

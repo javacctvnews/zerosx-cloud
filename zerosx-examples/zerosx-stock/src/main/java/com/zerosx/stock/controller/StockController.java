@@ -21,4 +21,9 @@ public class StockController implements IStockControllerApi {
         return ResultVOUtil.successBoolean(stockService.decreaseStock(commodityDTO));
     }
 
+    @PostMapping("/decrease_stock/redis")
+    public ResultVO<?> decreaseStockRedis() {
+        return ResultVOUtil.success(stockService.decreaseStockRedis());
+    }
+
 }

@@ -5,11 +5,9 @@ import com.aliyun.oss.model.GeneratePresignedUrlRequest;
 import com.aliyun.oss.model.PutObjectRequest;
 import com.aliyun.oss.model.PutObjectResult;
 import com.aliyun.oss.model.VoidResult;
-import com.zerosx.common.base.enums.ResultEnum;
-import com.zerosx.common.base.exception.BusinessException;
-import com.zerosx.common.base.vo.OssObjectVO;
 import com.zerosx.common.oss.core.config.AliyunOssConfig;
 import com.zerosx.common.oss.core.config.IOssConfig;
+import com.zerosx.common.oss.model.OssObjectVO;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStream;
@@ -59,10 +57,10 @@ public class AliyunClientService extends AbsOssClientService {
             }
         } catch (OSSException oe) {
             log.error("文件上传出现OSSException：" + objectName, oe);
-            throw new BusinessException(ResultEnum.FAIL.getCode(), "文件上传异常：" + oe.getErrorMessage());
+            throw new RuntimeException("文件上传异常：" + oe.getErrorMessage());
         } catch (ClientException ce) {
             log.error("OSS客户端连接异常", ce);
-            throw new BusinessException(ResultEnum.FAIL.getCode(), "OSS客户端连接异常：" + ce.getErrorMessage());
+            throw new RuntimeException("OSS客户端连接异常：" + ce.getErrorMessage());
         }
         return null;
     }
@@ -109,10 +107,10 @@ public class AliyunClientService extends AbsOssClientService {
             url = ossClient.generatePresignedUrl(request);
         } catch (OSSException oe) {
             log.error(oe.getMessage(), oe);
-            throw new BusinessException(ResultEnum.FAIL.getCode(), "文件查询异常：" + oe.getErrorMessage());
+            throw new RuntimeException("文件查询异常：" + oe.getErrorMessage());
         } catch (ClientException ce) {
             log.error(ce.getMessage(), ce);
-            throw new BusinessException(ResultEnum.FAIL.getCode(), "OSS客户端连接异常：" + ce.getErrorMessage());
+            throw new RuntimeException("OSS客户端连接异常：" + ce.getErrorMessage());
         }
         OssObjectVO vo = new OssObjectVO();
         vo.setObjectName(objectName);
@@ -128,10 +126,10 @@ public class AliyunClientService extends AbsOssClientService {
             voidResult = ossClient.deleteObject(aliyunOssConfig.getBucketName(), objectName);
         } catch (OSSException oe) {
             log.error(oe.getMessage(), oe);
-            throw new BusinessException(ResultEnum.FAIL.getCode(), "文件删除异常：" + oe.getErrorMessage());
+            throw new RuntimeException("文件删除异常：" + oe.getErrorMessage());
         } catch (ClientException ce) {
             log.error(ce.getMessage(), ce);
-            throw new BusinessException(ResultEnum.FAIL.getCode(), "OSS客户端连接异常：" + ce.getErrorMessage());
+            throw new RuntimeException("OSS客户端连接异常：" + ce.getErrorMessage());
         }
         return voidResult != null && voidResult.getResponse().isSuccessful();
     }
