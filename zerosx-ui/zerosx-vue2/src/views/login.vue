@@ -13,8 +13,7 @@
                 <h3>体验账号</h3>
                 <ul>
                   <li>超级管理员账号：admin123/Admin123</li>
-                  <li>租户管理员账号：zeros/Zeros1234</li>
-                  <li>租户普通账号：z001/Zeros1234</li>
+                  <li>租户管理员账号：zuo123/Zuo123456</li>
                 </ul>
               </div>
             </div>
@@ -36,7 +35,7 @@
                 </el-input>
               </el-form-item>
               <el-form-item prop="code" v-if="captchaEnabled">
-                <el-input clearable v-model="loginForm.code" auto-complete="off" placeholder="验证码" style="width: 60%"
+                <el-input clearable v-model="loginForm.code" auto-complete="off" placeholder="验证码(纯数字)" style="width: 60%"
                   @keyup.enter.native="handleLogin">
                   <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon" />
                 </el-input>

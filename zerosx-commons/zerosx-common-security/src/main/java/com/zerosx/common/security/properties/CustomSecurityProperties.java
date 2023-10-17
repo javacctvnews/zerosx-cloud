@@ -21,10 +21,7 @@ public class CustomSecurityProperties {
      * 默认redis
      */
     private String tokenStoreType = "redis";
-    /**
-     * Token存储前缀
-     */
-    private String tokenStorePrefix = CommonConstants.ZEROSX;
+
     /**
      * jwt的signingKey
      */

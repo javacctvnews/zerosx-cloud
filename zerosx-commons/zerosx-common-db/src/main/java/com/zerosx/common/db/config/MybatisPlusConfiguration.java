@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInt
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.zerosx.common.db.handler.CustomMetaObjectHandler;
 import com.zerosx.common.db.interceptor.CustomTenantInterceptor;
+import com.zerosx.common.db.interceptor.EncryptInnerInterceptor;
 import com.zerosx.common.db.properties.MybatisPlusAutoFillProperties;
 import com.zerosx.common.db.properties.TenantProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,7 @@ public class MybatisPlusConfiguration {
     @Bean
     public MybatisPlusInterceptor paginationInterceptor() {
         MybatisPlusInterceptor mpInterceptor = new MybatisPlusInterceptor();
+        mpInterceptor.addInnerInterceptor(new EncryptInnerInterceptor());
         boolean enableTenant = tenantProperties.getEnable();
         //是否开启多租户隔离
         if (enableTenant) {
@@ -61,7 +63,7 @@ public class MybatisPlusConfiguration {
     }
 
     /*
-    *//**
+     *//**
      * pagehelper的分页插件
      *//*
     @Bean

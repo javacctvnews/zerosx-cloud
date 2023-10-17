@@ -68,10 +68,11 @@ public interface ISysMenuService extends ISuperService<SysMenu> {
 
     SysRoleMenuTreeVO roleMenuTree(SysRoleMenuQueryDTO sysRoleMenuQueryDTO);
 
-    SysPermissionBO findByRoleCodes(RolePermissionDTO rolePermissionDTO);
+    SysPermissionBO queryPermsByRoleIds(RolePermissionDTO rolePermissionDTO);
 
     List<SysMenuBO> findByRoleCodes(List<Long> roleIds);
 
     Set<String> queryPermList(Set<Long> roles);
+
 }
 

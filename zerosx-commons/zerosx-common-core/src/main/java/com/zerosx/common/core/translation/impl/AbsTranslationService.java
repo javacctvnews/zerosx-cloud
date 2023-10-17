@@ -6,14 +6,13 @@ import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.core.feign.AsyncFeignService;
 import com.zerosx.common.core.translation.ITranslationService;
 import com.zerosx.common.redis.templete.RedissonOpService;
-import com.zerosx.utils.JacksonUtil;
-import com.zerosx.utils.SpringUtils;
+import com.zerosx.common.utils.JacksonUtil;
+import com.zerosx.common.utils.SpringUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ObjectUtils;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -114,10 +113,10 @@ public abstract class AbsTranslationService<T> implements ITranslationService<T>
             if (Objects.isNull(data)) {
                 return EMPTY;
             }
-            String endRes = EMPTY;
+            String endRes;
             if (data instanceof String) {
                 endRes = (String) data;
-            } else if (data instanceof Map) {
+            } else {
                 endRes = JacksonUtil.toJSONString(data);
             }
             if (StringUtils.isNotBlank(endRes)) {

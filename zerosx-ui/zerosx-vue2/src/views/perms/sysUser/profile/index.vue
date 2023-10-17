@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <el-col :span="6" :xs="24">
+      <el-col :span="8" :xs="24">
         <el-card class="box-card">
           <div slot="header" class="clearfix">
             <span>个人信息</span>
@@ -12,8 +12,12 @@
             </div>
             <ul class="list-group list-group-striped">
               <li class="list-group-item">
-                <svg-icon icon-class="user" />用户名称
+                <svg-icon icon-class="user" />用户名
                 <div class="pull-right">{{ user.userName }}</div>
+              </li>
+              <li class="list-group-item">
+                <svg-icon icon-class="user" />用户昵称
+                <div class="pull-right">{{ user.nickName }}</div>
               </li>
               <li class="list-group-item">
                 <svg-icon icon-class="phone" />手机号码
@@ -26,6 +30,7 @@
               <li class="list-group-item">
                 <svg-icon icon-class="tree" />所属部门
                 <div class="pull-right" v-if="user.dept">{{ user.deptId }} / {{ postGroup }}</div>
+                <div class="pull-right" v-else>暂无</div>
               </li>
               <li class="list-group-item">
                 <svg-icon icon-class="peoples" />所属角色
@@ -35,11 +40,23 @@
                 <svg-icon icon-class="date" />创建日期
                 <div class="pull-right">{{ user.createTime }}</div>
               </li>
+              <li class="list-group-item">
+                <svg-icon icon-class="user" />创建人
+                <div class="pull-right">{{ user.createBy }}</div>
+              </li>
+              <li class="list-group-item">
+                <svg-icon icon-class="date" />最近更新时间
+                <div class="pull-right">{{ user.updateTime }}</div>
+              </li>
+              <li class="list-group-item">
+                <svg-icon icon-class="user" />最近更新
+                <div class="pull-right">{{ user.updateBy }}</div>
+              </li>
             </ul>
           </div>
         </el-card>
       </el-col>
-      <el-col :span="18" :xs="24">
+      <el-col :span="16" :xs="24">
         <el-card>
           <div slot="header" class="clearfix">
             <span>基本资料</span>

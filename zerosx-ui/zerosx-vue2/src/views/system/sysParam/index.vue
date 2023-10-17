@@ -8,7 +8,7 @@
       </el-form-item>
       <el-form-item label="参数范围" prop="paramScope">
         <el-select v-model="queryParams.t.paramScope" placeholder="参数范围" clearable style="width: 220px;">
-          <el-option v-for="dict in dict.type.sys_param_scope" :key="dict.value" :label="dict.label"
+          <el-option v-for="dict in dict.type.ParamScopeEnum" :key="dict.value" :label="dict.label"
             :value="dict.value" />
         </el-select>
       </el-form-item>
@@ -57,7 +57,7 @@
           <dict-tag :options="dict.type.StatusEnum" :value="scope.row.status" />
         </template>
         <template slot-scope="scope" slot="paramScope">
-          <dict-tag :options="dict.type.sys_param_scope" :value="scope.row.paramScope" />
+          <dict-tag :options="dict.type.ParamScopeEnum" :value="scope.row.paramScope" />
         </template>
       </TablePlus>
     </div>
@@ -72,7 +72,7 @@
       <el-form ref="form" :model="form" label-width="110px" size="small" :rules="rules">
         <el-form-item label="参数范围" prop="paramScope">
           <el-radio-group v-model="form.paramScope">
-            <el-radio v-for="dict in dict.type.sys_param_scope" :key="dict.value" :label="dict.value">{{ dict.label
+            <el-radio v-for="dict in dict.type.ParamScopeEnum" :key="dict.value" :label="dict.value">{{ dict.label
             }}</el-radio>
           </el-radio-group>
         </el-form-item>
@@ -119,7 +119,7 @@ import { operators } from '@/api/common.js'
 
 export default {
   name: 'SysParam',
-  dicts: ['StatusEnum', 'sys_param_scope'],
+  dicts: ['StatusEnum', 'ParamScopeEnum'],
   data() {
     return {
       searching: false,
@@ -364,7 +364,7 @@ export default {
     },
     handleExport() {
       let name = '系统参数_' + this.parseTime(new Date(), '{y}{m}{d}{h}{i}{s}') + '.xlsx';
-      this.download(serviceConfig.system + '/sys_param/export', this.queryParams, name)
+      this.download(serviceConfig.resource + '/sys_param/export', this.queryParams, name)
     },
     handleDelete(row) {
       const idList = row.id || this.ids;

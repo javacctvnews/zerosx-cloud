@@ -4,19 +4,19 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;
-import com.zerosx.api.system.ISmsSupplierControllerApi;
-import com.zerosx.api.system.dto.SmsSendDTO;
+import com.zerosx.api.resource.ISmsSupplierClient;
+import com.zerosx.api.resource.dto.SmsSendDTO;
 import com.zerosx.auth.dto.SmsCodeDTO;
 import com.zerosx.auth.service.IVerificationCodeService;
 import com.zerosx.auth.vo.AuthCaptchaVO;
 import com.zerosx.auth.vo.SmsCodeVO;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.ResultVO;
+import com.zerosx.common.core.enums.RedisKeyNameEnum;
+import com.zerosx.common.core.enums.sms.SmsBusinessCodeEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.utils.IdGenerator;
-import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.redis.templete.RedissonOpService;
-import com.zerosx.common.core.enums.sms.SmsBusinessCodeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ public class VerificationCodeServiceImpl implements IVerificationCodeService {
     @Autowired
     private RedissonOpService redissonOpService;
     @Autowired
-    private ISmsSupplierControllerApi smsSupplierControllerApi;
+    private ISmsSupplierClient smsSupplierControllerApi;
 
     @Override
     public AuthCaptchaVO createCode() {

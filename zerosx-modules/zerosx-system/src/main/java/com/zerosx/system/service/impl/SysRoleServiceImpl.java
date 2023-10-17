@@ -3,14 +3,18 @@ package com.zerosx.system.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.common.base.exception.BusinessException;
+import com.zerosx.common.base.vo.BaseTenantDTO;
 import com.zerosx.common.base.vo.RequestVO;
+import com.zerosx.common.base.vo.SelectOptionVO;
+import com.zerosx.common.core.enums.RedisKeyNameEnum;
+import com.zerosx.common.core.enums.StatusEnum;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
-import com.zerosx.common.core.utils.BeanCopierUtil;
+import com.zerosx.common.core.utils.EasyTransUtils;
 import com.zerosx.common.core.utils.IdGenerator;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.redis.templete.RedissonOpService;
-import com.zerosx.common.core.enums.RedisKeyNameEnum;
+import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.system.dto.SysRoleDTO;
 import com.zerosx.system.dto.SysRoleMenuQueryDTO;
 import com.zerosx.system.dto.SysRolePageDTO;
@@ -32,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -82,7 +87,7 @@ public class SysRoleServiceImpl extends SuperServiceImpl<ISysRoleMapper, SysRole
     @Override
     @Transactional(rollbackFor = {Exception.class})
     public boolean add(SysRoleDTO sysRoleDTO) {
-        SysRole addEntity = BeanCopierUtil.copyProperties(sysRoleDTO, SysRole.class);
+        SysRole addEntity = BeanCopierUtils.copyProperties(sysRoleDTO, SysRole.class);
         if (StringUtils.isBlank(sysRoleDTO.getRoleKey())) {
             addEntity.setRoleKey(IdGenerator.getIdStr());
         }
@@ -108,7 +113,7 @@ public class SysRoleServiceImpl extends SuperServiceImpl<ISysRoleMapper, SysRole
         LambdaQueryWrapper<SysRole> countqw = Wrappers.lambdaQuery(SysRole.class);
         countqw.eq(SysRole::getRoleName, sysRoleDTO.getRoleName());
         countqw.eq(SysRole::getOperatorId, sysRoleDTO.getOperatorId());
-        countqw.ne(sysRoleDTO.getId() !=null, SysRole::getId, sysRoleDTO.getId());
+        countqw.ne(sysRoleDTO.getId() != null, SysRole::getId, sysRoleDTO.getId());
         long count = count(countqw);
         if (count > 0) {
             throw new BusinessException("已存在【" + sysRoleDTO.getRoleName() + "】，不能重复添加");
@@ -125,7 +130,7 @@ public class SysRoleServiceImpl extends SuperServiceImpl<ISysRoleMapper, SysRole
         checkExistName(sysRoleDTO);
         //更新前删除改角色关联的权限缓存
         redissonOpService.del(RedisKeyNameEnum.key(RedisKeyNameEnum.ROLE_PERMISSIONS, sysRoleDTO.getId()));
-        SysRole updateEntity = BeanCopierUtil.copyProperties(sysRoleDTO, SysRole.class);
+        SysRole updateEntity = BeanCopierUtils.copyProperties(sysRoleDTO, SysRole.class);
         LambdaQueryWrapper<SysRoleMenu> srmqw = Wrappers.lambdaQuery(SysRoleMenu.class);
         srmqw.eq(SysRoleMenu::getRoleId, sysRoleDTO.getId());
         sysRoleMenuService.remove(srmqw);
@@ -147,7 +152,7 @@ public class SysRoleServiceImpl extends SuperServiceImpl<ISysRoleMapper, SysRole
 
     @Override
     public SysRoleVO queryById(Long id) {
-        SysRoleVO sysRoleVO = BeanCopierUtil.copyProperties(getById(id), SysRoleVO.class);
+        SysRoleVO sysRoleVO = EasyTransUtils.copyTrans(getById(id), SysRoleVO.class);
         SysRoleMenuQueryDTO dto = new SysRoleMenuQueryDTO();
         dto.setRoleId(id);
         SysRoleMenuTreeVO sysRoleMenuTreeVO = sysMenuService.roleMenuTree(dto);
@@ -186,9 +191,28 @@ public class SysRoleServiceImpl extends SuperServiceImpl<ISysRoleMapper, SysRole
         srqw.in(SysRole::getId, deptRoleIds);
         List<SysRole> sysRoles = baseMapper.selectList(srqw);
         if (CollectionUtils.isNotEmpty(sysRoles)) {
-            List<SysRoleVO> deptRoles = BeanCopierUtil.copyPropertiesOfList(sysRoles, SysRoleVO.class);
+            List<SysRoleVO> deptRoles = BeanCopierUtils.copyProperties(sysRoles, SysRoleVO.class);
             resList.addAll(deptRoles);
         }
         return resList;
+    }
+
+    @Override
+    public void excelExport(RequestVO<SysRolePageDTO> requestVO, HttpServletResponse response) {
+        excelExport(PageUtils.of(requestVO, false), getWrapper(requestVO.getT()), SysRolePageVO.class, response);
+    }
+
+    @Override
+    public List<SelectOptionVO> selectOptions(BaseTenantDTO baseTenantDTO) {
+        LambdaQueryWrapper<SysRole> qw = Wrappers.lambdaQuery(SysRole.class);
+        qw.select(SysRole::getId, SysRole::getRoleName);
+        qw.eq(SysRole::getOperatorId, baseTenantDTO.getOperatorId());
+        qw.eq(SysRole::getStatus, StatusEnum.NORMAL.getCode());
+        List<SysRole> list = list(qw);
+        List<SelectOptionVO> res = new ArrayList<>();
+        for (SysRole sysRole : list) {
+            res.add(new SelectOptionVO(sysRole.getId(), sysRole.getRoleName()));
+        }
+        return res;
     }
 }

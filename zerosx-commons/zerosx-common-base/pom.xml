@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.zerosx.cloud</groupId>
         <artifactId>zerosx-commons</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.2</version>
     </parent>
 
     <artifactId>zerosx-common-base</artifactId>
@@ -21,8 +21,8 @@
             <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-utils</artifactId>
         </dependency>
     </dependencies>
 

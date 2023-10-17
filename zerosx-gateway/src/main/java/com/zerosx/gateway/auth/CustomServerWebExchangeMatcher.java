@@ -4,7 +4,6 @@ import com.zerosx.common.core.utils.AntPathMatcherUtils;
 import com.zerosx.common.security.properties.CustomSecurityProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -17,8 +16,6 @@ import java.util.List;
 public class CustomServerWebExchangeMatcher implements ServerWebExchangeMatcher {
 
     private final CustomSecurityProperties customSecurityProperties;
-
-    private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     public CustomServerWebExchangeMatcher(CustomSecurityProperties customSecurityProperties) {
         this.customSecurityProperties = customSecurityProperties;

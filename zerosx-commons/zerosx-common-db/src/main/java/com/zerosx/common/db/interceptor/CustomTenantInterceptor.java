@@ -3,7 +3,7 @@ package com.zerosx.common.db.interceptor;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
-import com.zerosx.common.core.enums.UserTypeEnum;
+import com.zerosx.common.core.enums.system.UserTypeEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.executor.Executor;

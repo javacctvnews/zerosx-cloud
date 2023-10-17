@@ -36,8 +36,11 @@ public class SystemOperatorLogPageDTO implements Serializable {
     private String endOperatorTime;
 
     /**
-     * 业务类型（0其它 1新增 2修改 3删除）
+     * 按钮操作类别
      */
-    private Integer businessType;
+    private String businessType;
 
+    private Integer beginLimit;
+
+    private Integer limitNumber;
 }

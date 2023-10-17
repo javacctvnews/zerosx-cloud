@@ -7,7 +7,7 @@
     <parent>
         <artifactId>zerosx-cloud</artifactId>
         <groupId>com.zerosx.cloud</groupId>
-        <version>0.0.1</version>
+        <version>0.0.2</version>
     </parent>
 
     <artifactId>zerosx-api</artifactId>
@@ -15,6 +15,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>zerosx-api-resource</module>
         <module>zerosx-api-system</module>
         <module>zerosx-api-auth</module>
         <module>zerosx-api-examples</module>

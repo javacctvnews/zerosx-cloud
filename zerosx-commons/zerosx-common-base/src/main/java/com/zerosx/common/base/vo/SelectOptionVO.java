@@ -1,10 +1,7 @@
 package com.zerosx.common.base.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.List;
@@ -16,8 +13,9 @@ import java.util.List;
  */
 @Setter
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
 @Schema(description = "前端select下拉框对象")
 public class SelectOptionVO implements Serializable {
 
@@ -32,4 +30,8 @@ public class SelectOptionVO implements Serializable {
     @Schema(description = "选项子集合")
     private List<SelectOptionVO> children;
 
+    public SelectOptionVO(Object value, String label) {
+        this.value = value;
+        this.label = label;
+    }
 }

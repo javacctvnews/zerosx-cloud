@@ -16,10 +16,10 @@ import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.core.enums.GranterTypeEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
-import com.zerosx.common.core.utils.BeanCopierUtil;
+import com.zerosx.common.core.utils.EasyTransUtils;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
-import com.zerosx.utils.IpUtils;
+import com.zerosx.common.utils.IpUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +30,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
@@ -51,7 +52,7 @@ public class OauthTokenRecordServiceImpl extends SuperServiceImpl<IOauthTokenRec
     public CustomPageVO<OauthTokenRecordPageVO> pageList(RequestVO<OauthTokenRecordPageDTO> requestVO, boolean searchCount) {
         IPage<OauthTokenRecordPageVO> page = baseMapper.selectPage(PageUtils.of(requestVO, searchCount), lambdaQW(requestVO.getT()))
                 .convert((e) -> {
-                    OauthTokenRecordPageVO pageVO = BeanCopierUtil.copyProperties(e, OauthTokenRecordPageVO.class);
+                    OauthTokenRecordPageVO pageVO = EasyTransUtils.copyTrans(e, OauthTokenRecordPageVO.class);
                     if (StringUtils.isBlank(pageVO.getSourceLocation())) {
                         pageVO.setSourceLocation(IpUtils.getIpLocation(pageVO.getSourceIp()));
                         LambdaUpdateWrapper<OauthTokenRecord> qw = Wrappers.lambdaUpdate(OauthTokenRecord.class);
@@ -149,5 +150,10 @@ public class OauthTokenRecordServiceImpl extends SuperServiceImpl<IOauthTokenRec
         LambdaQueryWrapper<OauthTokenRecord> deleteqw = Wrappers.lambdaQuery(OauthTokenRecord.class);
         deleteqw.le(OauthTokenRecord::getCreateTime, LocalDateTime.now());
         return remove(deleteqw);
+    }
+
+    @Override
+    public void excelExport(RequestVO<OauthTokenRecordPageDTO> requestVO, HttpServletResponse response) {
+        excelExport(PageUtils.of(requestVO, false), lambdaQW(requestVO.getT()), OauthTokenRecordPageVO.class, response);
     }
 }

@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 public @interface EncryptFields {
 
     /**
-     * 敏感信息
+     * 敏感信息字段
      */
     EncryptField[] value() default {};
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zerosx.stock.mapper.IStockMapper">
+
+    <select id="queryList" resultType="com.zerosx.stock.entity.Stock">
+        select * from t_stock where 1=1
+        <if test="commodityCode!=null and commodityCode!=''">
+            and commodity_code = #{commodityCode}
+        </if>
+    </select>
+
+</mapper>

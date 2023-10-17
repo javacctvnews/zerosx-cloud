@@ -84,7 +84,8 @@ public class EncryptInterceptor extends AbsEncryptInterceptor {
                 return invocation.proceed();
             }
         }
-        Object cloneMap = mapClone(parameterObjectMap);
+        //不拷贝对象，会丢失自增ID等一些字段信息
+        Object cloneMap = parameterObjectMap;//mapClone(parameterObjectMap);
         if (cloneMap instanceof Map) {
             Map<String, Object> cloneMapTemp = (Map<String, Object>) cloneMap;
             Iterator<Map.Entry<String, Object>> iterator = cloneMapTemp.entrySet().iterator();

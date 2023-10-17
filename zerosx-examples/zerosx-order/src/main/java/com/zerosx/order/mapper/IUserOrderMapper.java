@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
  * 用户订单
  * 
  * @author javacctvnews
- * @date 2023-09-12 16:21:49
+ * @date 2023-09-22 14:09:54
  */
 @Mapper
 public interface IUserOrderMapper extends SuperMapper<UserOrder> {

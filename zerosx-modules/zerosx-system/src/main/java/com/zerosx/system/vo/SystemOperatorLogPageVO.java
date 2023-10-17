@@ -60,6 +60,7 @@ public class SystemOperatorLogPageVO implements Serializable {
     private String operatorIp;
 
     @Schema(description = "主机地址归属地")
+    @ExcelProperty(value = {"主机地址"})
     private String ipLocation;
 
     @Schema(description = "请求URL")
@@ -74,9 +75,9 @@ public class SystemOperatorLogPageVO implements Serializable {
     @ExcelProperty(value = {"请求方式"})
     private String requestMethod;
 
-    @Schema(description = "业务类型（0其它 1新增 2修改 3删除）")
-    @ExcelProperty(value = {"业务类型（0其它 1新增 2修改 3删除）"})
-    private Integer businessType;
+    @Schema(description = "按钮操作类别")
+    @ExcelProperty(value = {"按钮操作类别"})
+    private String businessType;
 
     @Schema(description = "创建时间")
     @ExcelProperty(value = {"创建时间"})

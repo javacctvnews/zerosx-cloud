@@ -4,11 +4,9 @@ import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.base.vo.SelectOptionVO;
-import com.zerosx.common.core.easyexcel.EasyExcelUtil;
-import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.vo.CustomPageVO;
-import com.zerosx.common.log.annotation.SystemLog;
-import com.zerosx.common.log.enums.BusinessType;
+import com.zerosx.common.log.anno.OpLog;
+import com.zerosx.common.log.enums.OpTypeEnum;
 import com.zerosx.system.dto.MutiTenancyGroupEditDTO;
 import com.zerosx.system.dto.MutiTenancyGroupQueryDTO;
 import com.zerosx.system.dto.MutiTenancyGroupSaveDTO;
@@ -36,27 +34,27 @@ public class MutiTenancyGroupController {
 
     @Operation(summary = "分页列表")
     @PostMapping("/muti_tenancy/list_pages")
-    @SystemLog(title = "多租户集团", btnName = "分页查询", businessType = BusinessType.QUERY)
+    @OpLog(mod = "多租户集团", btn = "分页查询", opType = OpTypeEnum.QUERY)
     public ResultVO<CustomPageVO<MutiTenancyGroupPageVO>> listPages(@RequestBody RequestVO<MutiTenancyGroupQueryDTO> requestVO) {
         return ResultVOUtil.success(mutiTenancyGroupService.listPages(requestVO, true));
     }
 
     @Operation(summary = "保存")
     @PostMapping("/muti_tenancy/save")
-    @SystemLog(title = "多租户集团", btnName = "新增", businessType = BusinessType.INSERT)
+    @OpLog(mod = "多租户集团", btn = "新增", opType = OpTypeEnum.INSERT)
     public ResultVO saveMutiTenancyGroup(@Validated @RequestBody MutiTenancyGroupSaveDTO mutiTenancyGroupSaveDTO) {
         return ResultVOUtil.success(mutiTenancyGroupService.saveMutiTenancyGroup(mutiTenancyGroupSaveDTO));
     }
 
     @Operation(summary = "更新")
     @PostMapping("/muti_tenancy/update")
-    @SystemLog(title = "多租户集团", btnName = "编辑", businessType = BusinessType.UPDATE)
+    @OpLog(mod = "多租户集团", btn = "编辑", opType = OpTypeEnum.UPDATE)
     public ResultVO updateGroupCompany(@Validated @RequestBody MutiTenancyGroupEditDTO mutiTenancyGroupEditDTO) throws Exception {
         return ResultVOUtil.success(mutiTenancyGroupService.editMutiTenancyGroup(mutiTenancyGroupEditDTO));
     }
 
     @Operation(summary = "删除")
-    @SystemLog(title = "多租户集团", btnName = "删除", businessType = BusinessType.DELETE)
+    @OpLog(mod = "多租户集团", btn = "删除", opType = OpTypeEnum.DELETE)
     @DeleteMapping("/muti_tenancy/deleted/{ids}")
     public ResultVO deleteGroupCompany(@PathVariable("ids") Long[] ids) {
         return ResultVOUtil.success(mutiTenancyGroupService.deleteGroupCompany(ids));
@@ -69,13 +67,10 @@ public class MutiTenancyGroupController {
     }
 
     @Operation(summary = "导出")
-    @SystemLog(title = "多租户集团", btnName = "导出", businessType = BusinessType.EXPORT)
+    @OpLog(mod = "多租户集团", btn = "导出", opType = OpTypeEnum.EXPORT)
     @PostMapping("/muti_tenancy/export")
     public void operatorExport(@RequestBody RequestVO<MutiTenancyGroupQueryDTO> requestVO, HttpServletResponse response) throws IOException {
-        long t1 = System.currentTimeMillis();
-        CustomPageVO<MutiTenancyGroupPageVO> pages = mutiTenancyGroupService.listPages(requestVO, false);
-        EasyExcelUtil.writeExcel(response, pages.getList(), MutiTenancyGroupPageVO.class);
-        log.debug("【{}】执行导出{}条 耗时:{}ms", ZerosSecurityContextHolder.getUserName(), pages.getTotal(), System.currentTimeMillis() - t1);
+        mutiTenancyGroupService.excelExport(requestVO,response);
     }
 
     @Operation(summary = "按id查询")

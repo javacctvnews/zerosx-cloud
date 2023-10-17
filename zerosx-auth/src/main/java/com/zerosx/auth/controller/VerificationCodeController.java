@@ -6,8 +6,8 @@ import com.zerosx.auth.vo.AuthCaptchaVO;
 import com.zerosx.auth.vo.SmsCodeVO;
 import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.log.annotation.SystemLog;
-import com.zerosx.common.log.enums.BusinessType;
+import com.zerosx.common.log.anno.OpLog;
+import com.zerosx.common.log.enums.OpTypeEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +39,7 @@ public class VerificationCodeController {
      */
     @Operation(summary = "图形验证码")
     @GetMapping("/auth/getImgCode")
-    @SystemLog(title = "验证码", btnName = "图形验证码", businessType = BusinessType.INSERT)
+    @OpLog(mod = "验证码", btn = "图形验证码", opType = OpTypeEnum.INSERT)
     public ResultVO<AuthCaptchaVO> getImgCode() {
         return ResultVOUtil.success(verificationCodeService.createCode());
     }
@@ -51,7 +51,7 @@ public class VerificationCodeController {
      */
     @Operation(summary = "短信验证码")
     @PostMapping("/auth/getSmsCode")
-    @SystemLog(title = "验证码", btnName = "短信验证码", businessType = BusinessType.INSERT)
+    @OpLog(mod = "验证码", btn = "短信验证码", opType = OpTypeEnum.INSERT)
     public ResultVO<SmsCodeVO> getSmsCode(@RequestBody SmsCodeDTO smsCodeDTO) {
         return ResultVOUtil.success(verificationCodeService.getSmsCode(smsCodeDTO));
     }

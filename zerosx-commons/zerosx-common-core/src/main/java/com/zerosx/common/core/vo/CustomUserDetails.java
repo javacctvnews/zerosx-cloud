@@ -2,7 +2,7 @@ package com.zerosx.common.core.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.zerosx.common.base.vo.SysUserBO;
+import com.zerosx.api.system.vo.LoginUserVO;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,7 +22,7 @@ import java.util.Set;
 @Setter
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CustomUserDetails extends SysUserBO implements UserDetails {
+public class CustomUserDetails extends LoginUserVO implements UserDetails {
 
     private static final long serialVersionUID = 3137580483489062264L;
 

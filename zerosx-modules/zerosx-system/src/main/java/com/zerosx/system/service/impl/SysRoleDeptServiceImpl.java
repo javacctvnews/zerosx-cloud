@@ -3,7 +3,6 @@ package com.zerosx.system.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
-import com.zerosx.system.entity.SysParam;
 import com.zerosx.system.entity.SysRoleDept;
 import com.zerosx.system.mapper.ISysRoleDeptMapper;
 import com.zerosx.system.service.ISysRoleDeptService;

@@ -6,11 +6,9 @@ import com.zerosx.auth.vo.OauthTokenRecordPageVO;
 import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.core.easyexcel.EasyExcelUtil;
-import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.vo.CustomPageVO;
-import com.zerosx.common.log.annotation.SystemLog;
-import com.zerosx.common.log.enums.BusinessType;
+import com.zerosx.common.log.anno.OpLog;
+import com.zerosx.common.log.enums.OpTypeEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -36,34 +34,31 @@ public class OauthTokenRecordController {
     private IOauthTokenRecordService oauthTokenRecordService;
 
     @Operation(summary = "分页列表")
-    @SystemLog(title = "登录日志", btnName = "分页查询", businessType = BusinessType.QUERY)
+    @OpLog(mod = "登录日志", btn = "分页查询", opType = OpTypeEnum.QUERY)
     @PostMapping("/oauth_token_record/page_list")
     public ResultVO<CustomPageVO<OauthTokenRecordPageVO>> pageList(@RequestBody RequestVO<OauthTokenRecordPageDTO> requestVO) {
         return ResultVOUtil.success(oauthTokenRecordService.pageList(requestVO, true));
     }
 
     @Operation(summary = "删除")
-    @SystemLog(title = "登录日志", btnName = "删除", businessType = BusinessType.DELETE)
+    @OpLog(mod = "登录日志", btn = "删除", opType = OpTypeEnum.DELETE)
     @DeleteMapping("/oauth_token_record/delete/{id}")
     public ResultVO<?> deleteRecord(@PathVariable("id") Long[] id) {
         return ResultVOUtil.successBoolean(oauthTokenRecordService.deleteRecord(id));
     }
 
     @Operation(summary = "清空所有")
-    @SystemLog(title = "登录日志", btnName = "清空所有", businessType = BusinessType.DELETE)
+    @OpLog(mod = "登录日志", btn = "清空所有", opType = OpTypeEnum.DELETE)
     @DeleteMapping("/oauth_token_record/delete_all")
     public ResultVO<?> deleteAll() {
         return ResultVOUtil.successBoolean(oauthTokenRecordService.deleteAll());
     }
 
     @Operation(summary = "导出")
-    @SystemLog(title = "登录日志", btnName = "导出", businessType = BusinessType.EXPORT)
+    @OpLog(mod = "登录日志", btn = "导出", opType = OpTypeEnum.EXPORT)
     @PostMapping("/oauth_token_record/export")
     public void operatorExport(@RequestBody RequestVO<OauthTokenRecordPageDTO> requestVO, HttpServletResponse response) throws IOException {
-        long t1 = System.currentTimeMillis();
-        CustomPageVO<OauthTokenRecordPageVO> pageInfo = oauthTokenRecordService.pageList(requestVO, false);
-        EasyExcelUtil.writeExcel(response, pageInfo.getList(), OauthTokenRecordPageVO.class);
-        log.debug("【{}】执行导出{}条 耗时:{}ms", ZerosSecurityContextHolder.getUserName(), pageInfo.getTotal(), System.currentTimeMillis() - t1);
+        oauthTokenRecordService.excelExport(requestVO, response);
     }
 
 }

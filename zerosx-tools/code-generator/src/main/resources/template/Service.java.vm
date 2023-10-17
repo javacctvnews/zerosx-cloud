@@ -9,6 +9,7 @@ import ${package}.${moduleName}.dto.${className}PageDTO;
 import ${package}.${moduleName}.dto.${className}DTO;
 import ${package}.${moduleName}.vo.${className}VO;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -61,5 +62,14 @@ public interface I${className}Service extends ISuperService<${className}> {
      * @return
      */
     boolean deleteRecord(Long[] ids);
+
+    /**
+     * 导出Excel
+     *
+     * @param requestVO requestVO
+     * @param response  response
+     */
+    void excelExport(RequestVO<${className}PageDTO> requestVO, HttpServletResponse response);
+
 }
 

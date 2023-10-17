@@ -1,17 +1,18 @@
 package com.zerosx.system.service;
 
 import com.zerosx.api.system.dto.UserLoginDTO;
+import com.zerosx.api.system.vo.LoginUserVO;
 import com.zerosx.common.base.vo.LoginUserTenantsBO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.core.service.ISuperService;
 import com.zerosx.common.core.vo.CustomPageVO;
-import com.zerosx.common.core.vo.CustomUserDetails;
 import com.zerosx.system.dto.SysUserDTO;
 import com.zerosx.system.dto.SysUserPageDTO;
 import com.zerosx.system.entity.SysUser;
 import com.zerosx.system.vo.SysUserPageVO;
 import com.zerosx.system.vo.SysUserVO;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -72,7 +73,7 @@ public interface ISysUserService extends ISuperService<SysUser> {
      */
     boolean deleteRecord(Long[] id);
 
-    CustomUserDetails queryLoginUser(UserLoginDTO userLoginDTO);
+    LoginUserVO queryLoginUser(UserLoginDTO userLoginDTO);
 
     LoginUserTenantsBO currentLoginUser(String userName);
 
@@ -81,5 +82,13 @@ public interface ISysUserService extends ISuperService<SysUser> {
     Map<String, Object> getUserProfile();
 
     boolean updateProfile(SysUserDTO sysUserDTO);
+
+    /**
+     * 导出Excel
+     *
+     * @param requestVO requestVO
+     * @param response  response
+     */
+    void excelExport(RequestVO<SysUserPageDTO> requestVO, HttpServletResponse response);
 }
 

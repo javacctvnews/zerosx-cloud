@@ -2,6 +2,7 @@ package com.zerosx.common.core.utils;
 
 import com.zerosx.common.base.anno.Trans;
 import com.zerosx.common.core.translation.TranslationFactory;
+import com.zerosx.common.utils.BeanCopierUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -29,6 +30,44 @@ public class EasyTransUtils {
      * 类需要翻译的字段集合的缓存
      */
     private static final Map<String, Set<Field>> enumsFieldsCacheMap = new ConcurrentHashMap<>();
+
+    /**
+     * 拷贝并翻译
+     *
+     * @param r         源对象
+     * @param targetClz 目标class
+     */
+    public static <T, R> T copyTrans(R r, Class<T> targetClz) {
+        T t = BeanCopierUtils.copyProperties(r, targetClz);
+        easyTrans(t);
+        return t;
+    }
+
+    /**
+     * 拷贝并翻译
+     *
+     * @param r 源对象
+     * @param t 目标对象
+     */
+    public static <T, R> T copyTrans(R r, T t) {
+        BeanCopierUtils.copyProperties(r, t);
+        easyTrans(t);
+        return t;
+    }
+
+    /**
+     * List拷贝并翻译
+     *
+     * @param sourceList  源List
+     * @param targetClass 目标targeClass
+     * @return 目标List
+     */
+    public static <R, T> List<T> copyTrans(List<R> sourceList, Class<T> targetClass) {
+        List<T> targetList = BeanCopierUtils.copyProperties(sourceList, targetClass);
+        easyTrans(targetList);
+        return targetList;
+    }
+
 
     /**
      * 单个对象翻译
@@ -98,7 +137,7 @@ public class EasyTransUtils {
         long t1 = System.currentTimeMillis();
         Set<Field> finalCacheTransFields = cacheTransFields;
         list.forEach((e) -> easyTrans(e, targetClazz, finalCacheTransFields));
-        log.debug("执行【{}】翻译 条数:{} 耗时{}ms", targetClazz.getName(), list.size(), System.currentTimeMillis() - t1);
+        log.debug("翻译{}条，耗时{}ms", list.size(), System.currentTimeMillis() - t1);
     }
 
     /**
@@ -109,7 +148,7 @@ public class EasyTransUtils {
      * @param fields
      * @param <T>
      */
-    public static <T> void easyTrans(T t, Class<?> targetClazz, Set<Field> fields) {
+    private static <T> void easyTrans(T t, Class<?> targetClazz, Set<Field> fields) {
         if (t == null) {
             return;
         }

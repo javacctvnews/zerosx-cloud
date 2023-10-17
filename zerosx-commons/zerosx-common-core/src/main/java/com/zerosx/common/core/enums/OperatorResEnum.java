@@ -1,7 +1,7 @@
 package com.zerosx.common.core.enums;
 
-import com.zerosx.common.base.anno.AutoDictData;
-import com.zerosx.common.base.enums.CodeEnum;
+import com.zerosx.common.anno.AutoDictData;
+import com.zerosx.common.base.BaseEnum;
 import lombok.Getter;
 
 /**
@@ -13,7 +13,7 @@ import lombok.Getter;
  **/
 @Getter
 @AutoDictData(code = "OperatorResEnum", name = "操作结果")
-public enum OperatorResEnum implements CodeEnum<String> {
+public enum OperatorResEnum implements BaseEnum<String> {
 
     NORMAL("0", "成功"),
 

@@ -38,6 +38,18 @@ services:
     volumes:
       # 配置文件
       - /home/zerosx-cloud/logs/:/home/zerosx-cloud/logs/
+  #资源服务
+  zerosx-resource:
+    image: registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-resource:0.0.1
+    container_name: zerosx-resource
+    environment:
+      # 时区上海
+      TZ: Asia/Shanghai
+    ports:
+      - "19106:19106"
+    volumes:
+      # 配置文件
+      - /home/zerosx-cloud/logs/:/home/zerosx-cloud/logs/
   #监控服务
 #  zerosx-monitor:
 #    image: registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-monitor:0.0.1

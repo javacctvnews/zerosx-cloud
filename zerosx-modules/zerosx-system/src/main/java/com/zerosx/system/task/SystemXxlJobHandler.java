@@ -35,11 +35,17 @@ public class SystemXxlJobHandler {
             try {
                 days = Integer.parseInt(jobParam);
             } catch (NumberFormatException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }
         boolean deleted = systemOperatorLogService.deleteSystemOperatorLog(days);
         log.debug("删除{}天前的日志：{}", days, deleted);
+    }
+
+
+    @XxlJob(value = "saveSysOpLog")
+    public void saveSysOpLog() {
+        systemOperatorLogService.saveSystemOperatorLog();
     }
 
 }

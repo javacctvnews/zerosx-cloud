@@ -4,6 +4,7 @@ const serviceConfig = {
   //微服务前缀
   system: '/api-system',
   auth: '/api-auth',
+  resource: '/api-resource',
   //客户端授权
   clientId: 'saas',
   clientSecret: 'Zeros9999!#@',

@@ -4,19 +4,19 @@
     <el-form :model="queryParams.t" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="auto"
       label-position="left">
       <el-form-item label="租户公司" prop="operatorId">
-        <el-select clearable v-model="queryParams.t.operatorId" placeholder="请选择租户公司" style="width: 200px;">
+        <el-select clearable v-model="queryParams.t.operatorId" placeholder="请选择租户公司" style="width: 220px;">
           <el-option v-for="item in operators" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="用户关键字" prop="userKeyword">
-        <el-input v-model="queryParams.t.userKeyword" placeholder="用户账号或昵称关键字" clearable style="width: 200px;" />
+      <el-form-item label="关键字" prop="userKeyword">
+        <el-input v-model="queryParams.t.userKeyword" placeholder="用户账号或昵称关键字" clearable style="width: 220px;" />
       </el-form-item>
       <el-form-item label="手机号码" prop="phoneNumber">
-        <el-input v-model="queryParams.t.phoneNumber" placeholder="请输入手机号码" clearable style="width: 200px;" />
+        <el-input v-model="queryParams.t.phoneNumber" placeholder="请输入手机号码" clearable style="width: 220px;" />
       </el-form-item>
       <el-form-item label="帐号状态" prop="status">
-        <el-select v-model="queryParams.t.status" placeholder="帐号状态" clearable style="width: 200px;">
+        <el-select v-model="queryParams.t.status" placeholder="帐号状态" clearable style="width: 220px;">
           <el-option v-for="dict in dict.type.StatusEnum" :key="dict.value" :label="dict.label" :value="dict.value" />
         </el-select>
       </el-form-item>
@@ -55,7 +55,7 @@
           <dict-tag :options="dict.type.StatusEnum" :value="scope.row.status" />
         </template>
         <template slot-scope="scope" slot="sex">
-          <dict-tag :options="dict.type.sys_user_sex" :value="scope.row.sex" />
+          <dict-tag :options="dict.type.SexEnum" :value="scope.row.sex" />
         </template>
         <template slot-scope="scope" slot="userType">
           <dict-tag :options="dict.type.sys_user_type" :value="scope.row.userType" />
@@ -75,7 +75,8 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="租户公司" prop="operatorId">
-              <el-select clearable v-model="form.operatorId" placeholder="请选择租户公司" style="width: 100%;">
+              <el-select @change="changeOpeator" clearable v-model="form.operatorId" placeholder="请选择租户公司"
+                style="width: 100%;">
                 <el-option v-for="item in operators" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
@@ -134,7 +135,7 @@
           <el-col :span="12">
             <el-form-item label="用户性别" prop="sex">
               <el-radio-group v-model="form.sex">
-                <el-radio v-for="dict in dict.type.sys_user_sex" :key="dict.value" :label="dict.value">{{ dict.label
+                <el-radio v-for="dict in dict.type.SexEnum" :key="dict.value" :label="dict.value">{{ dict.label
                 }}</el-radio>
               </el-radio-group>
             </el-form-item>
@@ -151,14 +152,15 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="所属部门" prop="deptId">
-              <treeselect v-model="form.deptId" :options="deptTreeData" :show-count="true" placeholder="请选择归属部门" />
+              <treeselect v-model="form.deptId" :options="deptTreeData" :show-count="true" placeholder="请选择归属部门"
+                noOptionsText="暂无数据" />
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
             <el-form-item label="角色权限" prop="roleIds">
               <el-select multiple clearable v-model="form.roleIds" placeholder="请选择权限角色" style="width: 100%;">
-                <el-option v-for="item in roleSelectData" :key="item.id" :label="item.roleName" :value="item.id">
+                <el-option v-for="item in roleSelectData" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -168,7 +170,7 @@
           <el-col :span="12">
             <el-form-item label="所属岗位" prop="postIds">
               <el-select multiple clearable v-model="form.postIds" placeholder="请选择岗位" style="width: 100%;">
-                <el-option v-for="item in postSelectData" :key="item.id" :label="item.postName" :value="item.id">
+                <el-option v-for="item in postSelectData" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -184,6 +186,7 @@
 </template>
 
 <script>
+import store from "@/store";
 import { pageList, addSysUser, queryById, updateSysUser, deleteSysUser } from '@/api/perms/sysUser.js';
 import { roleSelectList } from '@/api/perms/sysRole.js';
 import { detpTreeSelect } from '@/api/perms/sysDept.js'
@@ -195,7 +198,7 @@ import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
   name: 'SysUser',
-  dicts: ['StatusEnum', 'sys_user_sex', 'sys_user_type'],
+  dicts: ['StatusEnum', 'SexEnum', 'sys_user_type'],
   components: { Treeselect },
   data() {
     var checkPasswordRule = (rule, value, callback) => {
@@ -230,6 +233,9 @@ export default {
       },
       roleSelectData: [],
       postSelectData: [],
+      selectParam: {
+
+      },
       deptProps: {
         checkStrictly: true,
         expandTrigger: 'hover',
@@ -334,9 +340,9 @@ export default {
         //   { required: true, message: "备注不能为空", trigger: "blur" },
         //   { max: 500, message: '备注长度必须小于500个字符', trigger: 'blur' }
         // ],
-        deptId: [
-          { required: true, message: "所属部门不能为空", trigger: "blur" },
-        ],
+        // deptId: [
+        //   { required: true, message: "所属部门不能为空", trigger: "blur" },
+        // ],
       },
       columns: [
         {
@@ -489,8 +495,18 @@ export default {
   created() {
     this.getList();
     this.getOperators();
+    this.selectParam.operatorId = store.getters.operatorId;
   },
   methods: {
+    changeOpeator(val) {
+      this.selectParam = {
+        operatorId: val
+      }
+      this.form.deptId = undefined;
+      this.getDeptTreeSelect();
+      this.getRoleSelectList();
+      this.getPostSelectList();
+    },
     handleSortChange(sortProp) {
       this.queryParams.sortList = [];
       this.queryParams.sortList.push({ orderByColumn: sortProp.prop, sortType: sortProp.order });
@@ -500,17 +516,17 @@ export default {
 
     },
     getRoleSelectList() {
-      roleSelectList({}).then((res) => {
+      roleSelectList(this.selectParam).then((res) => {
         this.roleSelectData = res.data;
       })
     },
     getPostSelectList() {
-      postSelectList({}).then((res) => {
+      postSelectList(this.selectParam).then((res) => {
         this.postSelectData = res.data;
       })
     },
     getDeptTreeSelect() {
-      detpTreeSelect({}).then((res) => {
+      detpTreeSelect(this.selectParam).then((res) => {
         this.deptTreeData = res.data;
       })
     },
@@ -551,24 +567,28 @@ export default {
       this.$refs.tables.$refs.tablePlus.sort(this.defaultSort.prop, this.defaultSort.order)
     },
     handleAdd() {
+      this.reset();
+      this.form.operatorId = store.getters.operatorId;
       this.getDeptTreeSelect();
       this.getRoleSelectList();
       this.getPostSelectList();
-      this.reset();
-      this.showPass = true,
-        this.open = true;
+      this.showPass = true;
+      this.open = true;
       this.title = '新增系统用户'
     },
     handleUpdate(row) {
       this.showPass = false;
       this.reset();
       this.title = '编辑系统用户'
-      this.getDeptTreeSelect();
-      this.getRoleSelectList();
-      this.getPostSelectList();
+
       let id = row.id || this.ids;
       queryById(id).then((res) => {
         this.form = res.data;
+        this.selectParam.operatorId = res.data.operatorId;
+        console.log(this.selectParam)
+        this.getDeptTreeSelect();
+        this.getRoleSelectList();
+        this.getPostSelectList();
       });
       this.open = true
     },

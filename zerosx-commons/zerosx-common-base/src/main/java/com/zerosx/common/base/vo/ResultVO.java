@@ -1,6 +1,8 @@
 package com.zerosx.common.base.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.zerosx.common.base.enums.ResultEnum;
+import com.zerosx.common.base.exception.BusinessException;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -70,4 +72,19 @@ public class ResultVO<T> implements Serializable {
     public boolean success() {
         return this.code != null && this.code == 0;
     }
+
+    /**
+     * 检查是否有异常
+     * @return T
+     */
+    @JsonIgnore
+    public T checkException() {
+        if (success()) {
+            return this.data;
+        } else {
+            //非0表示有异常
+            throw new BusinessException(this.code, this.msg);
+        }
+    }
+
 }

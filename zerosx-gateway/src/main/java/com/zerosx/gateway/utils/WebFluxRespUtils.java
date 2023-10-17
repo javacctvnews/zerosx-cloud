@@ -1,7 +1,7 @@
 package com.zerosx.gateway.utils;
 
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.utils.JacksonUtil;
+import com.zerosx.common.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;

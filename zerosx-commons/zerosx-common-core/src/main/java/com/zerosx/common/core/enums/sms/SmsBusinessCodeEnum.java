@@ -1,13 +1,15 @@
 package com.zerosx.common.core.enums.sms;
 
+import com.zerosx.common.anno.AutoDictData;
+import com.zerosx.common.base.BaseEnum;
 import lombok.Getter;
 
 /**
  * sms业务编码
  */
 @Getter
-//@AutoDictData(name = "短信业务编码")
-public enum SmsBusinessCodeEnum /*implements CodeEnum<String>*/ {
+@AutoDictData(name = "短信业务编码")
+public enum SmsBusinessCodeEnum implements BaseEnum<String> {
 
     VERIFY_CODE("verify_code", "验证码"),
 

@@ -3,8 +3,6 @@ package com.zerosx.auth.service.impl;
 import cn.hutool.core.util.PageUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zerosx.common.base.vo.OauthClientDetailsBO;
 import com.zerosx.auth.dto.OauthClientDetailsDTO;
 import com.zerosx.auth.dto.OauthClientDetailsPageDTO;
 import com.zerosx.auth.entity.OauthClientDetails;
@@ -19,21 +17,22 @@ import com.zerosx.common.base.constants.HeadersConstants;
 import com.zerosx.common.base.constants.SecurityConstants;
 import com.zerosx.common.base.constants.TokenStoreConstants;
 import com.zerosx.common.base.exception.BusinessException;
+import com.zerosx.common.base.vo.OauthClientDetailsBO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.SelectOptionVO;
 import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
-import com.zerosx.common.core.utils.BeanCopierUtil;
+import com.zerosx.common.core.service.impl.SuperServiceImpl;
 import com.zerosx.common.core.utils.EasyTransUtils;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.redis.properties.CustomRedissonProperties;
-import com.zerosx.common.redis.templete.RedisOpService;
 import com.zerosx.common.redis.templete.RedissonOpService;
-import com.zerosx.common.security.utils.JdkSerializationUtils;
+import com.zerosx.common.utils.BeanCopierUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.redisson.codec.SerializationCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -44,12 +43,13 @@ import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.*;
 
 @Slf4j
 @Service
-public class OauthClientDetailsServiceImpl extends ServiceImpl<IOauthClientDetailsMapper, OauthClientDetails> implements IOauthClientDetailsService {
+public class OauthClientDetailsServiceImpl extends SuperServiceImpl<IOauthClientDetailsMapper, OauthClientDetails> implements IOauthClientDetailsService {
 
     /**
      * 清理token时每次取多少条数据
@@ -65,16 +65,16 @@ public class OauthClientDetailsServiceImpl extends ServiceImpl<IOauthClientDetai
     @Autowired
     private TokenStore tokenStore;
     @Autowired
-    private RedisOpService redisOpService;
-    @Autowired
     private CustomRedissonProperties customRedissonProperties;
     @Autowired
     private CustomJdbcClientDetailsService customJdbcClientDetailsService;
+    @Autowired
+    private SerializationCodec serializationCodec;
 
     @Override
     public CustomPageVO<OauthClientDetailsPageVO> listPage(RequestVO<OauthClientDetailsPageDTO> requestVO, boolean searchCount) {
         return PageUtils.of(baseMapper.selectPage(PageUtils.of(requestVO, searchCount), getWrapper(requestVO.getT())).convert((e) -> {
-            OauthClientDetailsPageVO pageVO = BeanCopierUtil.copyProperties(e, OauthClientDetailsPageVO.class);
+            OauthClientDetailsPageVO pageVO = EasyTransUtils.copyTrans(e, OauthClientDetailsPageVO.class);
             pageVO.setClientSecret(e.getClientSecretStr());
             pageVO.setAccessTokenValidity(e.getAccessTokenValiditySeconds());
             pageVO.setRefreshTokenValidity(e.getRefreshTokenValiditySeconds());
@@ -105,7 +105,7 @@ public class OauthClientDetailsServiceImpl extends ServiceImpl<IOauthClientDetai
 
     @Override
     public OauthClientDetailsBO getClient(String clientId) {
-        OauthClientDetailsBO oauthClientDetailsBO = BeanCopierUtil.copyProperties(getByClientId(clientId), OauthClientDetailsBO.class);
+        OauthClientDetailsBO oauthClientDetailsBO = BeanCopierUtils.copyProperties(getByClientId(clientId), OauthClientDetailsBO.class);
         customJdbcClientDetailsService.loadClientByClientId(clientId);
         return oauthClientDetailsBO;
     }
@@ -116,7 +116,7 @@ public class OauthClientDetailsServiceImpl extends ServiceImpl<IOauthClientDetai
         if (clientDetails != null) {
             throw new BusinessException("已存在的客户端:" + oauthClientDetailsDTO.getClientId());
         }
-        OauthClientDetails oauthClientDetails = BeanCopierUtil.copyProperties(oauthClientDetailsDTO, OauthClientDetails.class);
+        OauthClientDetails oauthClientDetails = BeanCopierUtils.copyProperties(oauthClientDetailsDTO, OauthClientDetails.class);
         Date nowDate = new Date();
         oauthClientDetails.setCreateTime(nowDate);
         oauthClientDetails.setUpdateTime(nowDate);
@@ -147,7 +147,7 @@ public class OauthClientDetailsServiceImpl extends ServiceImpl<IOauthClientDetai
             }
         }
         redissonOpService.del(clientRedisKey(clientDetails.getClientId()));
-        OauthClientDetails oauthClientDetails = BeanCopierUtil.copyProperties(editDTO, OauthClientDetails.class);
+        OauthClientDetails oauthClientDetails = BeanCopierUtils.copyProperties(editDTO, OauthClientDetails.class);
         oauthClientDetails.setUpdateTime(new Date());
         oauthClientDetails.setAuthorizedGrantTypes(String.join(",", editDTO.getAuthorizedGrantTypes()));
         oauthClientDetails.setClientSecret(passwordEncoder.encode(editDTO.getClientSecret()));
@@ -155,13 +155,17 @@ public class OauthClientDetailsServiceImpl extends ServiceImpl<IOauthClientDetai
         oauthClientDetails.setUpdateBy(ZerosSecurityContextHolder.getUserName());
         oauthClientDetails.setAccessTokenValiditySeconds(editDTO.getAccessTokenValidity());
         oauthClientDetails.setRefreshTokenValiditySeconds(editDTO.getRefreshTokenValidity());
-        return updateById(oauthClientDetails);
+        boolean b = updateById(oauthClientDetails);
+        if (b) {
+            redissonOpService.del(clientRedisKey(clientDetails.getClientId()));
+        }
+        return b;
     }
 
     @Override
     public OauthClientDetailsVO queryById(Long id) {
         OauthClientDetails clientDetails = getById(id);
-        OauthClientDetailsVO oauthClientDetailsVO = BeanCopierUtil.copyProperties(clientDetails, OauthClientDetailsVO.class);
+        OauthClientDetailsVO oauthClientDetailsVO = EasyTransUtils.copyTrans(clientDetails, OauthClientDetailsVO.class);
         oauthClientDetailsVO.setAccessTokenValidity(clientDetails.getAccessTokenValiditySeconds());
         oauthClientDetailsVO.setRefreshTokenValidity(clientDetails.getRefreshTokenValiditySeconds());
         oauthClientDetailsVO.setClientSecret(clientDetails.getClientSecretStr());
@@ -226,31 +230,35 @@ public class OauthClientDetailsServiceImpl extends ServiceImpl<IOauthClientDetai
         Integer limit = requestVO.getPageSize();
         //根据请求参数生成redis的key
         TokenQueryVO tokenQueryVO = requestVO.getT();
-        byte[] clientIdKey = JdkSerializationUtils.serialize(getRedisKey(tokenQueryVO.getUsername(), tokenQueryVO.getClientId()));
-        Long total = redisOpService.length(clientIdKey);
+        String clientIdKeyStr = getRedisKey(tokenQueryVO.getUsername(), tokenQueryVO.getClientId());
+        int expireCount = redissonOpService.zRemByScore(clientIdKeyStr, (double) new Date().getTime(), serializationCodec);
+        log.debug("已过期个数:{}", expireCount);
+        int total = redissonOpService.zLen(clientIdKeyStr, serializationCodec);
         if (!searchCount) {
             limit = Math.toIntExact(total);
         }
         int[] startEnds = PageUtil.transToStartEnd(page - 1, limit);
-        //查询token集合
-        List<byte[]> tokenObjs = redisOpService.getByteList(clientIdKey, startEnds[0], startEnds[1] - 1);
         List<TokenVO> res = new ArrayList<>();
-        for (byte[] obj : tokenObjs) {
+        Collection<String> objects = redissonOpService.zRange(clientIdKeyStr, startEnds[0], startEnds[1] - 1, serializationCodec);
+        for (String tokenValue : objects) {
             TokenVO tokenVo = new TokenVO();
-            OAuth2AccessToken accessToken = JdkSerializationUtils.deserialize((byte[]) obj, OAuth2AccessToken.class);
-            tokenVo.setOperatorId((String) accessToken.getAdditionalInformation().get("operatorId"));
-            tokenVo.setUsername((String) accessToken.getAdditionalInformation().get("userName"));
-            tokenVo.setAuthUserType((String) accessToken.getAdditionalInformation().get(SecurityConstants.USER_AUTH_TYPE));
-            tokenVo.setTokenValue(accessToken.getValue());
-            tokenVo.setExpiration(accessToken.getExpiration());
-            tokenVo.setExpirationLength(new BigDecimal(accessToken.getExpiresIn()));
-            OAuth2Authentication authentication = tokenStore.readAuthentication(accessToken);
-            if (authentication != null) {
-                OAuth2Request request = authentication.getOAuth2Request();
-                tokenVo.setClientId(request.getClientId());
-                tokenVo.setGrantType(request.getGrantType());
+            tokenVo.setTokenValue(tokenValue);
+            OAuth2AccessToken accessToken = tokenStore.readAccessToken(tokenValue);
+            if (accessToken != null) {
+                tokenVo.setOperatorId((String) accessToken.getAdditionalInformation().get("operatorId"));
+                tokenVo.setUsername((String) accessToken.getAdditionalInformation().get("userName"));
+                tokenVo.setAuthUserType((String) accessToken.getAdditionalInformation().get(SecurityConstants.USER_AUTH_TYPE));
+                tokenVo.setTokenValue(accessToken.getValue());
+                tokenVo.setExpiration(accessToken.getExpiration());
+                tokenVo.setExpirationLength(new BigDecimal(accessToken.getExpiresIn()));
+                OAuth2Authentication authentication = tokenStore.readAuthentication(tokenValue);
+                if (authentication != null) {
+                    OAuth2Request request = authentication.getOAuth2Request();
+                    tokenVo.setClientId(request.getClientId());
+                    tokenVo.setGrantType(request.getGrantType());
+                }
+                EasyTransUtils.easyTrans(tokenVo);
             }
-            EasyTransUtils.easyTrans(tokenVo);
             res.add(tokenVo);
         }
         return PageUtils.of(total, res);
@@ -270,46 +278,47 @@ public class OauthClientDetailsServiceImpl extends ServiceImpl<IOauthClientDetai
     }
 
     private void cleanDataByClient(String clientId, String opType) {
-        String redisKey = customRedissonProperties.getKeyPrefix() + ":" + TokenStoreConstants.CLIENT_ID_TO_ACCESS + clientId;
-        byte[] clientIdKey = JdkSerializationUtils.serialize(redisKey);
-        Long total = redisOpService.length(clientIdKey);
+        String redisKey = TokenStoreConstants.CLIENT_ID_TO_ACCESS + clientId;
+        if ("1".equals(opType)) {
+            redissonOpService.zRemByScore(redisKey, (double) new Date().getTime(), serializationCodec);
+            return;
+        }
+
+        int total = redissonOpService.zLen(redisKey, serializationCodec);
         int loopNum = (int) Math.ceil((double) total / INTERVAL);
         int startRow = 0;
-        List<Map<String, byte[]>> cleanClientList = new ArrayList<>();
+        List<Map<String, OAuth2AccessToken>> cleanClientList = new ArrayList<>();
         for (int i = 0; i < loopNum; i++) {
             if (startRow > total) {
                 break;
             }
             int endRow = startRow + INTERVAL;
-            List<byte[]> tokenObjs = redisOpService.getByteList(clientIdKey, startRow, endRow - 1);
+            Collection<String> tokenObjs = redissonOpService.zRange(redisKey, startRow, endRow - 1, serializationCodec);
             log.debug("{} {} {}", startRow, endRow - 1, tokenObjs.size());
-            for (byte[] tokenObj : tokenObjs) {
-                OAuth2AccessToken obj = JdkSerializationUtils.deserialize(tokenObj, OAuth2AccessToken.class);
-                if ("1".equals(opType)) {
-                    if (obj.getExpiresIn() < 0) {
-                        Map<String, byte[]> umap = new HashMap<>();
-                        String userName = (String) obj.getAdditionalInformation().get("userName");
-                        umap.put(userName, tokenObj);
-                        cleanClientList.add(umap);
-                    }
-                } else {
-                    Map<String, byte[]> umap = new HashMap<>();
-                    String userName = (String) obj.getAdditionalInformation().get("userName");
-                    umap.put(userName, tokenObj);
-                    cleanClientList.add(umap);
+            for (String tokenValue : tokenObjs) {
+                OAuth2AccessToken obj = tokenStore.readAccessToken(tokenValue);
+                if (obj == null) {
+                    continue;
                 }
+                Map<String, OAuth2AccessToken> umap = new HashMap<>();
+                String userName = (String) obj.getAdditionalInformation().get("userName");
+                umap.put(userName, obj);
+                cleanClientList.add(umap);
             }
             startRow += INTERVAL;
         }
         //删除
-        for (Map<String, byte[]> record : cleanClientList) {
-            for (Map.Entry<String, byte[]> entry : record.entrySet()) {
-                byte[] unameKey = JdkSerializationUtils.serialize(TokenStoreConstants.UNAME_TO_ACCESS + clientId + ":" + entry.getKey());
-                Long rmClientId = redisOpService.lRem(clientIdKey, 1, entry.getValue());
-                Long rmUnameKey = redisOpService.lRem(unameKey, 1, entry.getValue());
+        for (Map<String, OAuth2AccessToken> record : cleanClientList) {
+            for (Map.Entry<String, OAuth2AccessToken> entry : record.entrySet()) {
+                String unameKey = TokenStoreConstants.UNAME_TO_ACCESS + clientId + ":" + entry.getKey();
+                boolean rmClientId = redissonOpService.zRem(redisKey, entry.getValue().getValue(), serializationCodec);
+                boolean rmUnameKey = redissonOpService.zRem(unameKey, entry.getValue().getValue(), serializationCodec);
                 log.debug("Token已失效，【{} {}】", rmClientId, rmUnameKey);
                 if ("0".equals(opType)) {
-                    tokenStore.removeAccessToken(JdkSerializationUtils.deserialize(entry.getValue(), OAuth2AccessToken.class));
+                    OAuth2RefreshToken oAuth2RefreshToken = entry.getValue().getRefreshToken();
+                    tokenStore.removeAccessToken(entry.getValue());
+                    tokenStore.removeRefreshToken(oAuth2RefreshToken);
+                    tokenStore.removeAccessTokenUsingRefreshToken(oAuth2RefreshToken);
                 }
             }
         }
@@ -321,10 +330,16 @@ public class OauthClientDetailsServiceImpl extends ServiceImpl<IOauthClientDetai
     private String getRedisKey(String username, String clientId) {
         String result;
         if (StringUtils.isNotBlank(username)) {
-            result = customRedissonProperties.getKeyPrefix() + ":" + TokenStoreConstants.UNAME_TO_ACCESS + clientId + ":" + username;
+            result = TokenStoreConstants.UNAME_TO_ACCESS + clientId + ":" + username;
         } else {
-            result = customRedissonProperties.getKeyPrefix() + ":" + TokenStoreConstants.CLIENT_ID_TO_ACCESS + clientId;
+            result = TokenStoreConstants.CLIENT_ID_TO_ACCESS + clientId;
         }
         return result;
     }
+
+    @Override
+    public void excelExport(RequestVO<OauthClientDetailsPageDTO> requestVO, HttpServletResponse response) {
+        excelExport(PageUtils.of(requestVO, false), getWrapper(requestVO.getT()), OauthClientDetailsPageVO.class, response);
+    }
+
 }

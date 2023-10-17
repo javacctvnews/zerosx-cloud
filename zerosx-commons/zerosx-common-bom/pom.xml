@@ -7,12 +7,12 @@
     <!--<parent>
         <groupId>com.zerosx.cloud</groupId>
         <artifactId>zerosx-commons</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.2</version>
     </parent>-->
 
     <groupId>com.zerosx.cloud</groupId>
     <artifactId>zerosx-common-bom</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <packaging>pom</packaging>
     <description>公共组件的依赖</description>
 

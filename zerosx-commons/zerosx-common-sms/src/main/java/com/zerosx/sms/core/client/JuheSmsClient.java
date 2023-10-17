@@ -3,9 +3,9 @@ package com.zerosx.sms.core.client;
 import com.zerosx.sms.core.config.JuheConfig;
 import com.zerosx.sms.model.SmsRequest;
 import com.zerosx.sms.model.SmsResponse;
-import com.zerosx.utils.JacksonUtil;
+import com.zerosx.common.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
-import com.zerosx.utils.HttpClientUtils;
+import com.zerosx.common.utils.HttpClientUtils;
 
 import java.util.HashMap;
 import java.util.Map;

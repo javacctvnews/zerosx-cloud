@@ -1,16 +1,15 @@
 package com.zerosx.system.controller;
 
 import com.zerosx.common.base.utils.ResultVOUtil;
+import com.zerosx.common.base.vo.BaseTenantDTO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.core.easyexcel.EasyExcelUtil;
-import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
+import com.zerosx.common.base.vo.SelectOptionVO;
 import com.zerosx.common.core.vo.CustomPageVO;
-import com.zerosx.common.log.annotation.SystemLog;
-import com.zerosx.common.log.enums.BusinessType;
+import com.zerosx.common.log.anno.OpLog;
+import com.zerosx.common.log.enums.OpTypeEnum;
 import com.zerosx.system.dto.SysRoleDTO;
 import com.zerosx.system.dto.SysRolePageDTO;
-import com.zerosx.system.entity.SysRole;
 import com.zerosx.system.service.ISysRoleService;
 import com.zerosx.system.vo.SysRolePageVO;
 import com.zerosx.system.vo.SysRoleVO;
@@ -41,21 +40,21 @@ public class SysRoleController {
     private ISysRoleService sysRoleService;
 
     @Operation(summary = "分页列表")
-    @SystemLog(title = "角色管理", btnName = "分页查询", businessType = BusinessType.QUERY)
+    @OpLog(mod = "角色管理", btn = "分页查询", opType = OpTypeEnum.QUERY)
     @PostMapping("/sys_role/page_list")
     public ResultVO<CustomPageVO<SysRolePageVO>> pageList(@RequestBody RequestVO<SysRolePageDTO> requestVO) {
         return ResultVOUtil.success(sysRoleService.pageList(requestVO, true));
     }
 
     @Operation(summary = "新增")
-    @SystemLog(title = "角色管理", btnName = "新增", businessType = BusinessType.INSERT)
+    @OpLog(mod = "角色管理", btn = "新增", opType = OpTypeEnum.INSERT)
     @PostMapping("/sys_role/save")
     public ResultVO<?> add(@Validated @RequestBody SysRoleDTO sysRoleDTO) {
         return ResultVOUtil.successBoolean(sysRoleService.add(sysRoleDTO));
     }
 
     @Operation(summary = "编辑")
-    @SystemLog(title = "角色管理", btnName = "编辑", businessType = BusinessType.UPDATE)
+    @OpLog(mod = "角色管理", btn = "编辑", opType = OpTypeEnum.UPDATE)
     @PostMapping("/sys_role/update")
     public ResultVO<?> update(@Validated @RequestBody SysRoleDTO sysRoleDTO) {
         return ResultVOUtil.successBoolean(sysRoleService.update(sysRoleDTO));
@@ -68,26 +67,23 @@ public class SysRoleController {
     }
 
     @Operation(summary = "删除")
-    @SystemLog(title = "角色管理", btnName = "删除", businessType = BusinessType.DELETE)
+    @OpLog(mod = "角色管理", btn = "删除", opType = OpTypeEnum.DELETE)
     @DeleteMapping("/sys_role/delete/{roleIds}")
     public ResultVO<?> deleteRecord(@PathVariable("roleIds") Long[] roleIds) {
         return ResultVOUtil.successBoolean(sysRoleService.deleteRecord(roleIds));
     }
 
     @Operation(summary = "导出")
-    @SystemLog(title = "角色管理", btnName = "导出", businessType = BusinessType.EXPORT)
+    @OpLog(mod = "角色管理", btn = "导出", opType = OpTypeEnum.EXPORT)
     @PostMapping("/sys_role/export")
     public void operatorExport(@RequestBody RequestVO<SysRolePageDTO> requestVO, HttpServletResponse response) throws IOException {
-        long t1 = System.currentTimeMillis();
-        CustomPageVO<SysRolePageVO> pages = sysRoleService.pageList(requestVO, false);
-        EasyExcelUtil.writeExcel(response, pages.getList(), SysRolePageVO.class);
-        log.debug("【{}】执行导出{}条 耗时:{}ms", ZerosSecurityContextHolder.getUserName(), pages.getTotal(), System.currentTimeMillis() - t1);
+        sysRoleService.excelExport(requestVO, response);
     }
 
     @Operation(summary = "下拉框")
     @PostMapping("/sys_role/select_list")
-    public ResultVO<List<SysRole>> selectList(@RequestBody SysRolePageDTO sysRolePageDTO) {
-        return ResultVOUtil.success(sysRoleService.dataList(sysRolePageDTO));
+    public ResultVO<List<SelectOptionVO>> selectList(@RequestBody BaseTenantDTO baseTenantDTO) {
+        return ResultVOUtil.success(sysRoleService.selectOptions(baseTenantDTO));
     }
 
 }

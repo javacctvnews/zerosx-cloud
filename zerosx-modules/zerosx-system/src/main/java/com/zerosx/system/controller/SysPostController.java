@@ -1,16 +1,15 @@
 package com.zerosx.system.controller;
 
 import com.zerosx.common.base.utils.ResultVOUtil;
+import com.zerosx.common.base.vo.BaseTenantDTO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.core.easyexcel.EasyExcelUtil;
-import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
+import com.zerosx.common.base.vo.SelectOptionVO;
 import com.zerosx.common.core.vo.CustomPageVO;
-import com.zerosx.common.log.annotation.SystemLog;
-import com.zerosx.common.log.enums.BusinessType;
+import com.zerosx.common.log.anno.OpLog;
+import com.zerosx.common.log.enums.OpTypeEnum;
 import com.zerosx.system.dto.SysPostDTO;
 import com.zerosx.system.dto.SysPostPageDTO;
-import com.zerosx.system.entity.SysPost;
 import com.zerosx.system.service.ISysPostService;
 import com.zerosx.system.vo.SysPostPageVO;
 import com.zerosx.system.vo.SysPostVO;
@@ -41,21 +40,21 @@ public class SysPostController {
     private ISysPostService sysPostService;
 
     @Operation(summary = "分页列表")
-    @SystemLog(title = "岗位管理", btnName = "分页查询", businessType = BusinessType.QUERY)
+    @OpLog(mod = "岗位管理", btn = "分页查询", opType = OpTypeEnum.QUERY)
     @PostMapping("/sys_post/page_list")
     public ResultVO<CustomPageVO<SysPostPageVO>> pageList(@RequestBody RequestVO<SysPostPageDTO> requestVO) {
         return ResultVOUtil.success(sysPostService.pageList(requestVO, true));
     }
 
     @Operation(summary = "新增")
-    @SystemLog(title = "岗位管理", btnName = "新增", businessType = BusinessType.INSERT)
+    @OpLog(mod = "岗位管理", btn = "新增", opType = OpTypeEnum.INSERT)
     @PostMapping("/sys_post/save")
     public ResultVO<?> add(@Validated @RequestBody SysPostDTO sysPostDTO) {
         return ResultVOUtil.successBoolean(sysPostService.add(sysPostDTO));
     }
 
     @Operation(summary = "编辑")
-    @SystemLog(title = "岗位管理", btnName = "编辑", businessType = BusinessType.UPDATE)
+    @OpLog(mod = "岗位管理", btn = "编辑", opType = OpTypeEnum.UPDATE)
     @PostMapping("/sys_post/update")
     public ResultVO<?> update(@Validated @RequestBody SysPostDTO sysPostDTO) {
         return ResultVOUtil.successBoolean(sysPostService.update(sysPostDTO));
@@ -68,25 +67,22 @@ public class SysPostController {
     }
 
     @Operation(summary = "删除")
-    @SystemLog(title = "岗位管理", btnName = "删除", businessType = BusinessType.DELETE)
+    @OpLog(mod = "岗位管理", btn = "删除", opType = OpTypeEnum.DELETE)
     @DeleteMapping("/sys_post/delete/{ids}")
     public ResultVO<?> deleteRecord(@PathVariable("ids") Long[] ids) {
         return ResultVOUtil.successBoolean(sysPostService.deleteRecord(ids));
     }
 
     @Operation(summary = "导出")
-    @SystemLog(title = "岗位管理", btnName = "导出", businessType = BusinessType.EXPORT)
+    @OpLog(mod = "岗位管理", btn = "导出", opType = OpTypeEnum.EXPORT)
     @PostMapping("/sys_post/export")
     public void operatorExport(@RequestBody RequestVO<SysPostPageDTO> requestVO, HttpServletResponse response) throws IOException {
-        long t1 = System.currentTimeMillis();
-        CustomPageVO<SysPostPageVO> pages = sysPostService.pageList(requestVO, false);
-        EasyExcelUtil.writeExcel(response, pages.getList(), SysPostPageVO.class);
-        log.debug("【{}】执行导出{}条 耗时:{}ms", ZerosSecurityContextHolder.getUserName(), pages.getTotal(), System.currentTimeMillis() - t1);
+        sysPostService.excelExport(requestVO, response);
     }
 
     @Operation(summary = "下拉框")
     @PostMapping("/sys_post/select_list")
-    public ResultVO<List<SysPost>> selectList(@RequestBody SysPostPageDTO sysPostPageDTO) {
-        return ResultVOUtil.success(sysPostService.dataList(sysPostPageDTO));
+    public ResultVO<List<SelectOptionVO>> selectOptions(@RequestBody BaseTenantDTO baseTenantDTO) {
+        return ResultVOUtil.success(sysPostService.selectOptions(baseTenantDTO));
     }
 }

@@ -446,10 +446,22 @@ export default {
         const cities = [];
         cities.unshift(this.form.province, this.form.city, this.form.area)
         this.form.areaList = cities;
-        this.businessLicenseFileList = [res.data.businessLicensePictureUrl];
-        this.logoFileList = [res.data.logPictureUrl];
+        let logImg = this.buildImage(res.data.logPicture, res.data.logPicture,res.data.logPictureUrl);
+        let licenseImg = this.buildImage(res.data.businessLicensePicture, res.data.businessLicensePicture,res.data.businessLicensePictureUrl);
+        this.logoFileList.push(logImg);
+        this.businessLicenseFileList.push(licenseImg);
         this.form.businessLicensePicture = res.data.businessLicensePicture;
+        this.form.logPicture = res.data.logPicture;
       });
+    },
+    buildImage(name, objectName, url) {
+      let imageObj = {
+        name: name,
+        objectName: objectName,
+        url: url
+      }
+      console.log(imageObj);
+      return imageObj;
     },
     handleExport() {
       let name = '租户管理_' + this.parseTime(new Date(), '{y}{m}{d}{h}{i}{s}') + '.xlsx';

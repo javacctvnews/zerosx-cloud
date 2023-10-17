@@ -20,6 +20,4 @@ public class EncryptConfig {
     public EncryptProperties encryptProperties(){
         return new EncryptProperties();
     }
-
-
 }

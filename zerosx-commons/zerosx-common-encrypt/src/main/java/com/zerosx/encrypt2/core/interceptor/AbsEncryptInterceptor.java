@@ -6,6 +6,8 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
+import com.github.benmanes.caffeine.cache.AsyncCache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import com.zerosx.encrypt2.anno.EncryptField;
 import com.zerosx.encrypt2.anno.EncryptFields;
@@ -16,7 +18,7 @@ import com.zerosx.encrypt2.core.properties.EncryptProperties;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.RegExUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.executor.resultset.DefaultResultSetHandler;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -28,6 +30,8 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -63,6 +67,11 @@ public abstract class AbsEncryptInterceptor implements Interceptor {
         COMPILE_PATTERN = Pattern.compile(PATTERN);
         COMPILE_SYNTAX = Pattern.compile(SYNTAX);
     }
+
+    protected static AsyncCache<String, Object> cache = Caffeine.newBuilder()
+            .expireAfterWrite(10, TimeUnit.SECONDS)//过期时间
+            .maximumSize(1000)//最大条数1000
+            .buildAsync();//定义cache
 
     protected void debug(String s, Object... objects) {
         if (encryptProperties.getDebug()) {
@@ -109,16 +118,34 @@ public abstract class AbsEncryptInterceptor implements Interceptor {
         if (encryptor == null) {
             return value;
         }
+        String cacheValue = (String) getCacheValue(value);
+        if (StringUtils.isNotBlank(cacheValue)) {
+            return cacheValue;
+        }
         if (EncryptMode.ENC.equals(encryptMode)) {
             String encrypted = encryptor.encrypt(value);
+            cache.put(value, CompletableFuture.completedFuture(encrypted));
             debug("加密前:{} 加密后:{}", value, encrypted);
             return encrypted;
         } else if (EncryptMode.DEC.equals(encryptMode)) {
             String decrypted = encryptor.decrypt(value);
+            cache.put(value, CompletableFuture.completedFuture(decrypted));
             debug("解密前:{} 解密后:{}", value, decrypted);
             return decrypted;
         }
         return value;
+    }
+
+    @SneakyThrows
+    private static Object getCacheValue(String key) {
+        CompletableFuture<Object> completableFuture = cache.getIfPresent(key);
+        if (completableFuture == null) {
+            //log.debug("【获取】Caffeine缓存, {} = 缓存为空", key);
+            return null;
+        }
+        Object cacheValue = completableFuture.get();
+        //log.debug("【获取】Caffeine缓存 {} = {}", key, cacheValue);
+        return cacheValue;
     }
 
     /**
@@ -304,9 +331,11 @@ public abstract class AbsEncryptInterceptor implements Interceptor {
         if (!EncryptFactory.containsEncrypt(paramObjectClass)) {
             return;
         }
-        Object cloneObj = objectClone(paramObject);
-        encryptObject(cloneObj, encryptMode);
-        args[1] = cloneObj;
+        encryptObject(paramObject, encryptMode);
+        //不拷贝对象，会丢失自增ID等一些字段信息
+        //Object cloneObj = objectClone(paramObject);
+        //encryptObject(cloneObj, encryptMode);
+        //args[1] = cloneObj;
     }
 
     /**
@@ -409,12 +438,12 @@ public abstract class AbsEncryptInterceptor implements Interceptor {
                 encryptParam(item, encryptMode, encryptFields);
             }
         } else if (cloneMap instanceof AbstractWrapper) {
-            debug("AbstractWrapper类型实例-----------------");
             AbstractWrapper wrapper = (AbstractWrapper) cloneMap;
             Class<?> modelClazz = wrapper.getEntityClass();
             if (!EncryptFactory.containsEncrypt(modelClazz)) {
                 return;
             }
+            debug("AbstractWrapper类型实例:{}", modelClazz.getName());
             String sqlSegment = wrapper.getExpression().getSqlSegment();
             Map<String, Object> valuePairs = wrapper.getParamNameValuePairs();
 
@@ -451,31 +480,26 @@ public abstract class AbsEncryptInterceptor implements Interceptor {
 
     private Map<String, String> resolve(String line) {
         debug("where条件：{}", line);
+        Object cacheObject = getCacheValue(line);
+        if (Objects.nonNull(cacheObject)) {
+            Map<String, String> cacheValue = (Map<String, String>) cacheObject;
+            if (MapUtils.isNotEmpty(cacheValue)) {
+                return cacheValue;
+            }
+        }
         Map<String, String> map = new HashMap<>();
         //String line = "(mobile = #{MPGENVAL1} AND status LIKE #{MPGENVAL2} AND id IN (#{MPGENVAL3},#{MPGENVAL4},#{MPGENVAL5}) AND ((id = #{MPGENVAL6}))) GROUP BY id HAVING id > #{MPGENVAL7} ORDER BY add_blacklist_time DESC";
         Matcher m = COMPILE_PATTERN.matcher(line);
         while (m.find()) {
-            String syntaxLine = RegExUtils.replaceAll(m.group(0), "\\(", EMPTY).replaceAll("\\)", EMPTY).replaceAll("#", EMPTY);
-            //String syntaxLine = m.group(0).replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("#", "").replaceAll("\\{", "").replaceAll("\\}", "");
+            String syntaxLine = m.group(0).replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("#", "").replaceAll("\\{", "").replaceAll("\\}", "");
             Matcher m2 = COMPILE_SYNTAX.matcher(syntaxLine);
             if (m2.find()) {
-                //String[] syntaxArray = syntaxLine.split(m2.group(0));
-                //Arrays.stream(syntaxArray[1].split(",")).forEach(v -> map.put(v.trim(), syntaxArray[0].trim()));
-                String[] syntaxArray = split(syntaxLine, m2.group(0));
-                String[] syntaxArray1 = split(syntaxArray[1], ",");
-                Arrays.stream(syntaxArray1).forEach(v -> map.put(v.trim(), syntaxArray[0]));
+                String[] syntaxArray = syntaxLine.split(m2.group(0));
+                Arrays.stream(syntaxArray[1].split(",")).forEach(v -> map.put(v.trim(), syntaxArray[0].trim()));
             }
         }
+        cache.put(line, CompletableFuture.completedFuture(map));
         return map;
-    }
-
-    protected static String[] split(String content, String regex) {
-        List<String> regList = new ArrayList<>();
-        StringTokenizer tokenizer = new StringTokenizer(content, regex);
-        while (tokenizer.hasMoreElements()) {
-            regList.add(tokenizer.nextToken().trim());
-        }
-        return regList.toArray(new String[0]);
     }
 
 }

@@ -11,6 +11,7 @@ import com.zerosx.system.entity.MutiTenancyGroup;
 import com.zerosx.system.vo.MutiTenancyGroupPageVO;
 import com.zerosx.system.vo.MutiTenancyGroupVO;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -61,4 +62,12 @@ public interface IMutiTenancyGroupService extends ISuperService<MutiTenancyGroup
     List<MutiTenancyGroup> listData(MutiTenancyGroupQueryDTO query);
 
     String transIdName(String operatorId);
+
+    /**
+     * 导出Excel
+     *
+     * @param requestVO requestVO
+     * @param response  response
+     */
+    void excelExport(RequestVO<MutiTenancyGroupQueryDTO> requestVO, HttpServletResponse response);
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zerosx.resource.mapper.IOssSupplierMapper">
+
+    <select id="selectOssSupplier" resultType="com.zerosx.resource.entity.OssSupplier">
+        select *
+        from t_oss_supplier
+        where 1 = 1 and deleted = 0
+        and status = #{status}
+        <if test="id!=null">
+            and id = #{id}
+        </if>
+        <if test="operatorId!='' and operatorId!=null">
+            and operator_id = #{operatorId}
+        </if>
+        order by id desc limit 1
+    </select>
+
+</mapper>

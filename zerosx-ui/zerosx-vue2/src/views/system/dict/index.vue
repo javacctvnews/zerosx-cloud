@@ -371,7 +371,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       let name = '字典类型_' + this.parseTime(new Date(), '{y}{m}{d}{h}{i}{s}') + '.xlsx';
-      this.download(serviceConfig.system + '/sysDictType/export', this.queryParams, name)
+      this.download(serviceConfig.resource + '/sysDictType/export', this.queryParams, name)
     },
     /** 刷新缓存按钮操作 */
     handleRefreshCache() {

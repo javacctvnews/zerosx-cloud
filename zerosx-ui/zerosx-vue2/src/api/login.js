@@ -47,7 +47,6 @@ export function getCodeImg() {
 }
 
 //获取短信验证码
-
 export function smsCode(data) {
   return request({
     url: serviceConfig.auth + '/auth/getSmsCode',

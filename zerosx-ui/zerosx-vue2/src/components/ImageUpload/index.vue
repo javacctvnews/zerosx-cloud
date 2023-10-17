@@ -75,7 +75,7 @@ export default {
       dialogImageUrl: "",
       dialogVisible: false,
       hideUpload: false,
-      uploadImgUrl: process.env.VUE_APP_BASE_API + serviceConfig.system + "/upload_file", // 上传的图片服务器地址
+      uploadImgUrl: process.env.VUE_APP_BASE_API + serviceConfig.resource + "/upload_file", // 上传的图片服务器地址
       headers: {
         Authorization: "Bearer " + getToken(),
       },
@@ -87,10 +87,10 @@ export default {
     fileListBack: {
       handler(list) {
         console.log('图片：',list)
-
         this.fileLists = list.map(item => {
           return {
             url: item.url || item,
+            objectName: item.objectName
           };
         });
       },
@@ -154,8 +154,10 @@ export default {
       }
     },
     // 删除图片
-    handleDelete(file) {
-      console.log('删除文件', file)
+    handleDelete(file, files) {
+      console.log('删除文件:', file);
+      //console.log('删除文件List:', files);
+      deleteFile(file.objectName);
       const findex = this.fileLists.map(f => f.name).indexOf(file.name);
       if (findex > -1) {
         this.fileLists.splice(findex, 1);

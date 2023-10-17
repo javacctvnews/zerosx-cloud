@@ -7,6 +7,7 @@ import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.core.service.ISuperService;
 import com.zerosx.common.core.vo.CustomPageVO;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -58,5 +59,13 @@ public interface IOauthTokenRecordService extends ISuperService<OauthTokenRecord
      * @return
      */
     List<OauthTokenRecord> dataList(OauthTokenRecordPageDTO oauthTokenRecordPageDTO);
+
+    /**
+     * 导出Excel
+     *
+     * @param requestVO requestVO
+     * @param response  response
+     */
+    void excelExport(RequestVO<OauthTokenRecordPageDTO> requestVO, HttpServletResponse response);
 }
 

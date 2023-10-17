@@ -1,7 +1,7 @@
 package com.zerosx.common.core.enums;
 
-import com.zerosx.common.base.anno.AutoDictData;
-import com.zerosx.common.base.enums.CodeEnum;
+import com.zerosx.common.anno.AutoDictData;
+import com.zerosx.common.base.BaseEnum;
 import lombok.Getter;
 
 /**
@@ -9,7 +9,7 @@ import lombok.Getter;
  */
 @Getter
 @AutoDictData(name = "授权类型")
-public enum GranterTypeEnum implements CodeEnum<String> {
+public enum GranterTypeEnum implements BaseEnum<String> {
 
     /**
      * 默认的几种授权模式：authorization_code、implicit、client_credentials、password、REFRESH_TOKEN

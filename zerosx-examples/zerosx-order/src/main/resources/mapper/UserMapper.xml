@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zerosx.order.mapper.IUserMapper">
+
+    <select id="queryList" resultType="com.zerosx.order.entity.User">
+        select * from t_user
+        where 1 = 1 and deleted = 0
+          and phone = #{phone}
+    </select>
+
+    <select id="queryByPhones" resultType="com.zerosx.order.entity.User">
+        select * from t_user
+        where 1 = 1 and deleted = 0
+          and phone in
+        <foreach collection="list" close=")" open="(" separator="," item="item">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="queryByPhoneArr" resultType="com.zerosx.order.entity.User">
+        select * from t_user
+        where 1 = 1 and deleted = 0
+        and phone in
+        <foreach collection="array" close=")" open="(" separator="," item="item">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="queryPhones" resultType="java.lang.String">
+        select phone from t_user where 1=1 and deleted = 0
+    </select>
+
+    <select id="queryByMap" resultType="com.zerosx.order.entity.User">
+        select * from t_user
+        where 1 = 1 and deleted = 0
+          and phone = #{phone}
+        and card_id = #{cardId}
+        and email = #{email}
+        and nick_name like concat('%',#{nickName},'%')
+    </select>
+</mapper>

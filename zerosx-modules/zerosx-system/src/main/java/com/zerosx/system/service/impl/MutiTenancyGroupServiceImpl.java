@@ -5,14 +5,15 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.SelectOptionVO;
+import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.core.enums.StatusEnum;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
-import com.zerosx.common.core.utils.BeanCopierUtil;
+import com.zerosx.common.core.utils.EasyTransUtils;
 import com.zerosx.common.core.utils.IdGenerator;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
-import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.redis.templete.RedissonOpService;
+import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.system.dto.MutiTenancyGroupEditDTO;
 import com.zerosx.system.dto.MutiTenancyGroupQueryDTO;
 import com.zerosx.system.dto.MutiTenancyGroupSaveDTO;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -58,7 +60,7 @@ public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGr
     public boolean saveMutiTenancyGroup(MutiTenancyGroupSaveDTO mutiTenancyGroupSaveDTO) {
         //随机生成租户ID 6位长度
         String tenantId = IdGenerator.getRandomStr(6);
-        MutiTenancyGroup mutiTenancyGroup = BeanCopierUtil.copyProperties(mutiTenancyGroupSaveDTO, MutiTenancyGroup.class);
+        MutiTenancyGroup mutiTenancyGroup = BeanCopierUtils.copyProperties(mutiTenancyGroupSaveDTO, MutiTenancyGroup.class);
         mutiTenancyGroup.setOperatorId(tenantId);
         mutiTenancyGroup.setAuditStatus(1);
         //公司名称或社会信用代码存在时不允许保存
@@ -82,9 +84,13 @@ public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGr
                 throw new BusinessException(String.format("已存在租户集团，公司全称：%s，社会信用代码：%s", editDTO.getTenantGroupName(), editDTO.getSocialCreditCode()));
             }
         }
-        MutiTenancyGroup mutiTenancyGroup = BeanCopierUtil.copyProperties(editDTO, MutiTenancyGroup.class);
+        MutiTenancyGroup mutiTenancyGroup = BeanCopierUtils.copyProperties(editDTO, MutiTenancyGroup.class);
         redissonOpService.hRemove(RedisKeyNameEnum.key(RedisKeyNameEnum.OPERATOR, dbGroup.getOperatorId()), "operatorId");
-        return updateById(mutiTenancyGroup);
+        boolean b = updateById(mutiTenancyGroup);
+        if (b) {
+            redissonOpService.hRemove(RedisKeyNameEnum.key(RedisKeyNameEnum.OPERATOR, dbGroup.getOperatorId()), "operatorId");
+        }
+        return b;
     }
 
     @Override
@@ -127,7 +133,7 @@ public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGr
     @Override
     public MutiTenancyGroupVO getTenantById(Long id) {
         MutiTenancyGroup record = getById(id);
-        return BeanCopierUtil.copyProperties(record, MutiTenancyGroupVO.class);
+        return EasyTransUtils.copyTrans(record, MutiTenancyGroupVO.class);
     }
 
     @Override
@@ -147,5 +153,10 @@ public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGr
         }
         redissonOpService.hPut(RedisKeyNameEnum.key(RedisKeyNameEnum.OPERATOR, operatorId), "operatorId", mutiTenancyGroup.getTenantGroupName());
         return mutiTenancyGroup.getTenantGroupName();
+    }
+
+    @Override
+    public void excelExport(RequestVO<MutiTenancyGroupQueryDTO> requestVO, HttpServletResponse response) {
+        excelExport(PageUtils.of(requestVO, false), lambdaQW(requestVO.getT()), MutiTenancyGroupPageVO.class, response);
     }
 }

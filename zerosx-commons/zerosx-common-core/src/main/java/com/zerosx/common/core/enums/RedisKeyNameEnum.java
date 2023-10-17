@@ -34,22 +34,22 @@ public enum RedisKeyNameEnum {
     /**
      * 省市区 string结构
      */
-    REGION(ServiceIdConstants.SYSTEM, "region"),
+    REGION(ServiceIdConstants.RESOURCE, "region"),
     /**
      * 省市区 hash结构
      * hashkey为code
      */
-    REGION_HASH(ServiceIdConstants.SYSTEM, "region_hash"),
+    REGION_HASH(ServiceIdConstants.RESOURCE, "region_hash"),
 
     /**
      * oss文件的访问URL string结构
      */
-    OSS_FILE_URL(ServiceIdConstants.SYSTEM, "oss_file_url"),
+    OSS_FILE_URL(ServiceIdConstants.RESOURCE, "oss_file_url"),
 
     /**
      * 数据字典 hash结构
      */
-    DICT_DATA(ServiceIdConstants.SYSTEM, "dict_data"),
+    DICT_DATA(ServiceIdConstants.RESOURCE, "dict_data"),
 
     /**
      * 分布式锁前缀
@@ -63,6 +63,10 @@ public enum RedisKeyNameEnum {
      * 运营商缓存
      */
     OPERATOR(ServiceIdConstants.SYSTEM, "operator", ""),
+    /**
+     * 系统操作日志
+     */
+    SYS_OP_LOG(ServiceIdConstants.SYSTEM, "sys_op_log"),
     ;
 
     /**

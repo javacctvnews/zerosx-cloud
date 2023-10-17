@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 public class FeignConfig {
 
     @Bean
+    @ConditionalOnMissingBean
     public Decoder feignDecoder() {
         return new ResponseEntityDecoder(new SpringDecoder(feignHttpMessageConverter()));
     }

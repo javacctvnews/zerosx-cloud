@@ -36,8 +36,6 @@ public class XHorizontalCellStyleStrategy extends HorizontalCellStyleStrategy {
         headWriteCellStyle.setHorizontalAlignment(HorizontalAlignment.CENTER);
         // 垂直对齐方式
         headWriteCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        // 这里需要指定 FillPatternType 为FillPatternType.SOLID_FOREGROUND 不然无法显示背景颜色.头默认了 FillPatternType所以可以不指定
-        // contentWriteCellStyle.setFillPatternType(FillPatternType.SQUARES);
         // 背景白色
         contentWriteCellStyle.setFillForegroundColor(IndexedColors.WHITE.getIndex());
         WriteFont contentWriteFont = new WriteFont();

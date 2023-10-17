@@ -7,7 +7,7 @@
     <parent>
         <artifactId>zerosx-modules</artifactId>
         <groupId>com.zerosx.cloud</groupId>
-        <version>0.0.1</version>
+        <version>0.0.2</version>
     </parent>
 
     <artifactId>zerosx-system</artifactId>
@@ -30,6 +30,10 @@
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-seata</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-api-resource</artifactId>
         </dependency>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>

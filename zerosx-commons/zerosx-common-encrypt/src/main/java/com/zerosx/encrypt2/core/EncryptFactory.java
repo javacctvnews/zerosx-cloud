@@ -63,6 +63,9 @@ public abstract class EncryptFactory {
      * @return
      */
     public static boolean containsEncrypt(Class<?> clz) {
+        if (clz == null) {
+            return false;
+        }
         //是否有加密注解
         EncryptClass encryptClass = clz.getAnnotation(EncryptClass.class);
         return encryptClass != null;

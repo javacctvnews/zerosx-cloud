@@ -1,6 +1,8 @@
 package com.zerosx.system.service;
 
+import com.zerosx.common.base.vo.BaseTenantDTO;
 import com.zerosx.common.base.vo.RequestVO;
+import com.zerosx.common.base.vo.SelectOptionVO;
 import com.zerosx.common.core.service.ISuperService;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.system.dto.SysRoleDTO;
@@ -9,6 +11,7 @@ import com.zerosx.system.entity.SysRole;
 import com.zerosx.system.vo.SysRolePageVO;
 import com.zerosx.system.vo.SysRoleVO;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Set;
 
@@ -75,5 +78,15 @@ public interface ISysRoleService extends ISuperService<SysRole> {
      * @return
      */
     List<SysRoleVO> selectUserRoles(Long userId, Long deptId);
+
+    /**
+     * 导出Excel
+     *
+     * @param requestVO requestVO
+     * @param response  response
+     */
+    void excelExport(RequestVO<SysRolePageDTO> requestVO, HttpServletResponse response);
+
+    List<SelectOptionVO> selectOptions(BaseTenantDTO baseTenantDTO);
 }
 

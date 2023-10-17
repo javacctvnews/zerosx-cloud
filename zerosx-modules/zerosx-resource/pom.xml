@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>zerosx-modules</artifactId>
+        <groupId>com.zerosx.cloud</groupId>
+        <version>0.0.2</version>
+    </parent>
+
+    <artifactId>zerosx-resource</artifactId>
+    <packaging>jar</packaging>
+    <description>资源服务</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-xxljob</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-sms</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-encrypt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-seata</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-api-auth</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-oss</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-api-system</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-api-resource</artifactId>
+        </dependency>
+        <!-- SpringBoot Web容器 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                    <groupId>org.springframework.boot</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- web 容器使用 undertow -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.zerosx.resource.ResourceApplication</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

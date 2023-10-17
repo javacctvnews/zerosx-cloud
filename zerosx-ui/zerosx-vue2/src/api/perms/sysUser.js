@@ -63,7 +63,7 @@ export function getUser(userId) {
 // 用户头像上传
 export function uploadAvatar(data) {
   return request({
-    url: serviceConfig.system + '/sys_user/profile/avatar',
+    url: serviceConfig.system + '/sys_user/update_avatar',
     method: 'post',
     data: data
   })

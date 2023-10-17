@@ -35,9 +35,9 @@ public class SystemOperatorLog extends SuperEntity<SystemOperatorLog> {
     private String btnName;
 
     /**
-     * 业务类型（0其它 1新增 2修改 3删除）
+     * 按钮操作类别
      */
-    private Integer businessType;
+    private String businessType;
 
     /**
      * 方法名称

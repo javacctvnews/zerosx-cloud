@@ -4,13 +4,14 @@ import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.common.base.exception.BusinessException;
+import com.zerosx.common.base.vo.BaseTenantDTO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
-import com.zerosx.common.core.utils.BeanCopierUtil;
 import com.zerosx.common.core.utils.EasyTransUtils;
 import com.zerosx.common.core.utils.IdGenerator;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
+import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.system.dto.SysDeptDTO;
 import com.zerosx.system.dto.SysDeptPageDTO;
 import com.zerosx.system.entity.SysDept;
@@ -28,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -73,7 +75,7 @@ public class SysDeptServiceImpl extends SuperServiceImpl<ISysDeptMapper, SysDept
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean add(SysDeptDTO sysDeptDTO) {
-        SysDept addEntity = BeanCopierUtil.copyProperties(sysDeptDTO, SysDept.class);
+        SysDept addEntity = BeanCopierUtils.copyProperties(sysDeptDTO, SysDept.class);
         addEntity.setDeptCode(IdGenerator.getIdStr());
         checkExistName(sysDeptDTO);
         boolean save = save(addEntity);
@@ -89,7 +91,7 @@ public class SysDeptServiceImpl extends SuperServiceImpl<ISysDeptMapper, SysDept
             throw new BusinessException("编辑记录不存在");
         }
         checkExistName(sysDeptDTO);
-        SysDept updateEntity = BeanCopierUtil.copyProperties(sysDeptDTO, SysDept.class);
+        SysDept updateEntity = BeanCopierUtils.copyProperties(sysDeptDTO, SysDept.class);
         sysRoleDeptService.updateSysDeptRoles(dbUpdate.getId(), sysDeptDTO.getRoleIds(), true);
         return updateById(updateEntity);
     }
@@ -107,7 +109,7 @@ public class SysDeptServiceImpl extends SuperServiceImpl<ISysDeptMapper, SysDept
 
     @Override
     public SysDeptVO queryById(Long id) {
-        SysDeptVO sysDeptVO = BeanCopierUtil.copyProperties(getById(id), SysDeptVO.class);
+        SysDeptVO sysDeptVO = EasyTransUtils.copyTrans(getById(id), SysDeptVO.class);
         LambdaQueryWrapper<SysRoleDept> rm = Wrappers.lambdaQuery(SysRoleDept.class);
         rm.eq(SysRoleDept::getDeptId, id);
         List<SysRoleDept> sysRoleDepts = sysRoleDeptService.list(rm);
@@ -195,8 +197,10 @@ public class SysDeptServiceImpl extends SuperServiceImpl<ISysDeptMapper, SysDept
     }
 
     @Override
-    public List<SysTreeSelectVO> treeSelect() {
-        List<SysDept> sysDepts = buildMenuTree(dataList(new SysDeptPageDTO()));
+    public List<SysTreeSelectVO> treeSelect(BaseTenantDTO baseTenantDTO) {
+        SysDeptPageDTO sysDeptPageDTO = new SysDeptPageDTO();
+        sysDeptPageDTO.setOperatorId(baseTenantDTO.getOperatorId());
+        List<SysDept> sysDepts = buildMenuTree(dataList(sysDeptPageDTO));
         return sysDepts.stream().map(SysTreeSelectVO::new).collect(Collectors.toList());
     }
 
@@ -210,4 +214,10 @@ public class SysDeptServiceImpl extends SuperServiceImpl<ISysDeptMapper, SysDept
         }
         return roleDepts.stream().map(SysRoleDept::getRoleId).collect(Collectors.toSet());
     }
+
+    @Override
+    public void excelExport(RequestVO<SysDeptPageDTO> requestVO, HttpServletResponse response) {
+        excelExport(PageUtils.of(requestVO, false), lambdaQW(requestVO.getT()), SysDeptPageVO.class, response);
+    }
+
 }

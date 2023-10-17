@@ -1,6 +1,8 @@
 package com.zerosx.common.oss.enums;
 
 
+import com.zerosx.common.anno.AutoDictData;
+import com.zerosx.common.base.BaseEnum;
 import com.zerosx.common.oss.core.config.AliyunOssConfig;
 import com.zerosx.common.oss.core.config.IOssConfig;
 import com.zerosx.common.oss.core.config.QiniuOssConfig;
@@ -19,7 +21,8 @@ import lombok.Getter;
  * @create: 2023-08-30 14:03
  **/
 @Getter
-public enum OssTypeEnum {
+@AutoDictData(name = "OSS服务商")
+public enum OssTypeEnum implements BaseEnum<String> {
 
     /**
      * 阿里云

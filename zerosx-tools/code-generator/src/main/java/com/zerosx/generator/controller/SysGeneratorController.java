@@ -2,8 +2,8 @@ package com.zerosx.generator.controller;
 
 import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.core.utils.DateTimeUtil;
 import com.zerosx.generator.service.SysGeneratorService;
+import com.zerosx.common.utils.DateUtils2;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ public class SysGeneratorController {
     @GetMapping("/generator/code_zip")
     @Operation(summary = "代码生成器(压缩下载)")
     public void makeCode(String tables, HttpServletResponse response) throws IOException {
-        String zipPath = "CodeGenerator_" + DateTimeUtil.now(DateTimeUtil.FORMAT_2);
+        String zipPath = "CodeGenerator_" + DateUtils2.now(DateUtils2.FORMAT_2);
         byte[] data = sysGeneratorService.generatorCode(tables.split(","), true, zipPath);
         response.reset();
         response.setHeader("Content-Disposition", "attachment; filename=" + zipPath + ".zip");

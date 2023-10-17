@@ -92,6 +92,7 @@
 </template>
 
 <script>
+import store from "@/store";
 import { pageList, addSysPost, queryById, updateSysPost, deleteSysPost } from '@/api/perms/sysPost.js';
 import serviceConfig from '@/api/serviceConfig'
 import { operators } from '@/api/common.js'
@@ -302,6 +303,7 @@ export default {
     },
     handleAdd() {
       this.reset();
+      this.form.operatorId = store.getters.operatorId;
       this.open = true;
       this.title = '新增岗位管理'
     },

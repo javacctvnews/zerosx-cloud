@@ -1,6 +1,6 @@
 package com.zerosx.auth.service.userdetails;
 
-import com.zerosx.utils.JacksonUtil;
+import com.zerosx.common.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsChecker;

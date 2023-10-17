@@ -2,15 +2,17 @@ package ${package}.${moduleName}.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.zerosx.common.core.utils.EasyTransUtils;
 import org.springframework.stereotype.Service;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.base.vo.RequestVO;
-import com.zerosx.common.core.utils.BeanCopierUtil;
+import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.base.exception.BusinessException;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Arrays;
 
@@ -55,7 +57,7 @@ public class ${className}ServiceImpl extends SuperServiceImpl<I${className}Mappe
 
     @Override
     public boolean add(${className}DTO ${classname}DTO) {
-        ${className} addEntity = BeanCopierUtil.copyProperties(${classname}DTO, ${className}.class);
+        ${className} addEntity = BeanCopierUtils.copyProperties(${classname}DTO, ${className}.class);
         return save(addEntity);
     }
 
@@ -65,19 +67,25 @@ public class ${className}ServiceImpl extends SuperServiceImpl<I${className}Mappe
         if (dbUpdate == null) {
             throw new BusinessException("编辑记录不存在");
         }
-        ${className} updateEntity = BeanCopierUtil.copyProperties(${classname}DTO, ${className}.class);
+        ${className} updateEntity = BeanCopierUtils.copyProperties(${classname}DTO, ${className}.class);
         return updateById(updateEntity);
     }
 
    @Override
     public ${className}VO queryById(Long id) {
-        return BeanCopierUtil.copyProperties(getById(id), ${className}VO.class);
+        return EasyTransUtils.copyTrans(getById(id), ${className}VO.class);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteRecord(Long[] ids) {
         return removeByIds(Arrays.asList(ids));
+    }
+
+
+    @Override
+    public void excelExport(RequestVO<${className}PageDTO> requestVO, HttpServletResponse response) {
+        excelExport(PageUtils.of(requestVO, false), getWrapper(requestVO.getT()), ${className}PageVO.class, response);
     }
 
 }

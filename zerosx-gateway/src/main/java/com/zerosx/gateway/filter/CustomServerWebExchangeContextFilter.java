@@ -9,11 +9,10 @@ import com.zerosx.common.base.vo.OauthClientDetailsBO;
 import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.core.utils.AntPathMatcherUtils;
-import com.zerosx.common.core.utils.MDCTraceUtils;
 import com.zerosx.common.core.vo.CustomUserDetails;
 import com.zerosx.common.redis.templete.RedissonOpService;
+import com.zerosx.common.utils.JacksonUtil;
 import com.zerosx.gateway.feign.AsyncSysUserService;
-import com.zerosx.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
@@ -37,6 +36,8 @@ import java.util.stream.Collectors;
 /**
  * CustomServerWebExchangeContextFilter
  * <p> filter上下文数据
+ * 1）检查token是否有效
+ * 2）
  *
  * @author: javacctvnews
  * @create: 2023-09-03 13:53
@@ -56,11 +57,12 @@ public class CustomServerWebExchangeContextFilter extends ServerWebExchangeConte
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        log.debug("执行CustomServerWebExchangeContextFilter");
         MultiValueMap<String, String> headerValues = new LinkedMultiValueMap<>(8);
         //添加traceId
-        MDCTraceUtils.addTrace();
+        /*MDCTraceUtils.addTrace();
         headerValues.add(MDCTraceUtils.TRACE_ID_HEADER, MDCTraceUtils.getTraceId());
-        headerValues.add(MDCTraceUtils.SPAN_ID_HEADER, MDCTraceUtils.getNextSpanId());
+        headerValues.add(MDCTraceUtils.SPAN_ID_HEADER, MDCTraceUtils.getNextSpanId());*/
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
         String token = getToken(request);
@@ -75,6 +77,9 @@ public class CustomServerWebExchangeContextFilter extends ServerWebExchangeConte
             return buildExchange(exchange, chain, headerValues);
         }
         OAuth2Authentication oAuth2Authentication = tokenStore.readAuthentication(oAuth2AccessToken);
+        if (!hasResourcesPerms(oAuth2Authentication.getOAuth2Request().getClientId(), path)) {
+            return Mono.error(new BusinessException("您没有此ResourceIds资源权限！"));
+        }
         CustomUserDetails userDetails = (CustomUserDetails) oAuth2Authentication.getPrincipal();
         String username = userDetails.getUsername();
         long t1 = System.currentTimeMillis();
@@ -82,9 +87,6 @@ public class CustomServerWebExchangeContextFilter extends ServerWebExchangeConte
         Map<String, String> map = new HashMap<>();
         map.put(SecurityConstants.SECURITY_CONTEXT, JacksonUtil.toJSONString(loginUserTenantsBO));
         ServerWebExchangeUtils.putUriTemplateVariables(exchange, map);
-        if (!hasResourcesPerms(oAuth2Authentication.getOAuth2Request().getClientId(), path)) {
-            return Mono.error(new BusinessException("您没有此资源权限！"));
-        }
         headerValues.add(HeadersConstants.CLIENT_ID, oAuth2Authentication.getOAuth2Request().getClientId());
         headerValues.add(HeadersConstants.OPERATOR_ID, userDetails.getOperatorId());
         headerValues.add(HeadersConstants.USERNAME, userDetails.getUserName());

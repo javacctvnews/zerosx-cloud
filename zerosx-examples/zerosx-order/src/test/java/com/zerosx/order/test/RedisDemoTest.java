@@ -32,10 +32,10 @@ public class RedisDemoTest {
     @Test
     public void testString() {
         redissonOpService.set("test01", "1234567890");
-        long test01Expire = redissonOpService.expireTime("test01");
+        long test01Expire = redissonOpService.ttl("test01");
         log.debug("test01过期时间:{}", test01Expire);
         redissonOpService.set("test02", "1234567890", 30);
-        long test02Expire = redissonOpService.expireTime("test02");
+        long test02Expire = redissonOpService.ttl("test02");
         log.debug("test02过期时间:{}", test02Expire);
         String test01 = redissonOpService.getAndDelete("test01");
         log.debug("test01的内容:{}", test01);
@@ -118,7 +118,7 @@ public class RedisDemoTest {
         map.put("122222222222222", 16D);
 
         redissonOpService.zAdd(key, map);
-        redissonOpService.zAddScore(key, "122222222222222", 10D);
+        Double updateScore = redissonOpService.zAddScore(key, "122222222222222", 10D);
         int count = redissonOpService.zLen(key);
         log.debug("{} 元素个数:{}", key, count);
         Collection<ScoredEntry<String>> collection = redissonOpService.zEntryRange(key, 0, 10);

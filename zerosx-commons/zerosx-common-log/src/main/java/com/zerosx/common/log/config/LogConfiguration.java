@@ -1,7 +1,7 @@
 package com.zerosx.common.log.config;
 
 import com.zerosx.common.core.utils.MDCTraceUtils;
-import com.zerosx.common.log.properties.TraceProperties;
+import com.zerosx.common.log.properties.CustomLogProperties;
 import feign.RequestInterceptor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,17 +16,17 @@ import org.springframework.context.annotation.Bean;
  * @author javacctvnews
  */
 @AutoConfiguration
-@EnableConfigurationProperties({TraceProperties.class})
+@EnableConfigurationProperties({CustomLogProperties.class})
 public class LogConfiguration {
 
     @Autowired
-    private TraceProperties traceProperties;
+    private CustomLogProperties customLogProperties;
 
     @Bean
     @ConditionalOnClass(RequestInterceptor.class)
     public RequestInterceptor feignTraceInterceptor() {
         return template -> {
-            if (traceProperties.getEnable()) {
+            if (customLogProperties.getEnable()) {
                 //传递日志traceId spanId
                 String traceId = MDCTraceUtils.getTraceId();
                 if (StringUtils.isNotBlank(traceId)) {
@@ -36,6 +36,5 @@ public class LogConfiguration {
             }
         };
     }
-
 
 }

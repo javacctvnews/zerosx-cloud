@@ -24,12 +24,12 @@ services:
       --spring.datasource.url=jdbc:mysql://192.168.3.6:13306/xxl_job?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai&useSSL=false&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true
       --spring.datasource.username=root
       --spring.datasource.password=zerosx@123456
-      --spring.mail.host=smtp.163.com
-      --spring.mail.port=25
-      --spring.mail.username=javacctvnews@163.com
-      --spring.mail.from=javacctvnews@163.com
-      --spring.mail.password=PHJEWCKVYEYWIYRN
-      --spring.mail.properties.mail.smtp.starttls.enable=true
-      --spring.mail.properties.mail.smtp.starttls.required=true
       --xxl.job.accessToken=8888888888888888
       --xxl.job.logretentiondays=30'
+      #--spring.mail.host=smtp.163.com
+      #--spring.mail.port=25
+      #--spring.mail.username=${email}
+      #--spring.mail.from=${email}
+      #--spring.mail.password=${pwd}
+      #--spring.mail.properties.mail.smtp.starttls.enable=true
+      #--spring.mail.properties.mail.smtp.starttls.required=true

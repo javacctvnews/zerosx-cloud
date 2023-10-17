@@ -5,24 +5,21 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.zerosx.common.core.model.SuperEntity;
 import com.zerosx.encrypt2.anno.EncryptClass;
 import com.zerosx.encrypt2.anno.EncryptField;
-import com.zerosx.encrypt2.core.encryptor.AesEncryptor;
-import com.zerosx.order.rule.IdNumEncryptRule;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 /**
  * 用户订单
- *
- * @author javacctvnews
  * @Description
- * @date 2023-09-12 16:21:49
+ * @author javacctvnews
+ * @date 2023-09-22 14:09:54
  */
-@EncryptClass
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
 @TableName("t_user_order")
+@EncryptClass   //字段需要加解密
 public class UserOrder extends SuperEntity<UserOrder> {
 
     private static final long serialVersionUID = 1L;
@@ -55,19 +52,19 @@ public class UserOrder extends SuperEntity<UserOrder> {
     /**
      * 手机号码
      */
-    @EncryptField(algo = AesEncryptor.class)
+    @EncryptField
     private String phone;
 
     /**
      * 身份号码
      */
-    @EncryptField(algo = IdNumEncryptRule.class)
+    @EncryptField
     private String idCard;
 
     /**
      * 电子邮箱
      */
-    @EncryptField(algo = IdNumEncryptRule.class)
+    @EncryptField
     private String email;
 
     /**

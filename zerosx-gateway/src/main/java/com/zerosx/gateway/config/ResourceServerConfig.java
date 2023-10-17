@@ -1,12 +1,16 @@
 package com.zerosx.gateway.config;
 
 
+import com.zerosx.common.log.properties.CustomLogProperties;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.security.properties.CustomSecurityProperties;
 import com.zerosx.gateway.auth.*;
 import com.zerosx.gateway.feign.AsyncSysUserService;
 import com.zerosx.gateway.filter.CustomServerWebExchangeContextFilter;
-import com.zerosx.utils.JacksonUtil;
+import com.zerosx.common.utils.JacksonUtil;
+import com.zerosx.gateway.filter.TraceIDFilter;
+import com.zerosx.gateway.handler.CustomAccessDeniedHandler;
+import com.zerosx.gateway.handler.CustomAuthenticationEntryPoint;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -42,10 +46,15 @@ public class ResourceServerConfig {
     private RedissonOpService redissonOpService;
     @Autowired
     private AsyncSysUserService asyncLoginUserService;
+    @Autowired
+    private CustomLogProperties customLogProperties;
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        http.addFilterAt(new CustomServerWebExchangeContextFilter(tokenStore, redissonOpService, asyncLoginUserService), SecurityWebFiltersOrder.FIRST);
+        //log
+        http.addFilterAt(new TraceIDFilter(customLogProperties), SecurityWebFiltersOrder.FIRST);
+        //Context
+        http.addFilterAt(new CustomServerWebExchangeContextFilter(tokenStore, redissonOpService, asyncLoginUserService), SecurityWebFiltersOrder.REACTOR_CONTEXT);
         //认证处理器
         ReactiveAuthenticationManager customAuthenticationManager = new CustomAuthenticationManager(tokenStore);
         CustomAuthenticationEntryPoint entryPoint = new CustomAuthenticationEntryPoint();
@@ -58,7 +67,7 @@ public class ResourceServerConfig {
         oauth2Filter.setAuthenticationFailureHandler(new ServerAuthenticationEntryPointFailureHandler(entryPoint));
         oauth2Filter.setRequiresAuthenticationMatcher(new CustomServerWebExchangeMatcher(customSecurityProperties));
         http.addFilterAt(oauth2Filter, SecurityWebFiltersOrder.AUTHENTICATION);
-        //无需认证的俩url
+        //无需认证的url
         List<String> ignoreAuthUrls = customSecurityProperties.getAllIgnoreAuthUrls();
         log.debug("【zeros-gateway】不需要【Token认证】的URL集合:{}", JacksonUtil.toJSONString(ignoreAuthUrls));
 

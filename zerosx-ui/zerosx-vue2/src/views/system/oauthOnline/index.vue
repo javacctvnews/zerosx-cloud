@@ -202,6 +202,7 @@ export default {
     },
     resetQuery() {
       this.$refs["queryForm"].resetFields();
+      this.handleQuery();
     },
 
     handleExport() {

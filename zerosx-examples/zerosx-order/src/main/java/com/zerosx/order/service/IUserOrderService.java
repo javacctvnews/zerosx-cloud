@@ -9,13 +9,14 @@ import com.zerosx.order.dto.UserOrderPageDTO;
 import com.zerosx.order.dto.UserOrderDTO;
 import com.zerosx.order.vo.UserOrderVO;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
  * 用户订单
  * @Description
  * @author javacctvnews
- * @date 2023-09-12 16:21:49
+ * @date 2023-09-22 14:09:54
  */
 public interface IUserOrderService extends ISuperService<UserOrder> {
 
@@ -61,5 +62,14 @@ public interface IUserOrderService extends ISuperService<UserOrder> {
      * @return
      */
     boolean deleteRecord(Long[] ids);
+
+    /**
+     * 导出Excel
+     *
+     * @param requestVO requestVO
+     * @param response  response
+     */
+    void excelExport(RequestVO<UserOrderPageDTO> requestVO, HttpServletResponse response);
+
 }
 

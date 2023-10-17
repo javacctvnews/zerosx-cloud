@@ -9,8 +9,8 @@ import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.core.easyexcel.EasyExcelUtil;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.vo.CustomPageVO;
-import com.zerosx.common.log.annotation.SystemLog;
-import com.zerosx.common.log.enums.BusinessType;
+import com.zerosx.common.log.anno.OpLog;
+import com.zerosx.common.log.enums.OpTypeEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -32,14 +32,14 @@ public class OAuth2RequestController {
     private IOauthClientDetailsService oauthClientDetailsService;
 
     @Operation(summary = "token分页列表")
-    @SystemLog(title = "TOKEN管理", btnName = "分页查询", businessType = BusinessType.QUERY)
+    @OpLog(mod = "TOKEN管理", btn = "分页查询", opType = OpTypeEnum.QUERY)
     @PostMapping("/token/page_list")
     public ResultVO<CustomPageVO<TokenVO>> pageList(@RequestBody @Validated RequestVO<TokenQueryVO> requestVO) {
         return ResultVOUtil.success(oauthClientDetailsService.pageList(requestVO, true));
     }
 
     @Operation(summary = "退出登录")
-    @SystemLog(title = "TOKEN管理", btnName = "退出登录", businessType = BusinessType.QUERY)
+    @OpLog(mod = "TOKEN管理", btn = "退出登录", opType = OpTypeEnum.QUERY)
     @PostMapping("/token/logout")
     public ResultVO<?> logout(@RequestBody TokenQueryVO tokenQueryVO) {
         return ResultVOUtil.success(oauthClientDetailsService.logout(tokenQueryVO));
@@ -52,14 +52,14 @@ public class OAuth2RequestController {
      * @return
      */
     @Operation(summary = "清理Token数据")
-    @SystemLog(title = "TOKEN管理", btnName = "清理Token数据", businessType = BusinessType.QUERY)
+    @OpLog(mod = "TOKEN管理", btn = "清理Token数据", opType = OpTypeEnum.QUERY)
     @PostMapping("/token/clean_token_data")
     public ResultVO<?> cleanTokenData(@RequestBody TokenQueryVO tokenQueryVO) {
         return ResultVOUtil.success(oauthClientDetailsService.cleanTokenData(tokenQueryVO));
     }
 
     @Operation(summary = "导出")
-    @SystemLog(title = "TOKEN管理", btnName = "导出", businessType = BusinessType.EXPORT)
+    @OpLog(mod = "TOKEN管理", btn = "导出", opType = OpTypeEnum.EXPORT)
     @PostMapping("/token/export")
     public void operatorExport(@RequestBody @Validated RequestVO<TokenQueryVO> requestVO, HttpServletResponse response) throws IOException {
         long t1 = System.currentTimeMillis();

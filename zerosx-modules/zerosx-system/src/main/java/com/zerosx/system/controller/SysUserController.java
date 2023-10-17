@@ -2,26 +2,24 @@ package com.zerosx.system.controller;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.zerosx.api.auth.IAuthFeignServiceApi;
+import com.zerosx.api.auth.IAccessTokenClient;
+import com.zerosx.api.system.ISysUserClient;
 import com.zerosx.api.system.dto.UserLoginDTO;
+import com.zerosx.api.system.vo.LoginUserVO;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.LoginUserTenantsBO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.core.easyexcel.EasyExcelUtil;
-import com.zerosx.common.core.enums.UserTypeEnum;
+import com.zerosx.common.core.enums.system.UserTypeEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.utils.IdGenerator;
 import com.zerosx.common.core.vo.CustomPageVO;
-import com.zerosx.common.core.vo.CustomUserDetails;
-import com.zerosx.common.log.annotation.SystemLog;
-import com.zerosx.common.log.enums.BusinessType;
-import com.zerosx.common.oss.model.OssObjectVO;
+import com.zerosx.common.log.anno.OpLog;
+import com.zerosx.common.log.enums.OpTypeEnum;
 import com.zerosx.system.dto.SysUserDTO;
 import com.zerosx.system.dto.SysUserPageDTO;
 import com.zerosx.system.entity.SysUser;
-import com.zerosx.system.service.IOssFileUploadService;
 import com.zerosx.system.service.ISysUserService;
 import com.zerosx.system.vo.SysUserPageVO;
 import com.zerosx.system.vo.SysUserVO;
@@ -35,11 +33,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -52,33 +48,31 @@ import java.util.Map;
 @Slf4j
 @RestController
 @Tag(name = "系统用户")
-public class SysUserController {
+public class SysUserController implements ISysUserClient {
 
     @Autowired
     private ISysUserService sysUserService;
     @Autowired
-    private IOssFileUploadService ossFileUploadService;
-    @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    private IAuthFeignServiceApi authFeignServiceApi;
+    private IAccessTokenClient authFeignServiceApi;
 
     @Operation(summary = "分页列表")
-    @SystemLog(title = "系统用户", btnName = "分页查询", businessType = BusinessType.QUERY)
+    @OpLog(mod = "系统用户", btn = "分页查询", opType = OpTypeEnum.QUERY)
     @PostMapping("/sys_user/page_list")
     public ResultVO<CustomPageVO<SysUserPageVO>> pageList(@RequestBody RequestVO<SysUserPageDTO> requestVO) {
         return ResultVOUtil.success(sysUserService.pageList(requestVO, true));
     }
 
     @Operation(summary = "新增")
-    @SystemLog(title = "系统用户", btnName = "新增", businessType = BusinessType.INSERT)
+    @OpLog(mod = "系统用户", btn = "新增", opType = OpTypeEnum.INSERT)
     @PostMapping("/sys_user/save")
     public ResultVO<?> add(@Validated @RequestBody SysUserDTO sysUserDTO) {
         return ResultVOUtil.successBoolean(sysUserService.add(sysUserDTO));
     }
 
     @Operation(summary = "编辑")
-    @SystemLog(title = "系统用户", btnName = "编辑", businessType = BusinessType.UPDATE)
+    @OpLog(mod = "系统用户", btn = "编辑", opType = OpTypeEnum.UPDATE)
     @PostMapping("/sys_user/update")
     public ResultVO<?> update(@Validated @RequestBody SysUserDTO sysUserDTO) {
         return ResultVOUtil.successBoolean(sysUserService.update(sysUserDTO));
@@ -91,25 +85,22 @@ public class SysUserController {
     }
 
     @Operation(summary = "删除")
-    @SystemLog(title = "系统用户", btnName = "删除", businessType = BusinessType.DELETE)
+    @OpLog(mod = "系统用户", btn = "删除", opType = OpTypeEnum.DELETE)
     @DeleteMapping("/sys_user/delete/{userId}")
     public ResultVO<?> deleteRecord(@PathVariable("userId") Long[] userId) {
         return ResultVOUtil.successBoolean(sysUserService.deleteRecord(userId));
     }
 
     @Operation(summary = "导出")
-    @SystemLog(title = "系统用户", btnName = "导出", businessType = BusinessType.EXPORT)
+    @OpLog(mod = "系统用户", btn = "导出", opType = OpTypeEnum.EXPORT)
     @PostMapping("/sys_user/export")
     public void operatorExport(@RequestBody RequestVO<SysUserPageDTO> requestVO, HttpServletResponse response) throws IOException {
-        long t1 = System.currentTimeMillis();
-        CustomPageVO<SysUserPageVO> pages = sysUserService.pageList(requestVO, false);
-        EasyExcelUtil.writeExcel(response, pages.getList(), SysUserPageVO.class);
-        log.debug("【{}】执行导出{}条 耗时:{}ms", ZerosSecurityContextHolder.getUserName(), pages.getTotal(), System.currentTimeMillis() - t1);
+        sysUserService.excelExport(requestVO, response);
     }
 
     @Operation(summary = "查询登录用户信息")
     @PostMapping("/sys_user/query_login_user")
-    public ResultVO<CustomUserDetails> queryLoginUser(@RequestBody UserLoginDTO userLoginDTO) {
+    public ResultVO<LoginUserVO> queryLoginUser(@RequestBody UserLoginDTO userLoginDTO) {
         return ResultVOUtil.success(sysUserService.queryLoginUser(userLoginDTO));
     }
 
@@ -126,19 +117,15 @@ public class SysUserController {
     }
 
     @Operation(summary = "更换用户头像")
-    @PostMapping("/sys_user/profile/avatar")
-    public ResultVO<Map<String, Object>> getProfile(@RequestParam("avatarfile") MultipartFile file) {
-        OssObjectVO ossObjectVO = ossFileUploadService.upload(file);
-        if (ossObjectVO == null || StringUtils.isBlank(ossObjectVO.getObjectViewUrl())) {
-            throw new BusinessException("头像上传失败");
+    @PostMapping("/sys_user/update_avatar")
+    public ResultVO<?> getProfile(@RequestBody SysUserDTO sysUserDTO) {
+        if (StringUtils.isBlank(sysUserDTO.getAvatar())) {
+            throw new BusinessException("头像存储标识不能为空");
         }
-        Map<String, Object> map = new HashMap<>();
-        map.put("imgUrl", ossObjectVO.getObjectViewUrl());
         LambdaUpdateWrapper<SysUser> upqw = Wrappers.lambdaUpdate(SysUser.class);
         upqw.eq(SysUser::getUserName, ZerosSecurityContextHolder.getUserName());
-        upqw.set(SysUser::getAvatar, ossObjectVO.getObjectName());
-        sysUserService.update(upqw);
-        return ResultVOUtil.success(map);
+        upqw.set(SysUser::getAvatar, sysUserDTO.getAvatar());
+        return ResultVOUtil.successBoolean(sysUserService.update(upqw));
     }
 
     @Operation(summary = "更新个人信息")

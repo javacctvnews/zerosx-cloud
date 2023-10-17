@@ -31,7 +31,7 @@
         v-if="refreshTable"
         v-loading="loading"
         :data="menuList"
-        row-key="menuId" 
+        row-key="menuId"
         :border="true"
         style="width: 100%"
         :header-cell-style="{ padding: '0px' }"
@@ -66,20 +66,23 @@
             <el-button
               size="mini"
               type="text"
-              icon="el-icon-edit"
-              @click="handleUpdate(scope.row)"
-              v-hasPerms="['system:menu:edit']"
-            >修改</el-button>
-            <el-button
-              size="mini"
-              type="text"
               icon="el-icon-plus"
+              style="color: #2e78ef"
               @click="handleAdd(scope.row)"
               v-hasPerms="['system:menu:add']"
             >新增</el-button>
             <el-button
               size="mini"
               type="text"
+              icon="el-icon-edit"
+              style="color: #67c23a"
+              @click="handleUpdate(scope.row)"
+              v-hasPerms="['system:menu:edit']"
+            >修改</el-button>
+            <el-button
+              size="mini"
+              type="text"
+              style="color:#ff4949"
               icon="el-icon-delete"
               @click="handleDelete(scope.row)"
               v-hasPerms="['system:menu:remove']"
@@ -88,7 +91,7 @@
         </el-table-column>
       </el-table>
     </div>
-    
+
 
     <!-- 添加或修改菜单对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="750px" append-to-body :close-on-click-modal="false">
@@ -227,7 +230,7 @@
               </span>
               <el-radio-group v-model="form.visible">
                 <el-radio
-                  v-for="dict in dict.type.sys_show_hide"
+                  v-for="dict in dict.type.MenuShowHideEnum"
                   :key="dict.value"
                   :label="dict.value"
                 >{{dict.label}}</el-radio>
@@ -266,7 +269,7 @@
               </span>
               <el-radio-group v-model="form.requestMethod">
                 <el-radio
-                  v-for="dict in dict.type.sys_request_method"
+                  v-for="dict in dict.type.RequestMethodEnum"
                   :key="dict.value"
                   :label="dict.value"
                 >{{dict.label}}</el-radio>
@@ -291,7 +294,7 @@ import IconSelect from "@/components/IconSelect";
 
 export default {
   name: "Menu",
-  dicts: ['sys_show_hide', 'StatusEnum','sys_request_method'],
+  dicts: ['MenuShowHideEnum', 'StatusEnum','MenuTypeEnum','RequestMethodEnum'],
   components: { Treeselect, IconSelect },
   data() {
     return {

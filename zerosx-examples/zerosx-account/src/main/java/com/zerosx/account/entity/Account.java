@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.math.BigDecimal;
+
 @EqualsAndHashCode(callSuper = true)
 @TableName("t_account")
 @Data
@@ -17,6 +19,6 @@ public class Account extends Model<Account> {
 
     private String userId;
 
-    private Double amount;
+    private BigDecimal amount;
 
 }

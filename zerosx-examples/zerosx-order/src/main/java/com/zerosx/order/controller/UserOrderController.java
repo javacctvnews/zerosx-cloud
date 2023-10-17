@@ -10,28 +10,23 @@ import lombok.extern.slf4j.Slf4j;
 import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
-import com.zerosx.common.core.utils.BeanCopierUtil;
-import com.zerosx.common.core.easyexcel.EasyExcelUtil;
-import com.zerosx.common.log.annotation.SystemLog;
-import com.zerosx.common.log.enums.BusinessType;
+import com.zerosx.common.log.anno.OpLog;
+import com.zerosx.common.log.enums.OpTypeEnum;
 
 import com.zerosx.order.vo.UserOrderPageVO;
 import com.zerosx.order.dto.UserOrderPageDTO;
 import com.zerosx.order.dto.UserOrderDTO;
 import com.zerosx.order.vo.UserOrderVO;
-import com.zerosx.order.entity.UserOrder;
 import com.zerosx.order.service.IUserOrderService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * 用户订单
  * @Description
  * @author javacctvnews
- * @date 2023-09-12 16:21:49
+ * @date 2023-09-22 14:09:54
  */
 @Slf4j
 @RestController
@@ -42,21 +37,21 @@ public class UserOrderController {
     private IUserOrderService userOrderService;
 
     @Operation(summary ="分页列表")
-    @SystemLog(title = "用户订单", btnName = "分页查询", businessType= BusinessType.QUERY)
+    @OpLog(mod = "用户订单", btn = "分页查询", opType = OpTypeEnum.QUERY)
     @PostMapping("/user_order/page_list")
     public ResultVO<CustomPageVO<UserOrderPageVO>> pageList(@RequestBody RequestVO<UserOrderPageDTO> requestVO){
         return ResultVOUtil.success(userOrderService.pageList(requestVO, true));
     }
 
     @Operation(summary ="新增")
-    @SystemLog(title = "用户订单", btnName = "新增", businessType= BusinessType.INSERT)
+    @OpLog(mod = "用户订单", btn = "新增", opType = OpTypeEnum.INSERT)
     @PostMapping("/user_order/save")
     public ResultVO<?> add(@Validated @RequestBody UserOrderDTO userOrderDTO) {
         return ResultVOUtil.successBoolean(userOrderService.add(userOrderDTO));
     }
 
     @Operation(summary ="编辑")
-    @SystemLog(title = "用户订单", btnName = "编辑", businessType= BusinessType.UPDATE)
+    @OpLog(mod = "用户订单", btn = "编辑", opType = OpTypeEnum.UPDATE)
     @PostMapping("/user_order/update")
     public ResultVO<?> update(@Validated @RequestBody UserOrderDTO userOrderDTO) {
         return ResultVOUtil.successBoolean(userOrderService.update(userOrderDTO));
@@ -69,20 +64,17 @@ public class UserOrderController {
     }
 
     @Operation(summary ="删除")
-    @SystemLog(title = "用户订单", btnName = "删除", businessType= BusinessType.DELETE)
+    @OpLog(mod = "用户订单", btn = "删除", opType = OpTypeEnum.DELETE)
     @DeleteMapping("/user_order/delete/{ids}")
     public ResultVO<?> deleteRecord(@PathVariable("ids") Long[] ids){
         return ResultVOUtil.successBoolean(userOrderService.deleteRecord(ids));
     }
 
     @Operation(summary = "导出")
-    @SystemLog(title = "用户订单", btnName = "导出", businessType= BusinessType.EXPORT)
+    @OpLog(mod = "用户订单", btn = "导出", opType = OpTypeEnum.EXPORT)
     @PostMapping("/user_order/export")
     public void operatorExport(@RequestBody RequestVO<UserOrderPageDTO> requestVO, HttpServletResponse response) throws IOException {
-        long t1 = System.currentTimeMillis();
-        CustomPageVO<UserOrderPageVO> pages = userOrderService.pageList(requestVO, false);
-        EasyExcelUtil.writeExcel(response, pages.getList(), UserOrderPageVO.class);
-        log.debug("【{}】执行导出{}条 耗时:{}ms", ZerosSecurityContextHolder.getUserName(), pages.getTotal(), System.currentTimeMillis() - t1);
+        userOrderService.excelExport(requestVO, response);
     }
 
 }

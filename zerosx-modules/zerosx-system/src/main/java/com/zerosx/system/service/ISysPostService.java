@@ -1,6 +1,8 @@
 package com.zerosx.system.service;
 
+import com.zerosx.common.base.vo.BaseTenantDTO;
 import com.zerosx.common.base.vo.RequestVO;
+import com.zerosx.common.base.vo.SelectOptionVO;
 import com.zerosx.common.core.service.ISuperService;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.system.dto.SysPostDTO;
@@ -9,6 +11,7 @@ import com.zerosx.system.entity.SysPost;
 import com.zerosx.system.vo.SysPostPageVO;
 import com.zerosx.system.vo.SysPostVO;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -69,5 +72,20 @@ public interface ISysPostService extends ISuperService<SysPost> {
     boolean deleteRecord(Long[] ids);
 
     List<SysPost> queryUserPosts(Long userId);
+
+    /**
+     * 导出Excel
+     *
+     * @param requestVO requestVO
+     * @param response  response
+     */
+    void excelExport(RequestVO<SysPostPageDTO> requestVO, HttpServletResponse response);
+
+    /**
+     * 岗位下拉框
+     * @param baseTenantDTO
+     * @return
+     */
+    List<SelectOptionVO> selectOptions(BaseTenantDTO baseTenantDTO);
 }
 

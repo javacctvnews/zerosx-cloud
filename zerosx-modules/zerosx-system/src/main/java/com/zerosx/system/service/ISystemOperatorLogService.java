@@ -8,18 +8,21 @@ import com.zerosx.system.dto.SystemOperatorLogPageDTO;
 import com.zerosx.system.entity.SystemOperatorLog;
 import com.zerosx.system.vo.SystemOperatorLogPageVO;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
  * 操作日志
- * @Description
+ *
  * @author javacctvnews
+ * @Description
  * @date 2023-04-02 15:06:36
  */
 public interface ISystemOperatorLogService extends ISuperService<SystemOperatorLog> {
 
     /**
      * 分页查询
+     *
      * @param requestVO
      * @return
      */
@@ -27,6 +30,7 @@ public interface ISystemOperatorLogService extends ISuperService<SystemOperatorL
 
     /**
      * 新增
+     *
      * @param systemOperatorLogDTO
      * @return
      */
@@ -34,6 +38,7 @@ public interface ISystemOperatorLogService extends ISuperService<SystemOperatorL
 
     /**
      * 编辑
+     *
      * @param systemOperatorLogDTO
      * @return
      */
@@ -41,6 +46,7 @@ public interface ISystemOperatorLogService extends ISuperService<SystemOperatorL
 
     /**
      * 删除
+     *
      * @param id
      * @return
      */
@@ -48,6 +54,7 @@ public interface ISystemOperatorLogService extends ISuperService<SystemOperatorL
 
     /**
      * 删除指定天数的操作日志
+     *
      * @param deleteDays
      * @return
      */
@@ -55,17 +62,40 @@ public interface ISystemOperatorLogService extends ISuperService<SystemOperatorL
 
     /**
      * 清空全部日志
+     *
      * @return
      */
     boolean cleanAll();
 
     /**
      * 分页查询的data集合
-     * @param systemOperatorLogPageDTO
+     *
+     * @param systemOperatorLogPageDTO dto
      * @return
      */
     List<SystemOperatorLog> queryPageVOList(SystemOperatorLogPageDTO systemOperatorLogPageDTO);
 
+    /**
+     * 按id查询
+     *
+     * @param id id
+     * @return
+     */
     SystemOperatorLogPageVO queryById(Long id);
+
+    /**
+     * 读取redis的操作日志保存到mysql
+     *
+     */
+    void saveSystemOperatorLog();
+
+    /**
+     * 导出Excel
+     *
+     * @param requestVO requestVO
+     * @param response  response
+     */
+    void excelExport(RequestVO<SystemOperatorLogPageDTO> requestVO, HttpServletResponse response);
+
 }
 

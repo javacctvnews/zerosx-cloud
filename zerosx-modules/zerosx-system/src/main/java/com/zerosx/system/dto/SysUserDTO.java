@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,9 +19,6 @@ import java.util.List;
 public class SysUserDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    @Schema(description = "租户标识")
-    private String operatorId;
 
     @Schema(description = "用户ID")
     private Long id;
@@ -57,11 +53,11 @@ public class SysUserDTO implements Serializable {
     @Schema(description = "帐号状态（0正常 1停用）")
     private String status;
 
-    @Schema(description = "最后登录IP")
-    private String loginIp;
+//    @Schema(description = "最后登录IP")
+//    private String loginIp;
 
-    @Schema(description = "最后登录时间")
-    private Date loginDate;
+//    @Schema(description = "最后登录时间")
+//    private Date loginDate;
 
     @Schema(description = "备注")
     private String remark;
@@ -72,7 +68,12 @@ public class SysUserDTO implements Serializable {
     @Schema(description = "用户岗位集合")
     private List<Long> postIds;
 
+    @Schema(description = "旧密码")
     private String oldPassword;
 
+    @Schema(description = "新密码")
     private String newPassword;
+
+    @Schema(description = "租户标识")
+    private String operatorId;
 }

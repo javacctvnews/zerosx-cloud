@@ -22,4 +22,9 @@ public interface ServiceIdConstants {
      * 系统服务
      */
     String AUTH = "zerosx-auth";
+
+    /**
+     * 资源服务
+     */
+    String RESOURCE = "zerosx-resource";
 }

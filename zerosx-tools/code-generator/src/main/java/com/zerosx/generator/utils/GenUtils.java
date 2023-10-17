@@ -2,10 +2,10 @@ package com.zerosx.generator.utils;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.file.FileWriter;
+import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.generator.model.ColumnEntity;
 import com.zerosx.generator.model.TableEntity;
-import com.zerosx.common.base.exception.BusinessException;
-import com.zerosx.common.core.utils.DateTimeUtil;
+import com.zerosx.common.utils.DateUtils2;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -161,7 +161,7 @@ public class GenUtils {
         }
         map.put("author", author);
         map.put("email", config.getString("email"));
-        map.put("datetime", DateUtil.format(new Date(), DateTimeUtil.FORMAT_1));
+        map.put("datetime", DateUtil.format(new Date(), DateUtils2.FORMAT_1));
         VelocityContext context = new VelocityContext(map);
 
         //代码存放的绝对路径

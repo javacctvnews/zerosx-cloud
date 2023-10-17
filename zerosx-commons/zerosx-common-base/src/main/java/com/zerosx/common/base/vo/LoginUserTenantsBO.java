@@ -36,5 +36,7 @@ public class LoginUserTenantsBO implements Serializable {
     private Set<Long> roleIds;
     //权限
     private List<SysMenuBO> perms;
+    //权限，格式是：[请求方式:请求URL]
+    private Set<String> permsSet;
 
 }

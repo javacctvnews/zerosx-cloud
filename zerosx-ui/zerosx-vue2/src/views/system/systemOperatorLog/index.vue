@@ -13,7 +13,7 @@
       </el-form-item>
       <el-form-item label="类型" prop="businessType">
         <el-select v-model="queryParams.t.businessType" placeholder="操作类型" clearable style="width: 220px;">
-          <el-option v-for="dict in dict.type.sys_oper_type" :key="dict.value" :label="dict.label" :value="dict.value" />
+          <el-option v-for="dict in dict.type.OpTypeEnum" :key="dict.value" :label="dict.label" :value="dict.value" />
         </el-select>
       </el-form-item>
       <el-form-item label="状态" prop="status">
@@ -53,7 +53,7 @@
         @handleDelete="handleDelete" @handleSelectionChange="handleSelectionChange" @sort-change="handleSortChange"
         :defaultSort="defaultSort" actionWidth="120px">
         <template slot-scope="scope" slot="businessType">
-          <dict-tag :options="dict.type.sys_oper_type" :value="scope.row.businessType" />
+          <dict-tag :options="dict.type.OpTypeEnum" :value="scope.row.businessType" />
         </template>
         <template slot-scope="scope" slot="status">
           <dict-tag :options="dict.type.OperatorResEnum" :value="scope.row.status" />
@@ -119,7 +119,7 @@ import { list, delOperlog, cleanOperlog, queryById } from "@/api/system/systemOp
 import serviceConfig from '@/api/serviceConfig'
 export default {
   name: "SystemOperatorLog",
-  dicts: ['sys_oper_type', 'OperatorResEnum'],
+  dicts: ['OpTypeEnum', 'OperatorResEnum'],
   data() {
     return {
       searching: false,
@@ -329,7 +329,7 @@ export default {
     },
     // 操作日志类型字典翻译
     typeFormat(row, column) {
-      return this.selectDictLabel(this.dict.type.sys_oper_type, row.businessType);
+      return this.selectDictLabel(this.dict.type.OpTypeEnum, row.businessType);
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -341,7 +341,8 @@ export default {
       this.dateRange = [];
       this.resetForm("queryForm");
       //清除排序（默认自动排序的列）
-      this.$refs.tables.$refs.tablePlus.sort(this.defaultSort.prop, this.defaultSort.order)
+      this.$refs.tables.$refs.tablePlus.sort(this.defaultSort.prop, this.defaultSort.order);
+      //this.handleQuery();
     },
     /** 多选框选中数据 */
     handleSelectionChange(selection) {
@@ -378,6 +379,11 @@ export default {
     handleExport() {
       let name = '操作日志_' + this.parseTime(new Date(), '{y}{m}{d}{h}{i}{s}') + '.xlsx';
       this.download(serviceConfig.system + '/system_operator_log/export', this.queryParams, name)
+    },
+       /** 导出按钮操作 */
+    handleExportV2() {
+      let name = '操作日志_' + this.parseTime(new Date(), '{y}{m}{d}{h}{i}{s}') + '.xlsx';
+      this.download(serviceConfig.system + '/system_operator_log/export_v2', this.queryParams, name)
     }
   }
 };

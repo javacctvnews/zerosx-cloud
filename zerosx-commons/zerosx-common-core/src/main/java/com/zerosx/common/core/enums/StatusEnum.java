@@ -1,7 +1,7 @@
 package com.zerosx.common.core.enums;
 
-import com.zerosx.common.base.anno.AutoDictData;
-import com.zerosx.common.base.enums.CodeEnum;
+import com.zerosx.common.anno.AutoDictData;
+import com.zerosx.common.base.BaseEnum;
 import lombok.Getter;
 
 /**
@@ -13,7 +13,7 @@ import lombok.Getter;
  **/
 @Getter
 @AutoDictData(code = "StatusEnum", name = "状态")
-public enum StatusEnum implements CodeEnum<String> {
+public enum StatusEnum implements BaseEnum<String> {
 
     NORMAL("0", "正常"),
 

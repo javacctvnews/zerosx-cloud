@@ -391,7 +391,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       let name = '字典数据_' + this.parseTime(new Date(), '{y}{m}{d}{h}{i}{s}') + '.xlsx';
-      this.download(serviceConfig.system + '/sysDictData/export', {
+      this.download(serviceConfig.resource + '/sysDictData/export', {
         ...this.queryParams.t
       }, name)
     }

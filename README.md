@@ -10,7 +10,7 @@
 </div>
 <div style="text-align: center">
   <img src="https://img.shields.io/badge/JDK-1.8+-blue?logo=openjdk" alt="">
-  <img src="https://img.shields.io/badge/Spring_Boot-2.7.14-blue?logo=spring-boot" alt="">
+  <img src="https://img.shields.io/badge/Spring_Boot-2.7.16-blue?logo=spring-boot" alt="">
   <img src="https://img.shields.io/badge/Spring_Cloud-2021.0.5-blue?logo=spring-boot" alt="">
   <img src="https://img.shields.io/badge/Spring_Cloud_Alibaba-2021.0.5.0-blue?logo=alibabadotcom" alt="">
   <img src="https://img.shields.io/badge/Nacos-2.2.0-critical?logo=alibabadotcom" alt="">
@@ -29,16 +29,16 @@
 
 
 
-### 简介
+### 平台简介
 
 此平台是由作者个人兴趣下搭建及开发，开源，免费，仅供学习参考。
 
-* 基于JDK8、SpringBoot2.7.14、SpringCloud2021.0.5和SpringCloudAlibaba2021.0.5.0且采用前后端分离的微服务多租户体系架构；
+* 基于JDK8、SpringBoot2.7.16、SpringCloud2021.0.5和SpringCloudAlibaba2021.0.5.0且采用前后端分离的微服务多租户体系架构；
 * 采用自定义starter组件化的思想，结构解耦，易于扩展；
 * 实现了SpringCloudGateway集成OAuth2统一认证授权及URL级功能权限校验（适用于网络隔离场景，即网关是统一入口），且可自定义扩展OAuth2授权模式；
-* 集成Knife4j的OpenAPI3的接口文档，方便前后端对接，基础功能和文档注释完全由代码生成器一键生成（前后端代码）；
+* 集成Knife4j基于OpenAPI3的接口文档，方便前后端对接；
 * 代码生成器一键生成基础CRUD功能，节约开发时间，更多注重业务开发；
-* 提供一套基于Vue2.x的前端项目[zerosx-vue2]，此项目是参考【若依】前端开源改造，感谢若依，作者前端刚开始学习，勿喷。
+* 提供一套基于Vue2.x的前端项目[zerosx-vue2]，此项目是参考【若依】前端开源改造适配，感谢若依。
 
 ### 软件架构图
 
@@ -46,7 +46,7 @@
 
 > 备注：图中灰色虚线块组件作者并未搭建（服务器资源有限），只做一个选型参考。
 
-### 项目结构简介
+### 项目结构
 
 ```shell
 ├─zerosx-cloud								#顶级工程目录
@@ -58,6 +58,7 @@
 │ └─zerosx-auth			                  	#授权认证服务
 │ └─zerosx-commons		                  	#通用模块
 │   └─zerosx-common-base					#公共POJO、工具类
+│   └─zerosx-common-bom						#common模块依赖项
 │   └─zerosx-common-core					#公共核心模块
 │   └─zerosx-common-db						#数据权限
 │   └─zerosx-common-encrypt					#数据加解密
@@ -69,44 +70,48 @@
 │   └─zerosx-common-security				#Spring Security封装
 │   └─zerosx-common-sentinel				#Sentinel
 │   └─zerosx-common-sms						#多家SMS短信集成
+│   └─zerosx-common-utils					#工具类包
 │   └─zerosx-common-xxljob					#分布式任务调度XXL-JOB
 │ └─zerosx-examples		                  	#示例工程
 │ └─zerosx-gateway		                  	#网关服务
 │ └─zerosx-modules		                  	#业务模块
+│   └─zerosx-resource						#Resource服务
 │   └─zerosx-system							#System服务
 │ └─zerosx-tools			              	#工具工程
 │   └─code-generator				      	#项目的代码生成器
 │   └─zerosx-monitor						#SpringBootAdmin应用监控
 │ └─zerosx-ui				              	#前端
 │   └─zerosx-vue2			              	#前端-vue2版本
-│   └─zerosx-vue3			              	#前端-vue3版本(计划)
+│   └─zerosx-vue3			              	#前端-vue3版本(开发中)
 │ └─pom.xml				                  	#公共依赖
 │ └─README.md				              	#项目简介文档
 ```
 
-### 本地开发说明
+### 功能简介
 
-1. 组件安装教程及脚本请看【zerosx-cloud/doc/README.md】
+#### 1. 非业务功能
 
-2. 先启动zerosx-gateway、zerosx-auth、zerosx-system这三个项目；
+* 网关统一权限控制：URL级的功能按钮的权限控制，支持配置不同客户端及白名单URL；
+* 网关统一鉴权：OAuth2令牌Token的有效性校验，支持配置忽略认证的URL；
+* 网关聚合文档：集成Knife4j基于OpenAPI3规范的接口文档，聚合所有微服务，方便前后端对接
+* OAuth2.0认证授权：
+  * 支持OAuth2.0默认的4种鉴权方式；
+  * 可扩展自定义授权模式，已实现用户名+验证码+密码、手机号码验证码两种授权模式；
+  * 支持多账户类型授权，应用场景是同一授权模式下需要对不同的账户进行授权（不同数据库表）；
+* 数据权限：多租户的数据隔离，采用的是同一数据库表的逻辑隔离（table添加租户标识的列来区分数据）；
+* 数据安全：敏感数据的加密存储及解密，如手机号码、身份证号码等，不同加密字段可配置不同的加解密算法；
+* 数据导出：支持大量数据快速导出，支持配置每个sheet页的数据大小及每批次查询数据库数据条数大小；
+* 数据翻译：字段标识ID翻译成名称，已支持数据字典、枚举、行政区域、OSS访问链接、租户名称翻译，可扩展；
+* 链路追踪：记录整个调用链路的traceId和spanId，支持多线程；
+* OSS存储：支持多家OSS厂商且参数配置界面化，方便管理及文件管理，已实现阿里云、七牛云、腾讯云厂商，可扩展；
+* SMS短信：支持多家SMS厂商且参数配置界面化，方便管理，已实现阿里云、聚合短信厂商，可扩展；
+* 分布式任务调用：集成XXL-JOB分布式任务调度；
+* 分布式事务：集成Seata分布式事务；
+* 分布式锁：集成Redisson分布式锁，有测试案例；
+* 代码生成器：高度符合阿里巴巴开发手册规范的前后端代码一键生成，减少CRUD基础开发，更专注业务开发；
+* 系统监控：集成SpringBootAdmin应用监控；
 
-3. 启动前端项目，如何启动请看文档【zerosx-cloud/zerosx-ui/zerosx-vue2/README.md】；
-
-4. 浏览器访问前端地址，即可体验。
-
-5. 调试接口文档：
-
-   * 网关聚合入口：http://{gateway.host}:{gateway.port}/doc.html
-   
-   
-   * 单体微服务入口：http://{app1.host}:{app1.port}/doc.html (推荐，无token校验)
-   
-
-### 系统部署
-
-​	系统部署请看文档 **【zerosx-cloud/doc/README.md】**
-
-### 内置功能简介
+#### 2. 内置功能简介
 
 * 租户管理
     * 租户管理：接入系统的租户公司的管理
@@ -135,14 +140,35 @@
     * 接口文档：OpenAPI3聚合接口文档
     * 任务调度中心：XXL-JOB任务调度中心
 
+### 本地开发说明
+
+1. 组件安装教程及脚本请看【zerosx-cloud/doc/README.md】
+
+2. 先启动zerosx-gateway、zerosx-auth、zerosx-system、zerosx-resource这四个项目；
+
+3. 启动前端项目，如何启动请看文档【zerosx-cloud/zerosx-ui/zerosx-vue2/README.md】；
+
+4. 浏览器访问前端地址，即可体验。
+
+5. 调试接口文档：
+
+   * 网关聚合入口：http://{gateway.host}:{gateway.port}/doc.html
+
+
+   * 单体微服务入口：http://{app.host}:{app.port}/doc.html (推荐，无token校验)
+
+### 系统部署
+
+​	系统部署请看文档 **【zerosx-cloud/doc/README.md】**
+
 
 ### 在线体验
 
 * 演示地址：<a href="http://120.79.152.222/login"> http://120.79.152.222/login </a>
 
-> <span style="color:#666">目前版本只有基础功能，其他功能还在逐步完善中，敬请期待</span>
+> 体验系统只有主要功能，因服务器资源有限故都是单节点部署，但是所有组件及应用都支持集群。
 
-### 演示系统截图：
+### 演示系统截图
 
 <table>
    <tr>
@@ -190,3 +216,24 @@
       <td><img src="./doc/images/seata.png" /></td>
    </tr>
 </table>
+### 更新日志
+
+#### V0.0.2
+
+* 1.分离zerosx-resource资源微服务
+* 2.规范部分代码命名
+
+* 3.修复encrypt组件验证BUG（丢失自增ID等一些字段的值）
+
+* 4.导出功能增加nacos配置项
+
+* 5.seata分布式事务案例优化
+* 6.多租户前后逻辑优化（针对一个账户管理一个租户和多个租户情况）
+* 7.个人中心模块优化（头像上传、基本信息展示更多信息等）
+* 8.图片上传组件的删除按钮在删除时会删除服务器oss源文件
+* 9.修复数据字典翻译feign接口BUG
+* 10.补全更新md文档、数据库及YAML配置脚本
+
+#### V0.0.1
+
+* 初始版本，包括非业务功能及内置业务功能

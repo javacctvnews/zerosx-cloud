@@ -4,21 +4,22 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.api.system.dto.UserLoginDTO;
+import com.zerosx.api.system.vo.LoginUserVO;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.LoginUserTenantsBO;
 import com.zerosx.common.base.vo.RequestVO;
-import com.zerosx.common.base.vo.SysMenuBO;
 import com.zerosx.common.base.vo.SysRoleBO;
 import com.zerosx.common.core.enums.RedisKeyNameEnum;
-import com.zerosx.common.core.enums.UserTypeEnum;
+import com.zerosx.common.core.enums.system.UserTypeEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
-import com.zerosx.common.core.utils.BeanCopierUtil;
+import com.zerosx.common.core.utils.EasyTransUtils;
 import com.zerosx.common.core.utils.IdGenerator;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
-import com.zerosx.common.core.vo.CustomUserDetails;
 import com.zerosx.common.redis.templete.RedissonOpService;
+import com.zerosx.common.utils.BeanCopierUtils;
+import com.zerosx.common.utils.JacksonUtil;
 import com.zerosx.system.dto.SysUserDTO;
 import com.zerosx.system.dto.SysUserPageDTO;
 import com.zerosx.system.entity.*;
@@ -28,7 +29,6 @@ import com.zerosx.system.task.SystemAsyncTask;
 import com.zerosx.system.vo.SysRoleVO;
 import com.zerosx.system.vo.SysUserPageVO;
 import com.zerosx.system.vo.SysUserVO;
-import com.zerosx.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +37,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -50,6 +52,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser> implements ISysUserService {
+
+    private static final Map<Long, String> deptMap = new ConcurrentHashMap<>();
 
     @Autowired
     private ISysUserMapper sysUserMapper;
@@ -74,18 +78,20 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
 
     @Override
     public CustomPageVO<SysUserPageVO> pageList(RequestVO<SysUserPageDTO> requestVO, boolean searchCount) {
-        Map<Long, String> deptMap = new HashMap<>();
         return PageUtils.of(sysUserMapper.selectPage(PageUtils.of(requestVO, searchCount), getWrapper(requestVO.getT())).convert((e) -> {
-            SysUserPageVO tarVO = BeanCopierUtil.copyProperties(e, SysUserPageVO.class);
-            String deptName = deptMap.get(e.getDeptId());
-            if (StringUtils.isBlank(deptName)) {
-                SysDept sysDept = sysDeptService.getById(e.getDeptId());
-                if (sysDept != null) {
-                    deptMap.put(e.getDeptId(), sysDept.getDeptName());
-                    deptName = sysDept.getDeptName();
+            SysUserPageVO tarVO = EasyTransUtils.copyTrans(e, SysUserPageVO.class);
+            EasyTransUtils.easyTrans(tarVO);
+            if (e.getDeptId() != null) {
+                String deptName = deptMap.get(e.getDeptId());
+                if (StringUtils.isBlank(deptName)) {
+                    SysDept sysDept = sysDeptService.getById(e.getDeptId());
+                    if (sysDept != null) {
+                        deptMap.put(e.getDeptId(), sysDept.getDeptName());
+                        deptName = sysDept.getDeptName();
+                    }
                 }
+                tarVO.setDeptName(deptName);
             }
-            tarVO.setDeptName(deptName);
             return tarVO;
         }));
     }
@@ -99,18 +105,15 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
         LambdaQueryWrapper<SysUser> qw = Wrappers.lambdaQuery(SysUser.class);
         qw.eq(StringUtils.isNotBlank(query.getOperatorId()), SysUser::getOperatorId, query.getOperatorId());
         qw.eq(StringUtils.isNotBlank(query.getStatus()), SysUser::getStatus, query.getStatus());
-        qw.like(StringUtils.isNotBlank(query.getPhoneNumber()), SysUser::getPhoneNumber, query.getPhoneNumber());
+        qw.eq(StringUtils.isNotBlank(query.getPhoneNumber()), SysUser::getPhoneNumber, query.getPhoneNumber());
         qw.and(StringUtils.isNotBlank(query.getUserKeyword()), wq -> wq.like(SysUser::getUserName, query.getUserKeyword()).or().like(SysUser::getNickName, query.getUserKeyword()));
-        qw.orderByDesc(SysUser::getCreateTime);
-        //SysUser sysUser = BeanCopierUtil.copyProperties(query, SysUser.class);
-        //qw.setEntity(sysUser);
         return qw;
     }
 
     @Override
     @Transactional(rollbackFor = {Exception.class})
     public boolean add(SysUserDTO sysUserDTO) {
-        SysUser addEntity = BeanCopierUtil.copyProperties(sysUserDTO, SysUser.class);
+        SysUser addEntity = BeanCopierUtils.copyProperties(sysUserDTO, SysUser.class);
         addEntity.setUserCode(IdGenerator.getIdStr());
         addEntity.setPassword(passwordEncoder.encode(sysUserDTO.getPassword()));
         boolean save = save(addEntity);
@@ -131,20 +134,25 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
         //先删除缓存在更新 删除后会查询数据库
         redissonOpService.del(RedisKeyNameEnum.key(RedisKeyNameEnum.CURRENT_USER, sysUserDTO.getUserName()));
 
-        SysUser updateEntity = BeanCopierUtil.copyProperties(sysUserDTO, SysUser.class);
+        SysUser updateEntity = BeanCopierUtils.copyProperties(sysUserDTO, SysUser.class);
         //重新保存关系表
         sysUserRoleService.saveUserRoleIds(dbUpdate.getId(), sysUserDTO.getRoleIds(), true);
         //保存用户与岗位的关系
         sysUserPostService.saveUserPostIds(dbUpdate.getId(), sysUserDTO.getPostIds(), true);
-        boolean updateById = updateById(updateEntity);
-        //等数据更新完成后删除(延时删除)
-        systemAsyncTask.asyncRedisDelOptions(RedisKeyNameEnum.key(RedisKeyNameEnum.CURRENT_USER, sysUserDTO.getUserName()));
+        LambdaUpdateWrapper<SysUser> updateWrapper = Wrappers.lambdaUpdate(SysUser.class)
+                .set(SysUser::getDeptId, updateEntity.getDeptId())
+                .eq(SysUser::getId, updateEntity.getId());
+        boolean updateById = update(updateEntity, updateWrapper);
+        if (updateById) {
+            //等数据更新完成后删除(延时删除)
+            systemAsyncTask.asyncRedisDelOptions(RedisKeyNameEnum.key(RedisKeyNameEnum.CURRENT_USER, sysUserDTO.getUserName()));
+        }
         return updateById;
     }
 
     @Override
     public SysUserVO queryById(Long id) {
-        SysUserVO sysUserVO = BeanCopierUtil.copyProperties(getById(id), SysUserVO.class);
+        SysUserVO sysUserVO = EasyTransUtils.copyTrans(getById(id), SysUserVO.class);
         LambdaQueryWrapper<SysUserRole> surqw = Wrappers.lambdaQuery(SysUserRole.class);
         surqw.eq(SysUserRole::getUserId, id);
         List<SysUserRole> roles = sysUserRoleService.list(surqw);
@@ -175,25 +183,25 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     }
 
     @Override
-    public CustomUserDetails queryLoginUser(UserLoginDTO userLoginDTO) {
+    public LoginUserVO queryLoginUser(UserLoginDTO userLoginDTO) {
         SysUser sysUser = sysUserMapper.selectLoginSysUser(userLoginDTO.getUsername(), userLoginDTO.getMobilePhone());
         if (sysUser == null) {
             return null;
         }
-        CustomUserDetails customUserDetails = BeanCopierUtil.copyProperties(sysUser, CustomUserDetails.class);
-        customUserDetails.setId(sysUser.getId());
-        customUserDetails.setUserType(sysUser.getUserType());
-        customUserDetails.setOperatorId(sysUser.getOperatorId());
+        LoginUserVO loginUserVO = BeanCopierUtils.copyProperties(sysUser, LoginUserVO.class);
+        loginUserVO.setId(sysUser.getId());
+        loginUserVO.setUserType(sysUser.getUserType());
+        loginUserVO.setOperatorId(sysUser.getOperatorId());
         //角色
         LambdaQueryWrapper<SysUserRole> surqw = Wrappers.lambdaQuery(SysUserRole.class);
         surqw.eq(SysUserRole::getUserId, sysUser.getId());
         List<SysUserRole> roles = sysUserRoleService.list(surqw);
         if (CollectionUtils.isNotEmpty(roles)) {
-            List<SysRoleBO> sysRoleBOS = BeanCopierUtil.copyPropertiesOfList(roles, SysRoleBO.class);
-            customUserDetails.setRoles(sysRoleBOS);
+            List<SysRoleBO> sysRoleBOS = BeanCopierUtils.copyProperties(roles, SysRoleBO.class);
+            loginUserVO.setRoles(sysRoleBOS);
         }
         log.debug("用户【{}】登录 查询用户信息", userLoginDTO.getUsername() + " " + userLoginDTO.getMobilePhone());
-        return customUserDetails;
+        return loginUserVO;
     }
 
     @Override
@@ -220,8 +228,12 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
         //用户所有的角色
         tenantsBO.setRoleIds(sysRoleService.selectUserRoleIds(sysUser.getId(), sysUser.getDeptId()));
         //权限
-        List<SysMenuBO> sysMenuBOList = sysMenuService.findByRoleCodes(new ArrayList<>(tenantsBO.getRoleIds()));
-        tenantsBO.setPerms(sysMenuBOList);
+        /*List<SysMenuBO> sysMenuBOList = sysMenuService.findByRoleCodes(new ArrayList<>(tenantsBO.getRoleIds()));
+        if (CollectionUtils.isEmpty(sysMenuBOList)) {
+            sysMenuBOList = new ArrayList<>();
+        }
+        tenantsBO.setPerms(sysMenuBOList);*/
+        //tenantsBO.setPermsSet(sysMenuBOList.stream().map(e -> (e.getRequestMethod() + ":" + e.getRequestUrl()).toLowerCase(Locale.ROOT)).collect(Collectors.toSet()));
         redissonOpService.set(RedisKeyNameEnum.key(RedisKeyNameEnum.CURRENT_USER, userName), JacksonUtil.toJSONString(tenantsBO));
         return tenantsBO;
     }
@@ -297,6 +309,13 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
         if (sysUser == null) {
             throw new BusinessException("用户不存在");
         }
-        return BeanCopierUtil.copyProperties(sysUser, SysUserVO.class);
+        SysUserVO sysUserVO = BeanCopierUtils.copyProperties(sysUser, SysUserVO.class);
+        EasyTransUtils.easyTrans(sysUserVO);
+        return sysUserVO;
+    }
+
+    @Override
+    public void excelExport(RequestVO<SysUserPageDTO> requestVO, HttpServletResponse response) {
+        excelExport(PageUtils.of(requestVO, false), getWrapper(requestVO.getT()), SysUserPageVO.class, response);
     }
 }

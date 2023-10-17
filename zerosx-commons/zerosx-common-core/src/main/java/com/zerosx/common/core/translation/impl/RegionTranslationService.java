@@ -4,7 +4,7 @@ import com.zerosx.common.base.constants.CommonConstants;
 import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.redis.templete.RedissonOpService;
-import com.zerosx.utils.SpringUtils;
+import com.zerosx.common.utils.SpringUtils;
 
 /**
  * OssTranslationService

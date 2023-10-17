@@ -40,7 +40,7 @@
           </el-form-item>
           <el-form-item label="区域等级" prop="deep">
             <el-radio-group v-model="form.deep">
-              <el-radio v-for="dict in dict.type.area_deep" :key="dict.value" :label="dict.value">{{ dict.label
+              <el-radio v-for="dict in dict.type.AreaDeepEnum" :key="dict.value" :label="dict.value">{{ dict.label
               }}</el-radio>
             </el-radio-group>
           </el-form-item>
@@ -69,7 +69,7 @@
 import { areaTree, addArea, updateArea, deleteArea } from '@/api/system/area.js'
 import BasicContainer from '@/components/BasicContainer/index'
 export default {
-  dicts: ['area_deep'],
+  dicts: ['AreaDeepEnum'],
   components: {
     BasicContainer
   },

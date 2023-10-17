@@ -1,13 +1,12 @@
 package com.zerosx.system.controller;
 
 import com.zerosx.common.base.utils.ResultVOUtil;
+import com.zerosx.common.base.vo.BaseTenantDTO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.core.easyexcel.EasyExcelUtil;
-import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.vo.CustomPageVO;
-import com.zerosx.common.log.annotation.SystemLog;
-import com.zerosx.common.log.enums.BusinessType;
+import com.zerosx.common.log.anno.OpLog;
+import com.zerosx.common.log.enums.OpTypeEnum;
 import com.zerosx.system.dto.SysDeptDTO;
 import com.zerosx.system.dto.SysDeptPageDTO;
 import com.zerosx.system.entity.SysDept;
@@ -42,28 +41,28 @@ public class SysDeptController {
     private ISysDeptService sysDeptService;
 
     @Operation(summary = "分页列表")
-    @SystemLog(title = "部门管理", btnName = "分页查询", businessType = BusinessType.QUERY)
+    @OpLog(mod = "部门管理", btn = "分页查询", opType = OpTypeEnum.QUERY)
     @PostMapping("/sys_dept/page_list")
     public ResultVO<CustomPageVO<SysDeptPageVO>> pageList(@RequestBody RequestVO<SysDeptPageDTO> requestVO) {
         return ResultVOUtil.success(sysDeptService.pageList(requestVO, true));
     }
 
     @Operation(summary = "分页列表")
-    @SystemLog(title = "部门管理", btnName = "表格树形结构", businessType = BusinessType.QUERY)
+    @OpLog(mod = "部门管理", btn = "表格树形结构", opType = OpTypeEnum.QUERY)
     @PostMapping("/sys_dept/table_tree")
     public ResultVO<List<SysDept>> tableTree(@RequestBody SysDeptPageDTO sysDeptPageDTO) {
         return ResultVOUtil.success(sysDeptService.tableTree(sysDeptPageDTO));
     }
 
     @Operation(summary = "新增")
-    @SystemLog(title = "部门管理", btnName = "新增", businessType = BusinessType.INSERT)
+    @OpLog(mod = "部门管理", btn = "新增", opType = OpTypeEnum.INSERT)
     @PostMapping("/sys_dept/save")
     public ResultVO<?> add(@Validated @RequestBody SysDeptDTO sysDeptDTO) {
         return ResultVOUtil.successBoolean(sysDeptService.add(sysDeptDTO));
     }
 
     @Operation(summary = "编辑")
-    @SystemLog(title = "部门管理", btnName = "编辑", businessType = BusinessType.UPDATE)
+    @OpLog(mod = "部门管理", btn = "编辑", opType = OpTypeEnum.UPDATE)
     @PostMapping("/sys_dept/update")
     public ResultVO<?> update(@Validated @RequestBody SysDeptDTO sysDeptDTO) {
         return ResultVOUtil.successBoolean(sysDeptService.update(sysDeptDTO));
@@ -76,27 +75,24 @@ public class SysDeptController {
     }
 
     @Operation(summary = "删除")
-    @SystemLog(title = "部门管理", btnName = "删除", businessType = BusinessType.DELETE)
+    @OpLog(mod = "部门管理", btn = "删除", opType = OpTypeEnum.DELETE)
     @DeleteMapping("/sys_dept/delete/{ids}")
     public ResultVO<?> deleteRecord(@PathVariable("ids") Long[] ids) {
         return ResultVOUtil.successBoolean(sysDeptService.deleteRecord(ids));
     }
 
     @Operation(summary = "导出")
-    @SystemLog(title = "部门管理", btnName = "导出", businessType = BusinessType.EXPORT)
+    @OpLog(mod = "部门管理", btn = "导出", opType = OpTypeEnum.EXPORT)
     @PostMapping("/sys_dept/export")
     public void operatorExport(@RequestBody RequestVO<SysDeptPageDTO> requestVO, HttpServletResponse response) throws IOException {
-        long t1 = System.currentTimeMillis();
-        CustomPageVO<SysDeptPageVO> data = sysDeptService.pageList(requestVO, false);
-        EasyExcelUtil.writeExcel(response, data.getList(), SysDeptPageVO.class);
-        log.debug("【{}】执行导出{}条 耗时:{}ms", ZerosSecurityContextHolder.getUserName(), data.getTotal(), System.currentTimeMillis() - t1);
+        sysDeptService.excelExport(requestVO, response);
     }
 
 
-    @Operation(summary = "删除")
+    @Operation(summary = "Select下拉框")
     @PostMapping("/sys_dept/tree_select")
-    public ResultVO<List<SysTreeSelectVO>> treeSelect() {
-        return ResultVOUtil.success(sysDeptService.treeSelect());
+    public ResultVO<List<SysTreeSelectVO>> treeSelect(@RequestBody BaseTenantDTO baseTenantDTO) {
+        return ResultVOUtil.success(sysDeptService.treeSelect(baseTenantDTO));
     }
 
 }

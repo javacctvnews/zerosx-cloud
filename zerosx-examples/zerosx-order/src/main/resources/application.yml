@@ -1,16 +1,23 @@
 spring:
 
   datasource:
-    url: jdbc:mysql://120.79.152.222:3306/zerosx_order?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://192.168.3.6:13306/zerosx_order?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true
     username: root
-    password: javax@123456
+    password: zerosx@123456
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource
 
 zerosx:
+  encrypt:
+    enabled: true
+    password: "1234443223567887"
+    debug: true
   tenant:
     enable: false
     ignoreTables:
       - t_order
       - undo_log
     ignoreSqls:
+logging:
+  level:
+    com.zerosx: debug

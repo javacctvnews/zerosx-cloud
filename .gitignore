@@ -9,6 +9,7 @@ doc/seata/logs
 doc/nginx/nginx/log
 doc/nginx
 .DS_store
+版本简介.md
 
 # Compiled class file
 *.class

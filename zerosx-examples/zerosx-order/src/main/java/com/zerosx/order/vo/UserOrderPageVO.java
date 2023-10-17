@@ -1,26 +1,21 @@
 package com.zerosx.order.vo;
 
+import lombok.Getter;
+import lombok.Setter;
+import java.io.Serializable;
+import java.util.Date;
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.zerosx.common.base.anno.Trans;
 import com.zerosx.common.base.constants.CommonConstants;
-import com.zerosx.encrypt2.anno.EncryptClass;
-import com.zerosx.encrypt2.anno.EncryptField;
-import com.zerosx.order.rule.IdNumEncryptRule;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 用户订单
  * @Description
  * @author javacctvnews
- * @date 2023-09-12 16:21:49
+ * @date 2023-09-22 14:09:54
  */
-@EncryptClass
 @Getter
 @Setter
 @ExcelIgnoreUnannotated
@@ -54,17 +49,14 @@ public class UserOrderPageVO implements Serializable {
 
     @Schema(description = "手机号码")
     @ExcelProperty(value = {"手机号码"})
-    @EncryptField(algo = IdNumEncryptRule.class)
     private String phone;
 
     @Schema(description = "身份号码")
     @ExcelProperty(value = {"身份号码"})
-    @EncryptField(algo = IdNumEncryptRule.class)
     private String idCard;
 
     @Schema(description = "电子邮箱")
     @ExcelProperty(value = {"电子邮箱"})
-    @EncryptField(algo = IdNumEncryptRule.class)
     private String email;
 
     @Schema(description = "昵称")

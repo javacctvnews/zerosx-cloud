@@ -1,5 +1,10 @@
 package com.zerosx.common.core.feign;
 
+import com.zerosx.api.resource.IOssFileUploadClient;
+import com.zerosx.api.resource.IRegionClient;
+import com.zerosx.api.resource.ISysDictDataClient;
+import com.zerosx.api.system.IMutiTenancyGroupClient;
+import com.zerosx.common.base.vo.I18nSelectOptionVO;
 import com.zerosx.common.base.vo.ResultVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +13,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.util.List;
 import java.util.concurrent.Future;
 
 /**
@@ -24,25 +29,34 @@ public class AsyncFeignService {
 
     @Lazy
     @Autowired
-    private ISystemFeignService systemFeignService;
+    private IOssFileUploadClient ossFileUploadClient;
+    @Lazy
+    @Autowired
+    private IMutiTenancyGroupClient mutiTenancyGroupClient;
+    @Lazy
+    @Autowired
+    private IRegionClient regionClient;
+    @Lazy
+    @Autowired
+    private ISysDictDataClient sysDictDataClient;
 
     @Async
     public Future<ResultVO<String>> getTenantName(String operatorId) {
-        return new AsyncResult<>(systemFeignService.transIdName(operatorId));
+        return new AsyncResult<>(mutiTenancyGroupClient.transIdName(operatorId));
     }
 
     @Async
-    public Future<ResultVO<Map<String, String>>> getDictData(String dictType) {
-        return new AsyncResult<>(systemFeignService.getDictData(dictType));
+    public Future<ResultVO<List<I18nSelectOptionVO>>> getDictList(String dictType) {
+        return new AsyncResult<>(sysDictDataClient.getDictList(dictType));
     }
 
     @Async
     public Future<ResultVO<String>> getObjectViewUrl(String objectName) {
-        return new AsyncResult<>(systemFeignService.getObjectViewUrl(objectName));
+        return new AsyncResult<>(ossFileUploadClient.getObjectViewUrl(objectName));
     }
 
     @Async
     public Future<ResultVO<String>> getAreaName(String areaCode) {
-        return new AsyncResult<>(systemFeignService.getAreaName(areaCode));
+        return new AsyncResult<>(regionClient.getAreaName(areaCode));
     }
 }

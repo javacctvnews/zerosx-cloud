@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.core.vo.CustomPageVO;
+import com.zerosx.common.utils.BeanCopierUtils;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class PageUtils {
      * @param <T>
      * @return
      */
-    public static <T> Page<T> of(RequestVO requestVO, boolean searchCount) {
+    public static <T, R> Page<T> of(RequestVO<R> requestVO, boolean searchCount) {
         Integer pageNum = requestVO.getPageNum();
         Integer pageSize = requestVO.getPageSize();
         if (!searchCount) {
@@ -82,7 +83,7 @@ public class PageUtils {
      */
     public static <T, R> CustomPageVO<R> of(IPage<T> page, Class<R> clz) {
         CustomPageVO<R> rspData = new CustomPageVO<>();
-        rspData.setList(BeanCopierUtil.copyPropertiesOfList(page.getRecords(), clz));
+        rspData.setList(EasyTransUtils.copyTrans(page.getRecords(), clz));
         rspData.setTotal(page.getTotal());
         return rspData;
     }
@@ -126,16 +127,10 @@ public class PageUtils {
         if (CollectionUtils.isEmpty(page.getRecords())) {
             return CustomPageVO.EMPTY_PAGE;
         }
-        List<R> targetList = page.getRecords().stream().map(e -> {
-            try {
-                R r = targetClazz.getDeclaredConstructor().newInstance();
-                BeanCopierUtil.copyProperties(e, r);
-                return r;
-            } catch (Exception exception) {
-                throw new RuntimeException("convertPage cause exception", exception);
-            }
-        }).collect(Collectors.toList());
         CustomPageVO<R> customPageVO = new CustomPageVO<>();
+        List<R> targetList = page.getRecords().stream()
+                .map(e -> BeanCopierUtils.copyProperties(e, targetClazz))
+                .collect(Collectors.toList());
         customPageVO.setList(targetList);
         customPageVO.setTotal(page.getTotal());
         return customPageVO;

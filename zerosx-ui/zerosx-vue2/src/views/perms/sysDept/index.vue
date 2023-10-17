@@ -14,8 +14,7 @@
       </el-form-item>
       <el-form-item label="部门状态" prop="status">
         <el-select v-model="queryParams.t.status" placeholder="部门状态" clearable style="width: 220px;">
-          <el-option v-for="dict in dict.type.StatusEnum" :key="dict.value" :label="dict.label"
-            :value="dict.value" />
+          <el-option v-for="dict in dict.type.StatusEnum" :key="dict.value" :label="dict.label" :value="dict.value" />
         </el-select>
       </el-form-item>
     </el-form>
@@ -47,8 +46,8 @@
 
     <!-- 表格 -->
     <div class="componentTable" style="height: calc(100vh - 190px)">
-      <TablePlus ref="tables" :data="list" :columns="columns" v-loading="loading" @handleDelete="handleDelete" row-key="id"
-        :hideIndex="true" :border="true" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+      <TablePlus ref="tables" :data="list" :columns="columns" v-loading="loading" @handleDelete="handleDelete"
+        row-key="id" :hideIndex="true" :border="true" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         v-if="refreshTable" :default-expand-all="isExpandAll" @handleSelectionChange="handleSelectionChange"
         @sort-change="handleSortChange" :defaultSort="defaultSort" actionWidth="80px">
         <template slot-scope="scope" slot="status">
@@ -130,7 +129,7 @@
           <el-col :span="12">
             <el-form-item label="角色权限" prop="roleIds">
               <el-select multiple clearable v-model="form.roleIds" placeholder="请选择权限角色" style="width: 100%;">
-                <el-option v-for="item in roleSelectData" :key="item.id" :label="item.roleName" :value="item.id">
+                <el-option v-for="item in roleSelectData" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -146,6 +145,7 @@
 </template>
 
 <script>
+import store from "@/store";
 import { addSysDept, queryById, updateSysDept, deleteSysDept, tableTree, detpTreeSelect } from '@/api/perms/sysDept.js';
 import { roleSelectList } from '@/api/perms/sysRole.js';
 import serviceConfig from '@/api/serviceConfig'
@@ -188,6 +188,9 @@ export default {
         label: 'deptName',
         children: 'children',
         value: 'id'
+      },
+      selectParam: {
+
       },
       queryParams: {
         pageNum: 1,
@@ -391,6 +394,7 @@ export default {
   created() {
     this.getList();
     this.getOperators();
+    this.form.operatorId = store.getters.operatorId;
   },
   methods: {
     toggleExpandAll() {
@@ -401,12 +405,12 @@ export default {
       });
     },
     getRoleSelectList() {
-      roleSelectList({}).then((res) => {
+      roleSelectList(this.selectParam).then((res) => {
         this.roleSelectData = res.data;
       })
     },
     getDeptTreeSelect() {
-      detpTreeSelect({}).then((res) => {
+      detpTreeSelect(this.selectParam).then((res) => {
         this.deptTreeData = res.data;
       })
     },
@@ -461,21 +465,24 @@ export default {
       this.$refs.tables.$refs.tablePlus.sort(this.defaultSort.prop, this.defaultSort.order)
     },
     handleAdd() {
+      this.reset();
+      this.form.operatorId = store.getters.operatorId;
+      this.selectParam.operatorId = store.getters.operatorId;
       this.getDeptTreeSelect();
       this.getRoleSelectList();
-      this.reset();
       this.open = true;
       this.title = '新增部门表'
     },
     handleUpdate(row) {
-      this.getRoleSelectList();
-      this.getDeptTreeSelect();
       this.reset();
       this.title = '编辑部门表'
       this.open = true
       let id = row.id || this.ids;
       queryById(id).then((res) => {
         this.form = res.data;
+        this.selectParam.operatorId = res.data.operatorId;
+        this.getRoleSelectList();
+        this.getDeptTreeSelect();
       });
     },
     handleExport() {

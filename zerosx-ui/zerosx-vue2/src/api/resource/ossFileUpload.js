@@ -3,7 +3,7 @@ import serviceConfig from '@/api/serviceConfig'
 
 export function pageList(query) {
   return request({
-    url: serviceConfig.system + '/oss_file/list_pages',
+    url: serviceConfig.resource + '/oss_file/list_pages',
     method: 'post',
     data: query
   })
@@ -11,7 +11,7 @@ export function pageList(query) {
 
 export function queryById(id) {
   return request({
-    url: serviceConfig.system + '/oss_file/queryById/' + id,
+    url: serviceConfig.resource + '/oss_file/queryById/' + id,
     method: 'get'
   })
 }
@@ -19,7 +19,7 @@ export function queryById(id) {
 
 export function fullDelete(ids) {
   return request({
-    url: serviceConfig.system + '/oss_file/full_delete/' + ids,
+    url: serviceConfig.resource + '/oss_file/full_delete/' + ids,
     method: 'get'
   })
 }

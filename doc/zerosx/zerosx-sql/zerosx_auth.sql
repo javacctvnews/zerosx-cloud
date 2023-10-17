@@ -126,4 +126,4 @@ CREATE TABLE `oauth_code` (
 
 /*初始化数据*/
 INSERT INTO zerosx_auth.oauth_client_details (client_id,client_name,resource_ids,client_secret,client_secret_str,`scope`,authorized_grant_types,web_server_redirect_uri,authorities,access_token_validity,refresh_token_validity,additional_information,autoapprove,create_time,update_time,create_by,update_by,status,deleted) VALUES
-	 ('saas','SaaS','api-system,api-auth','{bcrypt}$2a$10$4mfItq8sx7LELT83gF34Bu/y8spQ7/S3eOslUWRVKxuxee6wbQaxK','Zeros9999!#@','all','authorization_code,password,refresh_token,openId,mobile_password,sms,password_code,implicit,client_credentials,captcha,mobile_sms',NULL,'',36000,288000,'{}','true','2023-03-20 14:03:13','2023-08-20 18:37:10.651000',NULL,'admin123','0',0);
+	 ('saas','SaaS','api-system,api-auth,api-resource','{bcrypt}$2a$10$4mfItq8sx7LELT83gF34Bu/y8spQ7/S3eOslUWRVKxuxee6wbQaxK','Zeros9999!#@','all','authorization_code,password,refresh_token,openId,mobile_password,sms,password_code,implicit,client_credentials,captcha,mobile_sms',NULL,'',36000,288000,'{}','true','2023-03-20 14:03:13','2023-08-20 18:37:10.651000',NULL,'admin123','0',0);

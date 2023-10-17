@@ -1,7 +1,7 @@
 package com.zerosx.common.core.enums;
 
-import com.zerosx.common.base.anno.AutoDictData;
-import com.zerosx.common.base.enums.CodeEnum;
+import com.zerosx.common.anno.AutoDictData;
+import com.zerosx.common.base.BaseEnum;
 import lombok.Getter;
 
 /**
@@ -14,7 +14,7 @@ import lombok.Getter;
  */
 @Getter
 @AutoDictData(name = "用户授权类型")
-public enum AuthTypeEnum implements CodeEnum<String> {
+public enum AuthTypeEnum implements BaseEnum<String> {
 
     /**
      * SaaS平台登录用户
@@ -31,16 +31,6 @@ public enum AuthTypeEnum implements CodeEnum<String> {
     AuthTypeEnum(String code, String message) {
         this.code = code;
         this.message = message;
-    }
-
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public String getMessage() {
-        return message;
     }
 
     public static String getMessageByCode(String obj) {

@@ -64,7 +64,7 @@ public class SysUserPageVO implements Serializable {
 
     @Schema(description = "用户性别（0男 1女 2未知）")
     @ExcelProperty(value = {"用户性别（0男 1女 2未知）"})
-    @Trans(type = CommonConstants.TRANS_DICT, key = "sys_user_sex", ref = "sex")
+    @Trans(type = CommonConstants.TRANS_DICT, key = "SexEnum", ref = "sex")
     private String sex;
 
     @Schema(description = "头像地址")

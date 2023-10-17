@@ -7,13 +7,17 @@
     <parent>
         <groupId>com.zerosx.cloud</groupId>
         <artifactId>zerosx-cloud</artifactId>
-                <version>0.0.1</version>
+                <version>0.0.2</version>
     </parent>
 
     <artifactId>zerosx-gateway</artifactId>
     <name>zerosx-gateway</name>
 
     <dependencies>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-api-auth</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-log</artifactId>

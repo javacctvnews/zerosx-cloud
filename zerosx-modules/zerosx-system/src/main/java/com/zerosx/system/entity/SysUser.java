@@ -22,7 +22,7 @@ import java.util.Date;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 @TableName(value = "t_sys_user")
-@EncryptClass
+@EncryptClass //有属性需要加解密
 public class SysUser extends SuperEntity<SysUser> {
 
     private static final long serialVersionUID = 1L;

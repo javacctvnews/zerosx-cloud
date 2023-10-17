@@ -11,8 +11,6 @@ import io.seata.core.context.RootContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-
 @Service
 @Slf4j
 public class AccountServiceImpl extends ServiceImpl<IAccountMapper, Account> implements IAccountService {
@@ -23,7 +21,7 @@ public class AccountServiceImpl extends ServiceImpl<IAccountMapper, Account> imp
         LambdaQueryWrapper<Account> qw = Wrappers.lambdaQuery(Account.class);
         qw.eq(Account::getUserId, accountDTO.getUserId());
         Account dbAccount = getOne(qw);
-        dbAccount.setAmount(BigDecimal.valueOf(dbAccount.getAmount()).subtract(accountDTO.getAmount()).doubleValue());
+        dbAccount.setAmount(dbAccount.getAmount().subtract(accountDTO.getAmount()));
         return updateById(dbAccount);
     }
 

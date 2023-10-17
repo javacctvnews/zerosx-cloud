@@ -21,7 +21,7 @@ public class KeyPrefixHandler implements NameMapper {
     @Override
     public String map(String name) {
         if (StringUtils.isBlank(name)) {
-            return null;
+            return name;
         }
         if (StringUtils.isNotBlank(keyPrefix) && !name.startsWith(keyPrefix)) {
             return keyPrefix + name;
@@ -35,7 +35,7 @@ public class KeyPrefixHandler implements NameMapper {
     @Override
     public String unmap(String name) {
         if (StringUtils.isBlank(name)) {
-            return null;
+            return name;
         }
         if (StringUtils.isNotBlank(keyPrefix) && name.startsWith(keyPrefix)) {
             return name.substring(keyPrefix.length());

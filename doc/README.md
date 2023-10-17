@@ -157,6 +157,7 @@
 执行SQL脚本，文件所在目录：zerosx-cloud/doc/zerosx/zerosx-sql
 # zerosx_auth.sql 			#auth服务数据库
 # zerosx_system.sql			#system服务数据库、菜单目录、初始登录用户
+# zerosx_resource.sql		#resource服务数据库、菜单目录、初始登录用户
 # t_area_city_source.sql	#行政区域初始数据
 ```
 
@@ -203,7 +204,7 @@ docker tag [imageId] registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-auth:
 # push
 docker push registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-auth:0.0.1
 
-# 3.zerosx-system
+# 3.zerosx-system（zersox-resource同理）
 cd zerosx-modules/zerosx-system
 docker build -t zerosx-cloud/zerosx-system:0.0.1 .
 

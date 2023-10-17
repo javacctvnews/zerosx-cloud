@@ -1,4 +1,4 @@
-import { login, logout, getInfo, refreshToken, requestPostLogin} from '@/api/login'
+import { login, logout, getInfo, refreshToken, requestPostLogin } from '@/api/login'
 import { getToken, setToken, setExpiresIn, removeToken } from '@/utils/auth'
 
 const user = {
@@ -7,7 +7,8 @@ const user = {
     name: '',
     avatar: '',
     roles: [],
-    permissions: []
+    permissions: [],
+    operatorId: '',
   },
 
   mutations: {
@@ -28,7 +29,10 @@ const user = {
     },
     SET_PERMISSIONS: (state, permissions) => {
       state.permissions = permissions
-    }
+    },
+    SET_OPERATORID: (state, operatorId) => {
+      state.operatorId = operatorId
+    },
   },
 
   actions: {
@@ -66,6 +70,7 @@ const user = {
           }
           commit('SET_NAME', user.userName)
           commit('SET_AVATAR', avatar)
+          commit('SET_OPERATORID', user.operatorId)
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -74,7 +79,7 @@ const user = {
     },
 
     // 刷新token
-    RefreshToken({commit, state}) {
+    RefreshToken({ commit, state }) {
       return new Promise((resolve, reject) => {
         refreshToken(state.token).then(res => {
           setExpiresIn(res.data)
@@ -85,12 +90,13 @@ const user = {
         })
       })
     },
-    
+
     // 退出系统
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
         logout(state.token).then(() => {
           console.log('LogOut执行了')
+          commit('SET_OPERATORID', '')
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
           commit('SET_PERMISSIONS', [])

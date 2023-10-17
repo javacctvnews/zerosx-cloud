@@ -1,13 +1,16 @@
 package com.zerosx.common.core.translation.impl;
 
 import com.zerosx.common.base.constants.CommonConstants;
+import com.zerosx.common.base.vo.I18nSelectOptionVO;
 import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.core.enums.RedisKeyNameEnum;
-import com.zerosx.utils.JacksonUtil;
+import com.zerosx.common.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName DictTranslationService
@@ -27,9 +30,10 @@ public class DictTranslationService extends AbsTranslationService<String> {
     @Override
     public String translation(Object value, String dictType) {
         Object translation = translation(dictType);
-        Map<String, String> objectMap = JacksonUtil.toMap(translation);
-        if (MapUtils.isNotEmpty(objectMap)) {
-            return objectMap.get(String.valueOf(value));
+        List<I18nSelectOptionVO> objectMap = JacksonUtil.toList(String.valueOf(translation), I18nSelectOptionVO.class);
+        if (CollectionUtils.isNotEmpty(objectMap)) {
+            Map<Object, String> map = objectMap.stream().collect(Collectors.toMap(I18nSelectOptionVO::getValue, I18nSelectOptionVO::getLabel));
+            return map.get(value);
         }
         return EMPTY;
     }
@@ -40,8 +44,8 @@ public class DictTranslationService extends AbsTranslationService<String> {
     }
 
     @Override
-    protected ResultVO<Map<String, String>> getFeignService(String dictType) throws Exception {
-        return getAsyncFeignService().getDictData(dictType).get();
+    protected ResultVO<List<I18nSelectOptionVO>> getFeignService(String dictType) throws Exception {
+        return getAsyncFeignService().getDictList(dictType).get();
     }
 
 }

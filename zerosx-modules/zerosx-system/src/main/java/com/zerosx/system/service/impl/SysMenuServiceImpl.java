@@ -12,13 +12,15 @@ import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.SysMenuBO;
 import com.zerosx.common.base.vo.SysPermissionBO;
 import com.zerosx.common.core.enums.RedisKeyNameEnum;
-import com.zerosx.common.core.enums.UserTypeEnum;
+import com.zerosx.common.core.enums.system.UserTypeEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
-import com.zerosx.common.core.utils.BeanCopierUtil;
+import com.zerosx.common.core.utils.EasyTransUtils;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.redis.templete.RedissonOpService;
+import com.zerosx.common.utils.BeanCopierUtils;
+import com.zerosx.common.utils.JacksonUtil;
 import com.zerosx.system.dto.SysMenuDTO;
 import com.zerosx.system.dto.SysMenuPageDTO;
 import com.zerosx.system.dto.SysRoleMenuQueryDTO;
@@ -33,7 +35,6 @@ import com.zerosx.system.service.ISysRoleService;
 import com.zerosx.system.service.ISysUserService;
 import com.zerosx.system.task.SystemAsyncTask;
 import com.zerosx.system.vo.*;
-import com.zerosx.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +75,7 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
         LambdaQueryWrapper<SysMenu> listqw = Wrappers.lambdaQuery(SysMenu.class);
         listqw.orderByDesc(SysMenu::getCreateTime);
         return PageUtils.of(baseMapper.selectPage(PageUtils.of(requestVO, true), listqw).convert((e) -> {
-            SysMenuPageVO sysMenuPageVO = BeanCopierUtil.copyProperties(e, SysMenuPageVO.class);
+            SysMenuPageVO sysMenuPageVO = EasyTransUtils.copyTrans(e, SysMenuPageVO.class);
             //todo
             return sysMenuPageVO;
         }));
@@ -82,7 +83,7 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
 
     @Override
     public boolean add(SysMenuDTO sysMenuDTO) {
-        SysMenu addEntity = BeanCopierUtil.copyProperties(sysMenuDTO, SysMenu.class);
+        SysMenu addEntity = BeanCopierUtils.copyProperties(sysMenuDTO, SysMenu.class);
         return save(addEntity);
     }
 
@@ -92,7 +93,7 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
         if (dbUpdate == null) {
             throw new BusinessException("编辑记录不存在");
         }
-        SysMenu updateEntity = BeanCopierUtil.copyProperties(sysMenuDTO, SysMenu.class);
+        SysMenu updateEntity = BeanCopierUtils.copyProperties(sysMenuDTO, SysMenu.class);
 
         Long menuId = sysMenuDTO.getMenuId();
         //删除所有关联次菜单的角色权限缓存
@@ -433,7 +434,7 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
     }
 
     @Override
-    public SysPermissionBO findByRoleCodes(RolePermissionDTO rolePermissionDTO) {
+    public SysPermissionBO queryPermsByRoleIds(RolePermissionDTO rolePermissionDTO) {
         List<Long> roles = rolePermissionDTO.getRoles();
         if (CollectionUtils.isEmpty(roles)) {
             return null;
@@ -470,4 +471,6 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
         }
         return permList.stream().filter(StringUtils::isNotBlank).collect(Collectors.toSet());
     }
+
+
 }

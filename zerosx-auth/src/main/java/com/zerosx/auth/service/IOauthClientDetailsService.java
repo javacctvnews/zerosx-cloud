@@ -14,6 +14,7 @@ import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.SelectOptionVO;
 import com.zerosx.common.core.vo.CustomPageVO;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 
@@ -106,4 +107,11 @@ public interface IOauthClientDetailsService extends IService<OauthClientDetails>
      */
     OauthClientDetailsBO getClient(String clientId);
 
+    /**
+     * 导出Excel
+     *
+     * @param requestVO requestVO
+     * @param response  response
+     */
+    void excelExport(RequestVO<OauthClientDetailsPageDTO> requestVO, HttpServletResponse response);
 }

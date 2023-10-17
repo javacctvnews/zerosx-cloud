@@ -21,26 +21,23 @@ public class CustomAuthorizationCodeServices extends RandomValueAuthorizationCod
 
     /**
      * //5分钟有效
+     *
      * @param code
      * @param authentication
      */
     @Override
     protected void store(String code, OAuth2Authentication authentication) {
-        redissonOpService.set(codeKey(code), authentication, VALID_SECONDS);
+        redissonOpService.set(code, authentication, VALID_SECONDS);
     }
 
     @Override
     protected OAuth2Authentication remove(String code) {
-        Object obj = redissonOpService.get(codeKey(code));
-        if(obj != null){
-            redissonOpService.del(codeKey(code));
+        Object obj = redissonOpService.get(code);
+        if (obj != null) {
+            redissonOpService.del(code);
             return (OAuth2Authentication) obj;
         }
         return null;
-    }
-
-    private String codeKey(String code) {
-        return customSecurityProperties.getTokenStorePrefix() + AUTHORIZATION_CODE +code;
     }
 
 }

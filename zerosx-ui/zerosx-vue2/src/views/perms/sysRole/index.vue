@@ -125,6 +125,7 @@
 </template>
 
 <script>
+import store from "@/store";
 import { pageList, addSysRole, queryById, updateSysRole, deleteSysRole, roleMenuTree } from '@/api/perms/sysRole.js';
 import serviceConfig from '@/api/serviceConfig'
 import { operators } from '@/api/common.js'
@@ -382,6 +383,7 @@ export default {
     },
     handleAdd() {
       this.reset();
+      this.form.operatorId = store.getters.operatorId;
       this.getOperators();
       this.handleRoleMenuTree();
       this.open = true;

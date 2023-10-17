@@ -1,20 +1,18 @@
 package com.zerosx.auth.controller;
 
-import com.zerosx.common.base.vo.OauthClientDetailsBO;
 import com.zerosx.auth.dto.OauthClientDetailsDTO;
 import com.zerosx.auth.dto.OauthClientDetailsPageDTO;
 import com.zerosx.auth.service.IOauthClientDetailsService;
 import com.zerosx.auth.vo.OauthClientDetailsPageVO;
 import com.zerosx.auth.vo.OauthClientDetailsVO;
 import com.zerosx.common.base.utils.ResultVOUtil;
+import com.zerosx.common.base.vo.OauthClientDetailsBO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.base.vo.SelectOptionVO;
-import com.zerosx.common.core.easyexcel.EasyExcelUtil;
-import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.vo.CustomPageVO;
-import com.zerosx.common.log.annotation.SystemLog;
-import com.zerosx.common.log.enums.BusinessType;
+import com.zerosx.common.log.anno.OpLog;
+import com.zerosx.common.log.enums.OpTypeEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -43,21 +41,21 @@ public class OauthClientDetailsController {
 
 
     @Operation(summary = "分页查询")
-    @SystemLog(title = "应用管理", btnName = "分页查询", businessType = BusinessType.QUERY)
+    @OpLog(mod = "应用管理", btn = "分页查询", opType = OpTypeEnum.QUERY)
     @PostMapping("/oauth_client_details/list_page")
     public ResultVO<CustomPageVO<OauthClientDetailsPageVO>> listPage(@RequestBody RequestVO<OauthClientDetailsPageDTO> requestVO) {
         return ResultVOUtil.success(oauthClientDetailsService.listPage(requestVO, true));
     }
 
     @Operation(summary = "新增")
-    @SystemLog(title = "应用管理", btnName = "新增", businessType = BusinessType.INSERT)
+    @OpLog(mod = "应用管理", btn = "新增", opType = OpTypeEnum.INSERT)
     @PostMapping("/oauth_client_details/save")
     public ResultVO saveOauthClient(@Validated @RequestBody OauthClientDetailsDTO oauthClientDetailsDTO) {
         return ResultVOUtil.successBoolean(oauthClientDetailsService.saveOauthClient(oauthClientDetailsDTO));
     }
 
     @Operation(summary = "编辑")
-    @SystemLog(title = "应用管理", btnName = "编辑", businessType = BusinessType.UPDATE)
+    @OpLog(mod = "应用管理", btn = "编辑", opType = OpTypeEnum.UPDATE)
     @PostMapping("/oauth_client_details/edit")
     public ResultVO editOauthClient(@Validated @RequestBody OauthClientDetailsDTO oauthClientDetailsEditDTO) {
         return ResultVOUtil.successBoolean(oauthClientDetailsService.editOauthClient(oauthClientDetailsEditDTO));
@@ -70,20 +68,17 @@ public class OauthClientDetailsController {
     }
 
     @Operation(summary = "删除")
-    @SystemLog(title = "客户端管理", btnName = "删除", businessType = BusinessType.DELETE)
+    @OpLog(mod = "客户端管理", btn = "删除", opType = OpTypeEnum.DELETE)
     @DeleteMapping("/oauth_client_details/delete/{ids}")
     public ResultVO<?> deleteRecord(@PathVariable("ids") Long[] ids) {
         return ResultVOUtil.successBoolean(oauthClientDetailsService.deleteRecord(ids));
     }
 
     @Operation(summary = "导出")
-    @SystemLog(title = "客户端管理", btnName = "导出", businessType = BusinessType.EXPORT)
+    @OpLog(mod = "客户端管理", btn = "导出", opType = OpTypeEnum.EXPORT)
     @PostMapping("/oauth_client_details/export")
     public void operatorExport(@RequestBody RequestVO<OauthClientDetailsPageDTO> requestVO, HttpServletResponse response) throws IOException {
-        long t1 = System.currentTimeMillis();
-        CustomPageVO<OauthClientDetailsPageVO> pages = oauthClientDetailsService.listPage(requestVO, false);
-        EasyExcelUtil.writeExcel(response, pages.getList(), OauthClientDetailsPageVO.class);
-        log.debug("【{}】执行导出{}条 耗时:{}ms", ZerosSecurityContextHolder.getUserName(), pages.getTotal(), System.currentTimeMillis() - t1);
+        oauthClientDetailsService.excelExport(requestVO, response);
     }
 
     @Operation(summary = "下拉框")

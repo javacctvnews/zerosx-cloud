@@ -86,7 +86,7 @@ service.interceptors.response.use(res => {
   }
 },
   error => {
-    console.log(error)
+    //console.log(error)
     if (error.response && error.response.data) {
       let errData = error.response.data;
       console.log('errData', errData)
@@ -108,6 +108,8 @@ service.interceptors.response.use(res => {
         if (errData.msg) {
           Message({ message: errData.msg, type: 'error', duration: 5 * 1000 })
           return Promise.reject('error')
+        } else if (errData.type == 'application/json') {
+          return Promise.reject(errData)
         } else {
           let { msg } = error;
           console.log('msg: ', msg)
@@ -141,7 +143,7 @@ service.interceptors.response.use(res => {
 
 // 通用下载方法
 export function download(url, params, filename, config) {
-  console.log(params)
+  //console.log(params)
   downloadLoadingInstance = Loading.service({ text: "正在下载数据，请稍候", spinner: "el-icon-loading", background: "rgba(0, 0, 0, 0.7)", })
   return service.post(url, params, {
     data: params,
@@ -149,6 +151,7 @@ export function download(url, params, filename, config) {
     //headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     headers: { 'Content-Type': 'application/json' },
     responseType: 'blob',
+    timeout: 120000,
     ...config
   }).then(async (data) => {
     const isBlob = blobValidate(data);
@@ -164,7 +167,16 @@ export function download(url, params, filename, config) {
     downloadLoadingInstance.close();
   }).catch((r) => {
     console.error(r)
-    Message.error('下载文件出现错误，请联系管理员！')
+    if (r.type == 'application/json') {
+      const reader = new FileReader();
+      reader.readAsText(r, 'utf-8');
+      reader.onload = function () {
+        const parseObj = JSON.parse(reader.result)
+        Message.error(parseObj.msg)
+      }
+    } else {
+      Message.error('下载文件出现错误，请联系管理员！')
+    }
     downloadLoadingInstance.close();
   })
 }

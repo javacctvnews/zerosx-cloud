@@ -10,11 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
-import com.zerosx.common.core.utils.BeanCopierUtil;
-import com.zerosx.common.core.easyexcel.EasyExcelUtil;
-import com.zerosx.common.log.annotation.SystemLog;
-import com.zerosx.common.log.enums.BusinessType;
+import com.zerosx.common.log.anno.OpLog;
+import com.zerosx.common.log.enums.OpTypeEnum;
 
 import ${package}.${moduleName}.vo.${className}PageVO;
 import ${package}.${moduleName}.dto.${className}PageDTO;
@@ -25,7 +22,6 @@ import ${package}.${moduleName}.service.I${className}Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * ${comments}
@@ -42,21 +38,21 @@ public class ${className}Controller {
     private I${className}Service ${classname}Service;
 
     @Operation(summary ="分页列表")
-    @SystemLog(title = "${comments}", btnName = "分页查询", businessType= BusinessType.QUERY)
+    @OpLog(mod = "${comments}", btn = "分页查询", opType = OpTypeEnum.QUERY)
     @PostMapping("/${pathName}/page_list")
     public ResultVO<CustomPageVO<${className}PageVO>> pageList(@RequestBody RequestVO<${className}PageDTO> requestVO){
         return ResultVOUtil.success(${classname}Service.pageList(requestVO, true));
     }
 
     @Operation(summary ="新增")
-    @SystemLog(title = "${comments}", btnName = "新增", businessType= BusinessType.INSERT)
+    @OpLog(mod = "${comments}", btn = "新增", opType = OpTypeEnum.INSERT)
     @PostMapping("/${pathName}/save")
     public ResultVO<?> add(@Validated @RequestBody ${className}DTO ${classname}DTO) {
         return ResultVOUtil.successBoolean(${classname}Service.add(${classname}DTO));
     }
 
     @Operation(summary ="编辑")
-    @SystemLog(title = "${comments}", btnName = "编辑", businessType= BusinessType.UPDATE)
+    @OpLog(mod = "${comments}", btn = "编辑", opType = OpTypeEnum.UPDATE)
     @PostMapping("/${pathName}/update")
     public ResultVO<?> update(@Validated @RequestBody ${className}DTO ${classname}DTO) {
         return ResultVOUtil.successBoolean(${classname}Service.update(${classname}DTO));
@@ -69,20 +65,17 @@ public class ${className}Controller {
     }
 
     @Operation(summary ="删除")
-    @SystemLog(title = "${comments}", btnName = "删除", businessType= BusinessType.DELETE)
+    @OpLog(mod = "${comments}", btn = "删除", opType = OpTypeEnum.DELETE)
     @DeleteMapping("/${pathName}/delete/{${pk.attrname}s}")
     public ResultVO<?> deleteRecord(@PathVariable("${pk.attrname}s") Long[] ${pk.attrname}s){
         return ResultVOUtil.successBoolean(${classname}Service.deleteRecord(${pk.attrname}s));
     }
 
     @Operation(summary = "导出")
-    @SystemLog(title = "${comments}", btnName = "导出", businessType= BusinessType.EXPORT)
+    @OpLog(mod = "${comments}", btn = "导出", opType = OpTypeEnum.EXPORT)
     @PostMapping("/${pathName}/export")
     public void operatorExport(@RequestBody RequestVO<${className}PageDTO> requestVO, HttpServletResponse response) throws IOException {
-        long t1 = System.currentTimeMillis();
-        CustomPageVO<${className}PageVO> pages = ${classname}Service.pageList(requestVO, false);
-        EasyExcelUtil.writeExcel(response, pages.getList(), ${className}PageVO.class);
-        log.debug("【{}】执行导出{}条 耗时:{}ms", ZerosSecurityContextHolder.getUserName(), pages.getTotal(), System.currentTimeMillis() - t1);
+        ${classname}Service.excelExport(requestVO, response);
     }
 
 }

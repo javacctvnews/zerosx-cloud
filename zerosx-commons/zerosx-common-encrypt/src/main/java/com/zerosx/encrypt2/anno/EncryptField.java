@@ -9,6 +9,7 @@ import java.lang.annotation.*;
 
 /**
  * 加密字段注解或dao方法
+ * 姓名、身份证号码、住址、电话、银行账号、邮箱、密码、医疗信息、教育背景等等
  */
 @Inherited
 @Target({ElementType.METHOD, ElementType.FIELD})

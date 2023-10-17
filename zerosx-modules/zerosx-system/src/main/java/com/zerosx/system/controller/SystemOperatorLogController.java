@@ -3,13 +3,11 @@ package com.zerosx.system.controller;
 import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.core.easyexcel.EasyExcelUtil;
-import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
-import com.zerosx.common.core.utils.BeanCopierUtil;
 import com.zerosx.common.core.vo.CustomPageVO;
-import com.zerosx.common.log.annotation.SystemLog;
-import com.zerosx.common.log.enums.BusinessType;
+import com.zerosx.common.log.anno.OpLog;
+import com.zerosx.common.log.enums.OpTypeEnum;
 import com.zerosx.common.log.vo.SystemOperatorLogBO;
+import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.system.dto.SystemOperatorLogDTO;
 import com.zerosx.system.dto.SystemOperatorLogPageDTO;
 import com.zerosx.system.service.ISystemOperatorLogService;
@@ -40,7 +38,7 @@ public class SystemOperatorLogController {
     private ISystemOperatorLogService systemOperatorLogService;
 
     @Operation(summary = "分页列表")
-    @SystemLog(title = "操作日志", btnName = "分页查询", businessType = BusinessType.QUERY)
+    @OpLog(mod = "操作日志", btn = "分页查询", opType = OpTypeEnum.QUERY)
     @PostMapping("/system_operator_log/page_list")
     public ResultVO<CustomPageVO<SystemOperatorLogPageVO>> pageList(@RequestBody RequestVO<SystemOperatorLogPageDTO> requestVO) {
         return ResultVOUtil.success(systemOperatorLogService.pageList(requestVO, true));
@@ -50,12 +48,12 @@ public class SystemOperatorLogController {
     //@SystemLog(title = "操作日志", businessType= BusinessType.INSERT)
     @PostMapping("/system_operator_log/save")
     public ResultVO<?> add(@Validated @RequestBody SystemOperatorLogBO systemOperatorLogBO) {
-        SystemOperatorLogDTO systemOperatorLogDTO = BeanCopierUtil.copyProperties(systemOperatorLogBO, SystemOperatorLogDTO.class);
+        SystemOperatorLogDTO systemOperatorLogDTO = BeanCopierUtils.copyProperties(systemOperatorLogBO, SystemOperatorLogDTO.class);
         return ResultVOUtil.successBoolean(systemOperatorLogService.add(systemOperatorLogDTO));
     }
 
     @Operation(summary = "删除")
-    @SystemLog(title = "操作日志", btnName = "删除", businessType = BusinessType.DELETE)
+    @OpLog(mod = "操作日志", btn = "删除", opType = OpTypeEnum.DELETE)
     @DeleteMapping("/system_operator_log/delete/{id}")
     public ResultVO<?> deleteRecord(@PathVariable("id") Long[] id) {
         return ResultVOUtil.successBoolean(systemOperatorLogService.deleteRecord(id));
@@ -68,22 +66,17 @@ public class SystemOperatorLogController {
     }
 
     @Operation(summary = "清空全部")
-    @SystemLog(title = "操作日志", btnName = "清空全部", businessType = BusinessType.DELETE)
+    @OpLog(mod = "操作日志", btn = "清空全部", opType = OpTypeEnum.DELETE)
     @PostMapping("/system_operator_log/clean")
     public ResultVO<?> cleanAll() {
         return ResultVOUtil.successBoolean(systemOperatorLogService.cleanAll());
     }
 
     @Operation(summary = "导出")
-    @SystemLog(title = "操作日志", btnName = "导出", businessType = BusinessType.EXPORT)
+    @OpLog(mod = "操作日志", btn = "导出", opType = OpTypeEnum.EXPORT)
     @PostMapping("/system_operator_log/export")
     public void operatorExport(@RequestBody RequestVO<SystemOperatorLogPageDTO> requestVO, HttpServletResponse response) throws IOException {
-        long t1 = System.currentTimeMillis();
-        CustomPageVO<SystemOperatorLogPageVO> pages = systemOperatorLogService.pageList(requestVO, false);
-        log.debug("【{}】执行导出 【查询、拷贝、翻译】耗时{}ms", ZerosSecurityContextHolder.getUserName(), System.currentTimeMillis() - t1);
-        long t2 = System.currentTimeMillis();
-        EasyExcelUtil.writeExcel(response, pages.getList(), SystemOperatorLogPageVO.class);
-        log.debug("【{}】执行导出 {}条 耗时:{}ms", ZerosSecurityContextHolder.getUserName(), pages.getTotal(), System.currentTimeMillis() - t2);
+        systemOperatorLogService.excelExport(requestVO, response);
     }
 
 }

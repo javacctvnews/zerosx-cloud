@@ -10,22 +10,18 @@
         <search id="header-search" class="right-menu-item" />
         
         <el-tooltip content="Gitee源码地址" effect="dark" placement="bottom">
-          <RuoYiGitee id="ruoyi-gitee" class="right-menu-item hover-effect" />
+          <GiteeLink id="ruoyi-gitee" class="right-menu-item hover-effect" />
         </el-tooltip>
 
         <el-tooltip content="Github源码地址" effect="dark" placement="bottom">
-          <RuoYiGithub id="ruoyi-github" class="right-menu-item hover-effect" />
+          <GithubLink id="ruoyi-github" class="right-menu-item hover-effect" />
         </el-tooltip>
 
-        <!-- <el-tooltip content="文档地址" effect="dark" placement="bottom">
-          <ruo-yi-doc id="ruoyi-doc" class="right-menu-item hover-effect" />
-        </el-tooltip> -->
+        <!-- <screenfull id="screenfull" class="right-menu-item hover-effect" /> -->
 
-        <screenfull id="screenfull" class="right-menu-item hover-effect" />
-
-        <el-tooltip content="布局大小" effect="dark" placement="bottom">
+        <!-- <el-tooltip content="布局大小" effect="dark" placement="bottom">
           <size-select id="size-select" class="right-menu-item hover-effect" />
-        </el-tooltip>
+        </el-tooltip> -->
 
       </template>
 
@@ -58,8 +54,8 @@ import Hamburger from '@/components/Hamburger'
 import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
-import RuoYiGitee from '@/components/RuoYi/Gitee'
-import RuoYiGithub from '@/components/RuoYi/Github'
+import GiteeLink from '@/components/RuoYi/Gitee'
+import GithubLink from '@/components/RuoYi/Github'
 
 export default {
   components: {
@@ -69,8 +65,8 @@ export default {
     Screenfull,
     SizeSelect,
     Search,
-    RuoYiGithub,
-    RuoYiGitee
+    GiteeLink,
+    GithubLink
   },
   computed: {
     ...mapGetters([

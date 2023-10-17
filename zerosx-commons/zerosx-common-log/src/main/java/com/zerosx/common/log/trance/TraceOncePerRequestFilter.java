@@ -1,7 +1,7 @@
 package com.zerosx.common.log.trance;
 
 import com.zerosx.common.core.utils.MDCTraceUtils;
-import com.zerosx.common.log.properties.TraceProperties;
+import com.zerosx.common.log.properties.CustomLogProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +24,11 @@ import java.io.IOException;
 public class TraceOncePerRequestFilter extends OncePerRequestFilter {
 
     @Autowired
-    private TraceProperties traceProperties;
+    private CustomLogProperties customLogProperties;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return !traceProperties.getEnable();
+        return !customLogProperties.getEnable();
     }
 
     @Override

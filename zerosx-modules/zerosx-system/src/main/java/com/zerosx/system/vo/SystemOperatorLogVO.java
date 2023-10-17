@@ -29,8 +29,8 @@ public class SystemOperatorLogVO implements Serializable {
     @Schema(description = "模块按钮名称")
     private String btnName;
 
-    @Schema(description = "业务类型（0其它 1新增 2修改 3删除）")
-    private Integer businessType;
+    @Schema(description = "按钮操作类别")
+    private String businessType;
 
     @Schema(description = "方法名称")
     private String methodName;

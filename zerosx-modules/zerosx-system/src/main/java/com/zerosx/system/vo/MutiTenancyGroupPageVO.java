@@ -75,6 +75,7 @@ public class MutiTenancyGroupPageVO {
     @Sensitive(strategy = SensitiveStrategy.PHONE)
     private String contactMobilePhone;
     @ExcelProperty(value = {"公司电话"})
+    @Sensitive(strategy = SensitiveStrategy.PHONE)
     private String telephone;
     @ExcelIgnore
     @Trans(type = CommonConstants.TRANS_OSS, ref = "logPictureUrl")

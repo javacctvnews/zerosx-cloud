@@ -5,8 +5,8 @@ import com.alibaba.excel.support.ExcelTypeEnum;
 import com.zerosx.common.base.enums.ResultEnum;
 import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.core.utils.DateTimeUtil;
-import com.zerosx.utils.JacksonUtil;
+import com.zerosx.common.utils.DateUtils2;
+import com.zerosx.common.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +26,7 @@ public class EasyExcelUtil {
     private EasyExcelUtil() {
 
     }
+
     public static <T> void writeExcel(HttpServletResponse response, List<T> list, Class<?> entityClass) throws IOException {
         writeExcel(response, list, UUID.randomUUID().toString(), entityClass, ExcelTypeEnum.XLSX);
     }
@@ -37,7 +38,7 @@ public class EasyExcelUtil {
 
     public static <T> void writeExcel(HttpServletResponse response, List<T> list, String fileName, Class<?> entityClass, @NotNull ExcelTypeEnum excelTypeEnum) throws IOException {
         try {
-            EasyExcel.write(getOutputStream(response, fileName, excelTypeEnum), entityClass)
+            EasyExcel.write(getOutputStream(response, fileName), entityClass)
                     .sheet(DEFAULT_SHEET_NAME)
                     .registerWriteHandler(new AutoColumnWidthWriteHandler())
                     .registerWriteHandler(new XHorizontalCellStyleStrategy())
@@ -53,19 +54,22 @@ public class EasyExcelUtil {
         }
     }
 
-    private static OutputStream getOutputStream(HttpServletResponse response, String fileName, ExcelTypeEnum xlsx) {
+    public static OutputStream getOutputStream(HttpServletResponse response, String fileName) {
         try {
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setCharacterEncoding("utf-8");
             // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
-            fileName = URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20") + "_" + DateTimeUtil.now_2();
-            response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + xlsx.getValue());
+            fileName = URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20") + "_" + DateUtils2.now(DateUtils2.FORMAT_2);
+            response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ExcelTypeEnum.XLSX.getValue());
             return response.getOutputStream();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    public static OutputStream getOutputStream(HttpServletResponse response) {
+        return getOutputStream(response, DateUtils2.now(DateUtils2.FORMAT_2));
+    }
 
 }
 
