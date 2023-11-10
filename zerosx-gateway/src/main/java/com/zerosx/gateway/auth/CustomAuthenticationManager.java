@@ -1,23 +1,25 @@
 package com.zerosx.gateway.auth;
 
+import com.zerosx.common.sas.auth.CustomOAuth2AuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken;
+import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
+import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
+import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
+import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
 import reactor.core.publisher.Mono;
+
+import java.security.Principal;
 
 
 @Slf4j
 public class CustomAuthenticationManager implements ReactiveAuthenticationManager {
 
-    private TokenStore tokenStore;
+    private final CustomOAuth2AuthorizationService customOAuth2AuthorizationService;
 
-    public CustomAuthenticationManager(TokenStore tokenStore) {
-        this.tokenStore = tokenStore;
+    public CustomAuthenticationManager(CustomOAuth2AuthorizationService customOAuth2AuthorizationService) {
+        this.customOAuth2AuthorizationService = customOAuth2AuthorizationService;
     }
 
     @Override
@@ -26,14 +28,13 @@ public class CustomAuthenticationManager implements ReactiveAuthenticationManage
                 .cast(BearerTokenAuthenticationToken.class).map(BearerTokenAuthenticationToken::getToken)
                 .flatMap((tokenValue -> {
                     log.debug("执行校验【token】有效性:{}", tokenValue);
-                    OAuth2AccessToken accessToken = tokenStore.readAccessToken(tokenValue);
-                    if (accessToken == null || accessToken.isExpired()) {
-                        tokenStore.removeAccessToken(accessToken);
-                        return Mono.error(new InvalidTokenException("无效的会话，或者会话已过期"));
+                    OAuth2Authorization oAuth2Authorization = customOAuth2AuthorizationService.findByToken(tokenValue, OAuth2TokenType.ACCESS_TOKEN);
+                    if (oAuth2Authorization == null) {
+                        return Mono.error(new InvalidBearerTokenException("无效的会话，或者会话已过期"));
                     }
-                    OAuth2Authentication result = tokenStore.readAuthentication(accessToken);
+                    Authentication result = oAuth2Authorization.getAttribute(Principal.class.getName());
                     if (result == null) {
-                        return Mono.error(new InvalidTokenException("无效的会话，或者会话已过期"));
+                        return Mono.error(new InvalidBearerTokenException("无效的会话，或者会话已过期"));
                     }
                     return Mono.just(result);
                 })).cast(Authentication.class);

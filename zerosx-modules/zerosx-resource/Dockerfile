@@ -1,5 +1,5 @@
 # 基础镜像
-FROM  openjdk:8-jre
+FROM  alibabadragonwell/dragonwell:17-anolis
 # author
 MAINTAINER javacctvnews
 
@@ -13,10 +13,11 @@ WORKDIR /home/zerosx-cloud
 COPY ./target/zerosx-resource.jar /home/zerosx-cloud/zerosx-resource.jar
 # 启动网关服务
 ENTRYPOINT ["java",\
-            "-jar",\
-            "-Xms300m", "-Xmx300m",\
+            "--add-opens=java.base/java.lang=ALL-UNNAMED",\
+            "-Xms300m", "-Xmx300m", \
             "-Djava.security.egd=file:/dev/./urandom",\
             "-XX:-OmitStackTraceInFastThrow",\
+            "-jar",\
             "zerosx-resource.jar"]
 
 #build镜像

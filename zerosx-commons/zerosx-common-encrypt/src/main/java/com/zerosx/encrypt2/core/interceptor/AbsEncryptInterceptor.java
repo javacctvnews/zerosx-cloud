@@ -8,7 +8,6 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.github.benmanes.caffeine.cache.AsyncCache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import com.zerosx.encrypt2.anno.EncryptField;
 import com.zerosx.encrypt2.anno.EncryptFields;
 import com.zerosx.encrypt2.core.EncryptFactory;
@@ -24,9 +23,6 @@ import org.apache.ibatis.executor.resultset.DefaultResultSetHandler;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Interceptor;
 
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -217,11 +213,11 @@ public abstract class AbsEncryptInterceptor implements Interceptor {
      * @param map 需要克隆map
      * @return 克隆后map
      */
-    public Object mapClone(Map<String, Object> map) {
+    /*public Object mapClone(Map<String, Object> map) {
         Map<String, Object> cloneMap = new HashMap<>(map);
         // 重新克隆入参，防止在后续的业务逻辑中继续使用加密数据从而造成重复加密
         return objectClone(cloneMap);
-    }
+    }*/
 
     /**
      * 对象深拷贝
@@ -229,7 +225,7 @@ public abstract class AbsEncryptInterceptor implements Interceptor {
      * @param obj 克隆对象
      * @return 克隆后对象
      */
-    public Object objectClone(Object obj) {
+    /*public Object objectClone(Object obj) {
         Object cloneObj;
         try {
             //无需手动关闭
@@ -248,7 +244,7 @@ public abstract class AbsEncryptInterceptor implements Interceptor {
             //throw new RuntimeException("请求参数克隆失败请将对象【" + obj.getClass().getName() + "】实现Serializable接口");
         }
         return cloneObj;
-    }
+    }*/
 
     /**
      * 判断集合中是否含有相同地址的对象

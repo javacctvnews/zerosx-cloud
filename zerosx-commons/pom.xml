@@ -20,7 +20,8 @@
         <module>zerosx-common-loadbalancer</module>
         <module>zerosx-common-sentinel</module>
         <module>zerosx-common-redis</module>
-        <module>zerosx-common-security</module>
+        <module>zerosx-common-sas</module>
+        <!--<module>zerosx-common-security</module>-->
         <module>zerosx-common-core</module>
         <module>zerosx-common-oss</module>
         <module>zerosx-common-log</module>

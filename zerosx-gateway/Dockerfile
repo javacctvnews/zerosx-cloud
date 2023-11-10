@@ -1,5 +1,5 @@
 # 基础镜像
-FROM  openjdk:8-jre
+FROM  alibabadragonwell/dragonwell:17-anolis
 # author
 MAINTAINER javacctvnews
 
@@ -20,4 +20,4 @@ ENTRYPOINT ["java", \
             "zerosx-gateway.jar"]
 
 #build镜像
-#docker build -t zerosx-cloud/zerosx-gateway:0.0.1 .
+#docker build -t zerosx-cloud/zerosx-gateway:0.0.3 .

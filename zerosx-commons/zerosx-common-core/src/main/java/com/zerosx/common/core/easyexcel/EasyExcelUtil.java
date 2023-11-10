@@ -7,10 +7,9 @@ import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.utils.DateUtils2;
 import com.zerosx.common.utils.JacksonUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
@@ -36,7 +35,7 @@ public class EasyExcelUtil {
     }
 
 
-    public static <T> void writeExcel(HttpServletResponse response, List<T> list, String fileName, Class<?> entityClass, @NotNull ExcelTypeEnum excelTypeEnum) throws IOException {
+    public static <T> void writeExcel(HttpServletResponse response, List<T> list, String fileName, Class<?> entityClass, ExcelTypeEnum excelTypeEnum) throws IOException {
         try {
             EasyExcel.write(getOutputStream(response, fileName), entityClass)
                     .sheet(DEFAULT_SHEET_NAME)

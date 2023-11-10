@@ -27,4 +27,9 @@ public interface ServiceIdConstants {
      * 资源服务
      */
     String RESOURCE = "zerosx-resource";
+
+    /**
+     * SAS
+     */
+    String SAS = "zerosx-sas";
 }

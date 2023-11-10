@@ -9,7 +9,7 @@ import com.zerosx.resource.entity.SysParam;
 import com.zerosx.resource.vo.SysParamPageVO;
 import com.zerosx.resource.vo.SysParamVO;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**

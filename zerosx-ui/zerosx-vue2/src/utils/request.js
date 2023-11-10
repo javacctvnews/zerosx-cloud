@@ -110,6 +110,9 @@ service.interceptors.response.use(res => {
           return Promise.reject('error')
         } else if (errData.type == 'application/json') {
           return Promise.reject(errData)
+        } else if(errData.status == 404){
+          Message({ message: '404 Not Found：' + errData.path, type: 'error', duration: 5 * 1000 })
+          return Promise.reject(error)
         } else {
           let { msg } = error;
           console.log('msg: ', msg)

@@ -1,11 +1,11 @@
 package com.zerosx.common.log.feign;
 
 import com.zerosx.common.log.vo.SystemOperatorLogBO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 
 /**
  * @ClassName AsyncLogService
@@ -18,7 +18,7 @@ import javax.annotation.Resource;
 public class AsyncSysOperatorLogService {
 
     @Lazy
-    @Resource
+    @Autowired
     private ISysOperatorLogService systemOperatorLogService;
 
     @Async

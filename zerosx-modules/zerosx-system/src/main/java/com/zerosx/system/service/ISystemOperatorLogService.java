@@ -8,7 +8,7 @@ import com.zerosx.system.dto.SystemOperatorLogPageDTO;
 import com.zerosx.system.entity.SystemOperatorLog;
 import com.zerosx.system.vo.SystemOperatorLogPageVO;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**

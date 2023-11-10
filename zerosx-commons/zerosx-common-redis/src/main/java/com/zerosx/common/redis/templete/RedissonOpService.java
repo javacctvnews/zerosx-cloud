@@ -187,11 +187,10 @@ public class RedissonOpService {
     }
 
     private <V> RMap<String, V> getRMap(final String key, Codec codec) {
+        if (codec == null) {
+            return redissonClient.getMap(key);
+        }
         return redissonClient.getMap(key, codec);
-    }
-
-    private <V> RMap<String, V> getRMap(final String key) {
-        return redissonClient.getMap(key);
     }
 
     /**
@@ -236,8 +235,15 @@ public class RedissonOpService {
      * @param valueMap valueMap
      */
     public <V> void hPut(final String key, final Map<String, V> valueMap, final long expireTime) {
-        RMap<String, V> map = getRMap(key);
+        RMap<String, V> map = getRMap(key, null);
         map.putAll(valueMap);
+        //设置key的过期时间
+        map.expire(Duration.ofSeconds(expireTime));
+    }
+
+    public <V> void hPut(final String key, final String hashKey, final V value, final long expireTime, Codec codec) {
+        RMap<String, V> map = getRMap(key, codec);
+        map.put(hashKey, value);
         //设置key的过期时间
         map.expire(Duration.ofSeconds(expireTime));
     }
@@ -249,7 +255,12 @@ public class RedissonOpService {
      * @param hashKey hash key
      */
     public <V> V hGet(final String key, final String hashKey) {
-        RMap<String, V> map = getRMap(key);
+        RMap<String, V> map = getRMap(key, null);
+        return map.get(hashKey);
+    }
+
+    public <V> V hGet(final String key, final String hashKey, Codec codec) {
+        RMap<String, V> map = getRMap(key, codec);
         return map.get(hashKey);
     }
 
@@ -259,7 +270,7 @@ public class RedissonOpService {
      * @param key key
      */
     public <V> Map<String, V> hGet(final String key, final Set<String> hashKeys) {
-        RMap<String, V> map = getRMap(key);
+        RMap<String, V> map = getRMap(key, null);
         return map.getAll(hashKeys);
     }
 
@@ -269,7 +280,7 @@ public class RedissonOpService {
      * @param key key
      */
     public <V> Map<String, V> hGet(final String key) {
-        RMap<String, V> map = getRMap(key);
+        RMap<String, V> map = getRMap(key, null);
         return map.readAllMap();
     }
 
@@ -280,7 +291,11 @@ public class RedissonOpService {
      * @return 存储内容
      */
     public boolean hDel(final String key) {
-        return getRMap(key).delete();
+        return getRMap(key, null).delete();
+    }
+
+    public boolean hDel(final String key, Codec codec) {
+        return getRMap(key, codec).delete();
     }
 
     /**
@@ -291,7 +306,11 @@ public class RedissonOpService {
      * @return 存储内容
      */
     public <V> V hRemove(final String key, final String hKey) {
-        RMap<String, V> rMap = getRMap(key);
+        return hRemove(key, hKey, null);
+    }
+
+    public <V> V hRemove(final String key, final String hKey, Codec codec) {
+        RMap<String, V> rMap = getRMap(key, codec);
         return rMap.remove(hKey);
     }
 
@@ -303,6 +322,10 @@ public class RedissonOpService {
     public void delByPattern(final String pattern) {
         redissonClient.getKeys().deleteByPattern(pattern);
     }
+
+    /*public void delByPattern(final String pattern, Codec codec) {
+        redissonClient.getKeys().deleteByPattern(pattern, codec);
+    }*/
 
     /**
      * 是否存在key
@@ -558,8 +581,21 @@ public class RedissonOpService {
      * @param codec 编解码器
      */
     public <V> boolean zAdd(final String key, final V value, final Double score, Codec codec) {
+        return zAdd(key, value, score, DEFAULT_EXPIRE_SECONDS, codec);
+    }
+
+    /**
+     * scoredSet-按score进行排序-可设置过期时间
+     *
+     * @param key        key
+     * @param value      value
+     * @param score      score
+     * @param expireTime expireTime
+     * @param codec      编解码器
+     */
+    public <V> boolean zAdd(final String key, final V value, final Double score, final long expireTime, Codec codec) {
         RScoredSortedSet<V> sortedSet = getScoredSortedSet(key, codec);
-        sortedSet.expire(DEFAULT_EXPIRE_DURATION);
+        sortedSet.expire(Duration.ofSeconds(expireTime));
         return sortedSet.add(score, value);
     }
 

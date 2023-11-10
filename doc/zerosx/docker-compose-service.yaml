@@ -1,4 +1,4 @@
-#docker-compose -f docker-compose-service.yaml up -d
+#docker-compose --compatibility -f docker-compose-service.yaml up -d
 version: '3'
 
 services:
@@ -15,14 +15,14 @@ services:
       # 配置文件
       - /home/zerosx-cloud/logs/:/home/zerosx-cloud/logs/
   #认证服务
-  zerosx-auth:
-    image: registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-auth:0.0.1
-    container_name: zerosx-auth
+  zerosx-sas:
+    image: registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-sas:0.0.3
+    container_name: zerosx-sas
     environment:
       # 时区上海
       TZ: Asia/Shanghai
     ports:
-      - "19101:19101"
+      - "19108:19108"
     volumes:
       # 配置文件
       - /home/zerosx-cloud/logs/:/home/zerosx-cloud/logs/
@@ -30,6 +30,11 @@ services:
   zerosx-system:
     image: registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-system:0.0.1
     container_name: zerosx-system
+    # 限制CPU及内存
+    deploy:
+      resources:
+        limits:
+          memory: 400M
     environment:
       # 时区上海
       TZ: Asia/Shanghai
@@ -64,7 +69,7 @@ services:
 #      - /home/zerosx-cloud/logs/:/home/zerosx-cloud/logs/
   #zerosx-ui
   zerosx-ui:
-    image: registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-vue2:0.0.1
+    image: registry.cn-shenzhen.aliyuncs.com/zerosx-cloud/zerosx-vue2:0.0.3
     container_name: zerosx-vue2
     environment:
       # 时区上海

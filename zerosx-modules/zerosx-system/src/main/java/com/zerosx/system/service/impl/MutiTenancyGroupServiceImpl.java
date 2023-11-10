@@ -22,14 +22,13 @@ import com.zerosx.system.mapper.IMutiTenancyGroupMapper;
 import com.zerosx.system.service.IMutiTenancyGroupService;
 import com.zerosx.system.vo.MutiTenancyGroupPageVO;
 import com.zerosx.system.vo.MutiTenancyGroupVO;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -114,7 +113,6 @@ public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGr
         return tenancyList;
     }
 
-    @NotNull
     public LambdaQueryWrapper<MutiTenancyGroup> lambdaQW(MutiTenancyGroupQueryDTO query) {
         LambdaQueryWrapper<MutiTenancyGroup> listqw = Wrappers.lambdaQuery(MutiTenancyGroup.class);
         listqw.eq(StringUtils.isNotBlank(query.getOperatorId()), MutiTenancyGroup::getOperatorId, query.getOperatorId());

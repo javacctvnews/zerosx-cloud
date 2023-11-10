@@ -3,13 +3,13 @@ const serviceConfig = {
 
   //微服务前缀
   system: '/api-system',
-  auth: '/api-auth',
+  auth: '/api-sas',
   resource: '/api-resource',
   //客户端授权
   clientId: 'saas',
   clientSecret: 'Zeros9999!#@',
   grantType: 'captcha',
-  captcha: "captcha",
+  captcha: "captcha_pwd",
   mobileSms: 'mobile_sms',
   authUserType: 'SysUser'
 

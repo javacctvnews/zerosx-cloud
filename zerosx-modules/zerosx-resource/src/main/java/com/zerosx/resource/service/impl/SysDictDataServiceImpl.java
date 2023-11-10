@@ -35,7 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,9 +47,6 @@ import java.util.stream.Collectors;
  * <p>
  * 字典数据表 服务实现类
  * </p>
- *
- * @author junmy
- * @since 2020-11-18
  */
 @Slf4j
 @Service
@@ -198,7 +196,7 @@ public class SysDictDataServiceImpl extends SuperServiceImpl<ISysDictDataMapper,
         sysDictTypeService.saveOrUpdate(sysDictType, sdtuw);
         //字典类型数据
         BaseEnum[] enumConstants = clz.getEnumConstants();
-        List<String> removeValues = new ArrayList<>();
+        List<Object> removeValues = new ArrayList<>();
         resList = new ArrayList<>();
         for (BaseEnum baseEnum : enumConstants) {
             SysDictData sd = new SysDictData();

@@ -20,6 +20,11 @@
         <dependencies>
             <dependency>
                 <groupId>com.zerosx.cloud</groupId>
+                <artifactId>zerosx-common-sas</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zerosx.cloud</groupId>
                 <artifactId>zerosx-common-base</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -92,6 +97,10 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-sas</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-base</artifactId>

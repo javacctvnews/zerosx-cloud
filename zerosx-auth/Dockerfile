@@ -1,5 +1,5 @@
 # 基础镜像
-FROM  openjdk:8-jre
+FROM  alibabadragonwell/dragonwell:17-anolis
 # author
 MAINTAINER javacctvnews
 

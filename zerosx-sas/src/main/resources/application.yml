@@ -1,0 +1,8 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  security:
+    oauth2:
+      authorizationserver:
+        endpoint:
+          jwk-set-uri:

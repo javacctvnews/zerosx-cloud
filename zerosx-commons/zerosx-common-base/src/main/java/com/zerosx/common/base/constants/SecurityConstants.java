@@ -17,14 +17,15 @@ public interface SecurityConstants {
      */
     String[] ENDPOINTS = {
             "/oauth/token",
+            "/oauth2/token",
             "/actuator/**",
-            "/*/v2/api-docs",
             "/doc.html",
             "/webjars/**",
             "/druid/**",
             "/favicon.ico",
             "/*/v3/api-docs/default",
-            "/monitor/**"
+            "/monitor/**",
+            "/v3/api-docs/**"
     };
 
     /**
@@ -40,4 +41,8 @@ public interface SecurityConstants {
      * security上下文-用户信息
      */
     String SECURITY_CONTEXT = "LoginUserTenantsBO";
+    /**
+     * OAuth2Authorization
+     */
+    String OAuth2Authorization = "OAuth2Authorization";
 }

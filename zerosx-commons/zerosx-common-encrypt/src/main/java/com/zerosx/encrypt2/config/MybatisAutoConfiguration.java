@@ -2,11 +2,11 @@ package com.zerosx.encrypt2.config;
 
 import com.zerosx.encrypt2.core.interceptor.EncryptInterceptor;
 import com.zerosx.encrypt2.core.properties.EncryptProperties;
+import jakarta.annotation.PostConstruct;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 /**

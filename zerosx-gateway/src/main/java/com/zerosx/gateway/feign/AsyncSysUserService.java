@@ -8,13 +8,13 @@ import com.zerosx.common.base.vo.LoginUserTenantsBO;
 import com.zerosx.common.base.vo.OauthClientDetailsBO;
 import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.base.vo.SysPermissionBO;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.concurrent.Future;
 
 /**

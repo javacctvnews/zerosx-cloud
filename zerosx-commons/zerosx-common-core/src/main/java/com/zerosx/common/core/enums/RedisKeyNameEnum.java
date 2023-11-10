@@ -13,14 +13,13 @@ import org.apache.commons.lang3.StringUtils;
 public enum RedisKeyNameEnum {
 
     /**
-     * 用户名密码+验证码登录授权 存储验证码 60秒有效
-     * string结构
+     * 用户名密码+验证码登录授权 存储验证码
      */
-    IMAGE_CODE(ServiceIdConstants.AUTH, "image_code"),
+    IMAGE_CODE(ServiceIdConstants.SAS, "image_code"),
     /**
      * 短信验证码
      */
-    SMS_CODE(ServiceIdConstants.AUTH, "sms_code"),
+    SMS_CODE(ServiceIdConstants.SAS, "sms_code"),
 
     /**
      * 当前登录用户基础信息（角色集合和租户信息）
@@ -58,7 +57,7 @@ public enum RedisKeyNameEnum {
     /**
      * 客户端配置
      */
-    OAUTH_CLIENT_DETAILS(ServiceIdConstants.AUTH, "oauth_client_details"),
+    OAUTH_CLIENT_DETAILS(ServiceIdConstants.SAS, "oauth_client_details"),
     /**
      * 运营商缓存
      */

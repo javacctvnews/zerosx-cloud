@@ -19,7 +19,7 @@ import com.zerosx.order.dto.UserDTO;
 import com.zerosx.order.vo.UserVO;
 import com.zerosx.order.service.IUserService;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**

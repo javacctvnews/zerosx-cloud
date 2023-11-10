@@ -10,33 +10,31 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>zerosx-auth</module>
+        <!--<module>zerosx-auth</module>-->
         <module>zerosx-gateway</module>
         <module>zerosx-commons</module>
         <module>zerosx-modules</module>
         <module>zerosx-examples</module>
         <module>zerosx-api</module>
+        <module>zerosx-sas</module>
         <module>zerosx-tools</module>
     </modules>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
 
-        <spring-boot.version>2.7.16</spring-boot.version>
-        <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>
-        <spring-cloud.version>2021.0.5</spring-cloud.version>
-        <spring-boot-admin-starter-server.version>2.7.10</spring-boot-admin-starter-server.version>
+        <spring-boot.version>3.1.5</spring-boot.version>
+        <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
+        <spring-cloud.version>2022.0.4</spring-cloud.version>
+        <spring-boot-admin-starter-server.version>3.1.5</spring-boot-admin-starter-server.version>
 
         <mybatis-plus-boot-starter.version>3.5.3.1</mybatis-plus-boot-starter.version>
         <mysql-connector-java.version>8.0.33</mysql-connector-java.version>
-        <druid-spring-boot-starter.version>1.2.6</druid-spring-boot-starter.version>
-        <mybatis-spring-boot-starter.version>2.2.2</mybatis-spring-boot-starter.version>
-        <pagehelper.version>5.3.3</pagehelper.version>
         <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
         <mybatis.version>3.5.10</mybatis.version>
         <bcprov-jdk15to18.version>1.75</bcprov-jdk15to18.version>
@@ -44,15 +42,10 @@
         <commons-io.version>2.12.0</commons-io.version>
         <commons-collections4.verison>4.4</commons-collections4.verison>
 
-        <nacos.client.version>1.4.6</nacos.client.version>
-
-        <spring-security-jwt.version>1.1.1.RELEASE</spring-security-jwt.version>
-        <spring-security-oauth2.version>2.5.2.RELEASE</spring-security-oauth2.version>
-
         <fastjson.version>1.2.83</fastjson.version>
         <transmittable-thread-local.version>2.14.2</transmittable-thread-local.version>
         <hutool.version>5.8.21</hutool.version>
-        <redisson.version>3.18.0</redisson.version>
+        <redisson.version>3.24.3</redisson.version>
         <easyexcel.version>3.3.2</easyexcel.version>
         <reflectasm.version>1.11.9</reflectasm.version>
         <easyCaptcha.version>1.6.2</easyCaptcha.version>
@@ -67,9 +60,8 @@
         <reflections.version>0.10.2</reflections.version>
         <cglib.version>3.3.0</cglib.version>
 
-        <spring-cloud-starter-oauth2.version>2.2.5.RELEASE</spring-cloud-starter-oauth2.version>
-
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+
     </properties>
 
     <dependencyManagement>
@@ -119,7 +111,11 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.14</version>
+            </dependency>
             <!--feign api-->
             <dependency>
                 <groupId>com.zerosx.cloud</groupId>
@@ -148,16 +144,6 @@
                 <artifactId>spring-boot-admin-starter-server</artifactId>
                 <version>${spring-boot-admin-starter-server.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.springframework.security.oauth</groupId>
-                <artifactId>spring-security-oauth2</artifactId>
-                <version>${spring-security-oauth2.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-jwt</artifactId>
-                <version>${spring-security-jwt.version}</version>
-            </dependency>
             <!-- mybatis-plus start -->
             <dependency>
                 <groupId>com.baomidou</groupId>
@@ -174,12 +160,6 @@
                 <artifactId>bcprov-jdk15to18</artifactId>
                 <version>${bcprov-jdk15to18.version}</version>
             </dependency>
-            <!--<dependency>
-                <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper</artifactId>
-                <version>${pagehelper.version}</version>
-            </dependency>-->
-            <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
             <dependency>
                 <groupId>com.mysql</groupId>
                 <artifactId>mysql-connector-j</artifactId>
@@ -236,11 +216,6 @@
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-spring-data-27</artifactId>
                 <version>${redisson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-oauth2</artifactId>
-                <version>${spring-cloud-starter-oauth2.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.reflections</groupId>
@@ -302,7 +277,7 @@
             <properties>
                 <project>prod</project>
                 <profiles.active>prod</profiles.active>
-                <nacos.server>172.19.54.164:8848</nacos.server>
+                <nacos.server>120.79.168.154:8848</nacos.server>
                 <nacos.namespace>477f012f-f553-4754-bf64-ee0db8907b8e</nacos.namespace>
                 <nacos.config.group>prod</nacos.config.group>
                 <nacos.discovery.group>prod</nacos.discovery.group>
@@ -362,10 +337,15 @@
                     <version>${spring-boot.version}</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
-                        <source>${maven.compiler.source}</source>
-                        <target>${maven.compiler.target}</target>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
                         <encoding>${project.build.sourceEncoding}</encoding>
                         <compilerArgument>-Xlint:unchecked</compilerArgument>
                         <compilerArguments>
@@ -373,6 +353,10 @@
                             <bootclasspath>${java.home}/lib/rt.jar${path.separator}${java.home}/lib/jce.jar
                             </bootclasspath>
                         </compilerArguments>
+                        <compilerArgs>
+                            <arg>--add-exports=java.base/sun.net.util=ALL-UNNAMED</arg>
+                            <arg>--add-exports=java.base/java.lang=ALL-UNNAMED</arg>
+                        </compilerArgs>
                     </configuration>
                 </plugin>
 

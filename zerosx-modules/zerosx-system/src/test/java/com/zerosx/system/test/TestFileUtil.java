@@ -1,13 +1,27 @@
 package com.zerosx.system.test;
 
+import com.zerosx.common.utils.DateUtils2;
 import org.apache.commons.collections4.CollectionUtils;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.InputStream;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class TestFileUtil {
+
+    @Test
+    public void test12(){
+        long time1 = Timestamp.valueOf(LocalDateTime.now()).getTime();
+        Date date2 = DateUtils2.dateMax(1000);
+        long time2 = date2.getTime();
+        System.out.println("time1 = " + time1);
+        System.out.println("time2 = " + time2);
+    }
 
     public static InputStream getResourcesFileInputStream(String fileName) {
         return Thread.currentThread().getContextClassLoader().getResourceAsStream("" + fileName);

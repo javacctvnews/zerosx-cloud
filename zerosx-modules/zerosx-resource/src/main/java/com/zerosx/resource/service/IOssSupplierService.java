@@ -10,7 +10,7 @@ import com.zerosx.resource.entity.OssSupplier;
 import com.zerosx.resource.vo.OssSupplierPageVO;
 import com.zerosx.resource.vo.OssSupplierVO;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**

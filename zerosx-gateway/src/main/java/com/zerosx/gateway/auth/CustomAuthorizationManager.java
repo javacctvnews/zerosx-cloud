@@ -11,19 +11,17 @@ import com.zerosx.common.core.enums.system.UserTypeEnum;
 import com.zerosx.common.core.utils.AntPathMatcherUtils;
 import com.zerosx.common.core.vo.CustomUserDetails;
 import com.zerosx.common.redis.templete.RedissonOpService;
-import com.zerosx.common.security.properties.CustomSecurityProperties;
-import com.zerosx.common.security.properties.PermissionProperties;
+import com.zerosx.common.sas.properties.CustomSecurityProperties;
+import com.zerosx.common.sas.properties.PermissionProperties;
 import com.zerosx.common.utils.JacksonUtil;
 import com.zerosx.gateway.feign.AsyncSysUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.web.server.authorization.AuthorizationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
@@ -33,7 +31,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -54,7 +51,6 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
 
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> authentication, AuthorizationContext authorizationContext) {
         return authentication.map(auth -> {
@@ -73,10 +69,10 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
      * @return
      */
     public boolean hasPermission(Authentication authentication, ServerWebExchange serverWebExchange) {
-        Map<String, String> map = ServerWebExchangeUtils.getUriTemplateVariables(serverWebExchange);
+        /*Map<String, String> map = ServerWebExchangeUtils.getUriTemplateVariables(serverWebExchange);
         if (map == null || map.isEmpty()) {
             return false;
-        }
+        }*/
         ServerHttpRequest serverHttpRequest = serverWebExchange.getRequest();
         PermissionProperties permissionProperties = customSecurityProperties.getPerms();
         if (permissionProperties == null) {
@@ -91,19 +87,20 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         String username = userDetails.getUsername();
         log.debug("用户【{}】请求授权资源【{}】", username, path);
-        OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
+        /*OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
         String clientId = oAuth2Authentication.getOAuth2Request().getClientId();
         List<String> passClientIds = permissionProperties.getPassClientIds();
         if (passClientIds.contains(clientId)) {
             return true;
-        }
+        }*/
         //放行url
         List<String> passPermsUrls = permissionProperties.getPassPermsUrls();
         if (passPermsUrls.contains(path) || AntPathMatcherUtils.matchUrl(path, passPermsUrls)) {
             return true;
         }
         //用户的权限
-        LoginUserTenantsBO sysPermissionBO = JacksonUtil.toObject(map.get(SecurityConstants.SECURITY_CONTEXT), LoginUserTenantsBO.class);
+        LoginUserTenantsBO sysPermissionBO = (LoginUserTenantsBO) serverWebExchange.getAttributes().get(SecurityConstants.SECURITY_CONTEXT);
+
         if (sysPermissionBO == null) {
             return false;
         }
@@ -140,7 +137,7 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
                 log.error(e.getMessage(), e);
             }
         }
-        String requestMethod = serverHttpRequest.getMethodValue();
+        String requestMethod = serverHttpRequest.getMethod().name();
         log.debug("用户:{} 最终校验是否有权限:{} ", username, path);
         for (SysMenuBO sysMenuBO : permissionUrls) {
             boolean match = antPathMatcher.match(sysMenuBO.getRequestUrl(), path);

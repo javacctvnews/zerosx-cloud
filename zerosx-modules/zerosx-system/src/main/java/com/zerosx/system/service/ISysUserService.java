@@ -12,7 +12,7 @@ import com.zerosx.system.entity.SysUser;
 import com.zerosx.system.vo.SysUserPageVO;
 import com.zerosx.system.vo.SysUserVO;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 

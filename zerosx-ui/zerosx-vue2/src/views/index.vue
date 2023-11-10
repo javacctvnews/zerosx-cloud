@@ -11,7 +11,7 @@
             <el-collapse v-model="activeNames" @change="handleChange">
               <el-collapse-item title="欢迎来到Zerox-Cloud多租户开发平台" name="1">
                 <div class="imgs">
-                  <img style="display: inline-block;" src="https://img.shields.io/badge/Zerosx_Cloud-0.0.2-critical"
+                  <img style="display: inline-block;" src="https://img.shields.io/badge/Zerosx_Cloud-0.0.3-critical"
                     alt="">
                   <img style="display: inline-block;"
                     src="https://img.shields.io/badge/copyright-javacctvnews@163.com-blue" alt="">
@@ -39,7 +39,7 @@
                   <div>3、实现了SpringCloudGateway集成OAuth2.0统一认证授权及URL级功能权限校验（适用于网络隔离场景，即网关是统一入口），且可自定义扩展OAuth2.0授权模式；</div>
                   <div>4、集成Knife4j的OpenAPI3的接口文档，方便前后端对接；</div>
                   <div>5、代码生成器一键生成基础CRUD功能，节约开发时间，更多注重业务开发；</div>
-                  <div>6、提供一套基于Vue2.x的前端项目[zerosx-vue2]，此项目是参考【若依】前端开源改造适配，感谢若依.</div>
+                  <div>6、提供一套基于Vue2.x的前端项目[zerosx-vue2]，此项目是参考【若依】前端开源改造适配，感谢若依（我是Vue2.x初学者，还不具备从零搭建一个完整的Vue项目，所以目前只能借鉴改造，勿喷^_^）。</div>
                 </div>
               </el-collapse-item>
 
@@ -64,9 +64,9 @@
                 <div>14、系统监控：集成SpringBootAdmin应用监控；</div>
                 <div>15、代码生成器：高度符合阿里巴巴开发手册规范的前后端代码一键生成，减少CRUD基础开发，更专注业务开发；</div>
               </el-collapse-item>
-              <el-collapse-item title="软件定制开发合作" name="4">
+              <el-collapse-item title="软件定制开发合作或其他咨询" name="4">
                 <ul>
-                  <li>敬请期待</li>
+                  <li>请邮件联系：javacctvnews@163.com，谢谢！</li>
                 </ul>
               </el-collapse-item>
             </el-collapse>
@@ -108,6 +108,18 @@
                   </el-timeline>
                 </div> -->
                 <el-collapse title="版本更新日志" v-model="activeLogs">
+                  <el-collapse-item title="V0.0.3" name="3">
+                    <ul>
+                      <li>1.jdk更新到17及适配</li>
+                      <li>2.SpringBoot版本更新到3.x</li>
+                      <li>3.SpringCloud&Alibaba版本更新到2022.x及更新对应的组件(Nacos等)</li>
+                      <li>4.引入Spring Authorization Server认证授权</li>
+                      <li>5.SpringCloudGateway集成Spring Authorization Server</li>
+                      <li>6.[适配]用户名密码+验证码授权模式</li>
+                      <li>7.[登录、登出、令牌管理、登录日志、客户端管理]等功能重新适配Spring Authorization Server</li>
+                      <li>8.更新md文档、数据库及YAML配置脚本</li>
+                    </ul>
+                  </el-collapse-item>
                   <el-collapse-item title="V0.0.2" name="2">
                     <ul>
                       <li>1.分离zerosx-resource资源微服务</li>
@@ -145,7 +157,7 @@ export default {
     return {
       activeNames: ['1', '2', '3', '4'],
       logActiveNames: ['32'],
-      activeLogs: ['2'],
+      activeLogs: ['3'],
       lyrics: [
         '天青色等烟雨，而我在等你，炊烟袅袅升起，隔江千万里',
         '翻着我们的照片，想念若隐若现，去年的冬天，我们笑得很甜',

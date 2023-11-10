@@ -6,7 +6,10 @@
     <top-nav id="topmenu-container" class="topmenu-container" v-if="topNav"/>
 
     <div class="right-menu">
+      <div style="float: left;margin-right: 20px;color: red;">欢迎各位小伙伴的莅临，希望各位小伙伴不要删原始数据，十分感谢！！！</div>
       <template v-if="device!=='mobile'">
+        
+       
         <search id="header-search" class="right-menu-item" />
         
         <el-tooltip content="Gitee源码地址" effect="dark" placement="bottom">

@@ -26,7 +26,7 @@ seata:
     # support: nacos, consul, apollo, zk, etcd3
     type: nacos
     nacos:
-      server-addr: 192.168.3.6:8848
+      server-addr: 192.168.3.100:8848
       namespace: 32c6d87e-c726-44c5-a87b-a89b0f91c63d
       group: local
       username: nacos
@@ -38,7 +38,7 @@ seata:
     type: nacos
     nacos:
       application: seata-server
-      server-addr: 192.168.3.6:8848
+      server-addr: 192.168.3.100:8848
       group: local
       namespace: 32c6d87e-c726-44c5-a87b-a89b0f91c63d
       # tc集群名称

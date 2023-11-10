@@ -4,8 +4,10 @@ zeros-ui-vue3
 doc/mysql8/mysql8.0.34/data
 doc/mysql8/mysql8.0.34/logs
 doc/nacos/logs
+doc/nacos2.2.1/logs
 doc/redis/data
 doc/seata/logs
+doc/seata1.7.0/logs
 doc/nginx/nginx/log
 doc/nginx
 .DS_store

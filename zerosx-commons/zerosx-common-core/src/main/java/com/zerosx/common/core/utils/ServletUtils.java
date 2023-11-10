@@ -1,9 +1,9 @@
 package com.zerosx.common.core.utils;
 
 import com.zerosx.common.base.constants.CommonConstants;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;

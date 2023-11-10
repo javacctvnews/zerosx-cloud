@@ -1,6 +1,5 @@
 package com.zerosx.common.oss.enums;
 
-
 import com.zerosx.common.anno.AutoDictData;
 import com.zerosx.common.base.BaseEnum;
 import com.zerosx.common.oss.core.config.AliyunOssConfig;

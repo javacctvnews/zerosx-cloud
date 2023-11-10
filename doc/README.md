@@ -53,7 +53,7 @@
    # 进入目录
    cd zerosx-cloud/doc/nacos
    # 安装(指定文件)
-   docker-compose -f docker-compose-nacos2.2.0.yaml up -d
+   docker-compose -f docker-compose.yaml up -d
    ```
    
 5. 登录Nacos控制台：http://127.0.0.1:8848/nacos 用户名：nacos 密码：nacos
@@ -136,7 +136,7 @@
    # 进入目录
    cd zerosx-cloud/doc/seata
    # 安装(指定文件)
-   docker-compose -f docker-compose-seata1.6.1.yaml up -d
+   docker-compose -f docker-compose.yaml up -d
    ```
 
    > [Seata官网安装教程地址](https://seata.io/zh-cn/docs/v1.6/ops/deploy-by-docker-compose)
