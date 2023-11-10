@@ -7,12 +7,12 @@
     <!--<parent>
         <groupId>com.zerosx.cloud</groupId>
         <artifactId>zerosx-commons</artifactId>
-        <version>0.0.2</version>
+        <version>0.0.3</version>
     </parent>-->
 
     <groupId>com.zerosx.cloud</groupId>
     <artifactId>zerosx-common-bom</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
     <packaging>pom</packaging>
     <description>公共组件的依赖</description>
 
@@ -53,11 +53,11 @@
                 <artifactId>zerosx-common-redis</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
+            <!--<dependency>
                 <groupId>com.zerosx.cloud</groupId>
                 <artifactId>zerosx-common-security</artifactId>
                 <version>${project.version}</version>
-            </dependency>
+            </dependency>-->
             <dependency>
                 <groupId>com.zerosx.cloud</groupId>
                 <artifactId>zerosx-common-oss</artifactId>
@@ -125,10 +125,10 @@
             <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-redis</artifactId>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-security</artifactId>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-oss</artifactId>
