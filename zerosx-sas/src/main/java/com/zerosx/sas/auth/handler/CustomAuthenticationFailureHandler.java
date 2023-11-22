@@ -9,6 +9,7 @@ import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.utils.IdGenerator;
 import com.zerosx.common.utils.IpUtils;
 import com.zerosx.common.utils.JacksonUtil;
+import com.zerosx.sas.auth.grant.CustomOAuth2ParameterNames;
 import com.zerosx.sas.entity.OauthTokenRecord;
 import com.zerosx.sas.service.IOauthTokenRecordService;
 import com.zerosx.sas.utils.SasAuthUtils;
@@ -54,6 +55,9 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         if (exception instanceof OAuth2AuthenticationException oAuth2AuthenticationException) {
             OAuth2Error oAuth2Error = oAuth2AuthenticationException.getError();
             error = oAuth2Error.toString();
+            if (error.contains(CustomOAuth2ParameterNames.CLIENT_SECRET_EXPIRES_AT)) {
+                error = "客户端密码有效日期已过期";
+            }
         } else if (exception instanceof BadCredentialsException badCredentialsException) {
             error = badCredentialsException.toString();
         } else {
@@ -64,7 +68,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         OauthTokenRecord otr = new OauthTokenRecord();
         otr.setClientId("");
         otr.setApplyOauthTime(new Date());
-        otr.setUsername(parameters.getFirst(OAuth2ParameterNames.USERNAME));
+        otr.setUsername(ZerosSecurityContextHolder.get(OAuth2ParameterNames.USERNAME));
         otr.setRequestId(IdGenerator.getIdStr());
         UserAgent userAgent = UserAgentUtil.parse(request.getHeader(CommonConstants.USER_AGENT));
         otr.setBrowserType(userAgent.getBrowser().getName() + "/" + userAgent.getVersion());

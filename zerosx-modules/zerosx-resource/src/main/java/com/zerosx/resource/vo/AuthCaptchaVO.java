@@ -1,4 +1,4 @@
-package com.zerosx.sas.vo;
+package com.zerosx.resource.vo;
 
 import lombok.Getter;
 import lombok.Setter;

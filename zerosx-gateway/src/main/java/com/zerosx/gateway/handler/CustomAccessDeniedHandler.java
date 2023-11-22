@@ -20,7 +20,7 @@ public class CustomAccessDeniedHandler implements ServerAccessDeniedHandler {
     public Mono<Void> handle(ServerWebExchange exchange, AccessDeniedException e) {
         HttpStatusCode statusCode = exchange.getResponse().getStatusCode();
         log.debug("【权限不足】的URL请求:{} HttpStatus：{}", exchange.getRequest().getPath(), statusCode);
-        //log.error(e.getMessage(), e);
+        log.error(e.getMessage(), e);
         return WebFluxRespUtils.responseWrite(exchange, ResultVOUtil.error(ResultEnum.FORBIDDEN));
     }
 

@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
  **/
 @Slf4j
 public class CustomUserDetailsChecker implements UserDetailsChecker {
+
     @Override
     public void check(UserDetails userDetails) {
         log.debug("执行CustomUserDetailsChecker");
@@ -29,6 +30,5 @@ public class CustomUserDetailsChecker implements UserDetailsChecker {
         if (!userDetails.isAccountNonExpired()) {
             throw new OAuth2AuthenticationException("用户已过期");
         }
-
     }
 }

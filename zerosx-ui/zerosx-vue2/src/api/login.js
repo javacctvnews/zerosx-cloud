@@ -37,7 +37,7 @@ export function getInfo() {
 // 获取验证码
 export function getCodeImg() {
   return request({
-    url: serviceConfig.auth + '/auth/getImgCode',
+    url: serviceConfig.resource + '/captcha',
     headers: {
       isToken: false
     },
@@ -49,7 +49,7 @@ export function getCodeImg() {
 //获取短信验证码
 export function smsCode(data) {
   return request({
-    url: serviceConfig.auth + '/auth/getSmsCode',
+    url: serviceConfig.resource + '/sms/getSmsCode',
     headers: {
       isToken: false
     },

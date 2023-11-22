@@ -5,13 +5,16 @@ import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.core.service.ISuperService;
 import com.zerosx.common.core.vo.CustomPageVO;
+import com.zerosx.resource.dto.SmsCodeDTO;
 import com.zerosx.resource.dto.SmsSupplierDTO;
 import com.zerosx.resource.dto.SmsSupplierPageDTO;
 import com.zerosx.resource.entity.SmsSupplier;
+import com.zerosx.resource.vo.SmsCodeVO;
 import com.zerosx.resource.vo.SmsSupplierPageVO;
 import com.zerosx.resource.vo.SmsSupplierVO;
 
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.List;
 
 /**
@@ -85,5 +88,13 @@ public interface ISmsSupplierService extends ISuperService<SmsSupplier> {
      * @param response  response
      */
     void excelExport(RequestVO<SmsSupplierPageDTO> requestVO, HttpServletResponse response);
+
+    /**
+     * 发送短信验证码（带图形验证码校验）
+     *
+     * @param smsCodeDTO
+     * @return
+     */
+    SmsCodeVO getSmsCode(SmsCodeDTO smsCodeDTO);
 }
 

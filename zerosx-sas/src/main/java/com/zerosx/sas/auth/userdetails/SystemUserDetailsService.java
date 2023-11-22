@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.stereotype.Service;
 
 
@@ -44,6 +45,7 @@ public class SystemUserDetailsService extends AbsCustomUserDetailsService {
             log.debug("用户名:{} {}", username, JacksonUtil.toJSONString(customUserDetails));
             if (loginUserVO != null) {
                 ZerosSecurityContextHolder.setOperatorIds(loginUserVO.getOperatorId());
+                ZerosSecurityContextHolder.set(OAuth2ParameterNames.USERNAME, loginUserVO.getUserName());
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);

@@ -1,9 +1,16 @@
+# --compatibility以兼容的模式运行
+# docker-compose --compatibility -f docker-compose.yaml up -d
+
 version: "3.1"
 services:
   seata-server:
     image: seataio/seata-server:1.7.0
     container_name: zerosx_seata_v1.7.0
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '5'
     ports:
       - "7091:7091"
       - "8091:8091"

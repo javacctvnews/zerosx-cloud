@@ -1,6 +1,6 @@
 package com.zerosx.sas.auth.config;
 
-import com.zerosx.sas.auth.grant.CustomDaoAuthenticationProvider;
+import com.zerosx.sas.auth.grant.CustomPwdDaoAuthenticationProvider;
 import com.zerosx.sas.auth.token.CustomOAuth2RefreshTokenGenerator;
 import com.zerosx.sas.auth.token.CustomOAuth2TokenCustomizer;
 import com.zerosx.sas.auth.token.CustomOAuth2TokenGenerator;
@@ -50,13 +50,9 @@ public class SasAuthBeanConfig {
      * @return
      */
     @Bean
-    public CustomDaoAuthenticationProvider customDaoAuthenticationProvider(CustomUserDetailsServiceFactory customUserDetailsServiceFactory,
-                                                                           PasswordEncoder passwordEncoder) {
-        //用户名密码扩展多用户认证体系
-        CustomDaoAuthenticationProvider userPasswordAuthenticationProvider = new CustomDaoAuthenticationProvider();
-        userPasswordAuthenticationProvider.setCustomUserDetailsServiceFactory(customUserDetailsServiceFactory);
-        userPasswordAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-        return userPasswordAuthenticationProvider;
+    public CustomPwdDaoAuthenticationProvider customDaoAuthenticationProvider(CustomUserDetailsServiceFactory customUserDetailsServiceFactory,
+                                                                              PasswordEncoder passwordEncoder) {
+        return new CustomPwdDaoAuthenticationProvider(customUserDetailsServiceFactory, passwordEncoder);
     }
 
     /**
@@ -87,7 +83,7 @@ public class SasAuthBeanConfig {
     }
 
     @Bean
-    public JdbcRegisteredClientRepository.RegisteredClientParametersMapper registeredClientParametersMapper(){
+    public JdbcRegisteredClientRepository.RegisteredClientParametersMapper registeredClientParametersMapper() {
         return new JdbcRegisteredClientRepository.RegisteredClientParametersMapper();
     }
 }

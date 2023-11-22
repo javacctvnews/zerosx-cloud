@@ -1,17 +1,18 @@
 package com.zerosx.sas.test;
 
+import com.zerosx.common.sas.auth.CustomOAuth2AuthorizationService;
 import com.zerosx.sas.SasApplication;
 import com.zerosx.sas.auth.grant.CustomAuthorizationGrantType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.keygen.Base64StringKeyGenerator;
-import org.springframework.security.crypto.keygen.StringKeyGenerator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
+import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
+import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
@@ -20,7 +21,6 @@ import org.springframework.security.oauth2.server.authorization.settings.TokenSe
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Base64;
 
 /**
  * SasTest
@@ -37,12 +37,16 @@ public class SasTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private CustomOAuth2AuthorizationService customOAuth2AuthorizationService;
+
     @Test
     public void test01() {
-        StringKeyGenerator generator =
-                new Base64StringKeyGenerator(Base64.getUrlEncoder().withoutPadding(), 96);
-        String s = generator.generateKey();
-        System.out.println("s = " + s);
+        //OAuth2Authorization oAuth2Authorization = customOAuth2AuthorizationService.findById("1724411225560711203");
+        OAuth2Authorization oAuth2Authorization = customOAuth2AuthorizationService.findByToken("1724419839377670209", OAuth2TokenType.ACCESS_TOKEN);
+        OAuth2Authorization oAuth2Authorization2 = customOAuth2AuthorizationService.findByToken("1724411225560711203", OAuth2TokenType.ACCESS_TOKEN);
+        System.out.println("oAuth2Authorization = " + oAuth2Authorization);
+        System.out.println("oAuth2Authorization = " + oAuth2Authorization2);
     }
 
     @Test

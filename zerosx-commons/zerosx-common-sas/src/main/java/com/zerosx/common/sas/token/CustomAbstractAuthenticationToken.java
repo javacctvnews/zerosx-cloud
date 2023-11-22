@@ -1,4 +1,4 @@
-package com.zerosx.sas.auth.grant;
+package com.zerosx.common.sas.token;
 
 import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -25,7 +25,7 @@ public abstract class CustomAbstractAuthenticationToken extends AbstractAuthenti
 
     private final Set<String> scopes;
 
-    private final Map<String, Object> additionalParameters;
+    protected final Map<String, Object> additionalParameters;
 
     public CustomAbstractAuthenticationToken(AuthorizationGrantType authorizationGrantType, Authentication clientPrincipal, Set<String> scopes, Map<String, Object> additionalParameters) {
         super(Collections.emptyList());
@@ -33,6 +33,7 @@ public abstract class CustomAbstractAuthenticationToken extends AbstractAuthenti
         this.clientPrincipal = clientPrincipal;
         this.scopes = scopes;
         this.additionalParameters = additionalParameters;
+        super.setDetails(additionalParameters);
     }
 
     /**

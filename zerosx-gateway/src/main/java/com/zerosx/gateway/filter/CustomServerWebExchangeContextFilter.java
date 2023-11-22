@@ -18,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
-import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.filter.reactive.ServerWebExchangeContextFilter;
@@ -65,7 +64,8 @@ public class CustomServerWebExchangeContextFilter extends ServerWebExchangeConte
                 return chain.filter(exchange);
             }
         }
-        OAuth2Authorization oAuth2Authorization = customOAuth2AuthorizationService.findByToken(token, OAuth2TokenType.ACCESS_TOKEN);
+        //OAuth2Authorization oAuth2Authorization = customOAuth2AuthorizationService.findByToken(token, OAuth2TokenType.ACCESS_TOKEN);
+        OAuth2Authorization oAuth2Authorization = customOAuth2AuthorizationService.findById(token);
         if (oAuth2Authorization == null) {
             return chain.filter(exchange);
         }

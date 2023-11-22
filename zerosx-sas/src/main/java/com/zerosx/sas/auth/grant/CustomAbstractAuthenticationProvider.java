@@ -1,13 +1,14 @@
 package com.zerosx.sas.auth.grant;
 
+import com.zerosx.common.sas.token.CustomAbstractAuthenticationToken;
 import com.zerosx.sas.utils.SasAuthUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.*;
+import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
@@ -18,16 +19,13 @@ import org.springframework.security.oauth2.server.authorization.context.Authoriz
 import org.springframework.security.oauth2.server.authorization.token.DefaultOAuth2TokenContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
-import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.security.Principal;
-import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Supplier;
 
 /**
  * CustomAuthenticationProvider
@@ -41,149 +39,134 @@ public abstract class CustomAbstractAuthenticationProvider<T extends CustomAbstr
 
     private final OAuth2AuthorizationService authorizationService;
 
-    private final OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator;
+    protected final OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator;
 
-    private final AuthenticationManager authenticationManager;
-
-    private Supplier<String> refreshTokenGenerator;
-
-    protected CustomAbstractAuthenticationProvider(OAuth2AuthorizationService authorizationService, OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator, AuthenticationManager authenticationManager) {
-        Assert.notNull(authorizationService, "authorizationService cannot be null");
-        Assert.notNull(tokenGenerator, "tokenGenerator cannot be null");
+    protected CustomAbstractAuthenticationProvider(OAuth2AuthorizationService authorizationService, OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator) {
         this.authorizationService = authorizationService;
         this.tokenGenerator = tokenGenerator;
-        this.authenticationManager = authenticationManager;
     }
-
-    public void setRefreshTokenGenerator(Supplier<String> refreshTokenGenerator) {
-        Assert.notNull(refreshTokenGenerator, "refreshTokenGenerator cannot be null");
-        this.refreshTokenGenerator = refreshTokenGenerator;
-    }
-
-    /**
-     * 当前的请求客户端是否支持此模式
-     *
-     * @param registeredClient
-     */
-    public abstract void checkClient(RegisteredClient registeredClient);
-
-    public abstract UsernamePasswordAuthenticationToken buildToken(Map<String, Object> reqParameters);
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+
         T customAuthentication = (T) authentication;
 
         OAuth2ClientAuthenticationToken clientPrincipal = SasAuthUtils.getAuthenticatedClientElseThrowInvalidClient(customAuthentication);
 
         RegisteredClient registeredClient = clientPrincipal.getRegisteredClient();
 
-        checkClient(registeredClient);
+        checkRegisteredClient(registeredClient, CustomAuthorizationGrantType.PASSWORD);
 
-        Set<String> authorizedScopes;
-        // Default to configured scopes
-        if (!CollectionUtils.isEmpty(customAuthentication.getScopes())) {
-            for (String requestedScope : customAuthentication.getScopes()) {
-                if (!registeredClient.getScopes().contains(requestedScope)) {
-                    throw new OAuth2AuthenticationException(OAuth2ErrorCodes.INVALID_SCOPE);
-                }
-            }
-            authorizedScopes = new LinkedHashSet<>(customAuthentication.getScopes());
-        } else {
-            authorizedScopes = new LinkedHashSet<>();
-        }
+        Set<String> authorizedScopes = getAuthorizedScopes(customAuthentication.getScopes(), registeredClient.getScopes());
 
         Map<String, Object> reqParameters = customAuthentication.getAdditionalParameters();
-        try {
 
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = buildToken(reqParameters);
+        Authentication authenticationed = executeAuthentication(reqParameters, authorizedScopes);
 
-            log.debug("got usernamePasswordAuthenticationToken=" + usernamePasswordAuthenticationToken);
+        return buildOAuth2Authorization(customAuthentication, authenticationed, registeredClient,
+                authorizedScopes, CustomAuthorizationGrantType.PASSWORD, clientPrincipal);
 
-            Authentication usernamePasswordAuthentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+    }
 
-            // @formatter:off
-            DefaultOAuth2TokenContext.Builder tokenContextBuilder = DefaultOAuth2TokenContext.builder()
-                    .registeredClient(registeredClient)
-                    .principal(usernamePasswordAuthentication)
-                    .authorizationServerContext(AuthorizationServerContextHolder.getContext())
+    protected abstract Authentication executeAuthentication(Map<String, Object> reqParameters, Set<String> authorizedScopes);
+
+    protected Authentication buildOAuth2Authorization(Authentication customAuthentication, Authentication authentication,
+                                                      RegisteredClient registeredClient, Set<String> authorizedScopes,
+                                                      AuthorizationGrantType authorizationGrantType, OAuth2ClientAuthenticationToken clientPrincipal) {
+        DefaultOAuth2TokenContext.Builder tokenContextBuilder = DefaultOAuth2TokenContext.builder()
+                .registeredClient(registeredClient)
+                .principal(authentication)
+                .authorizationServerContext(AuthorizationServerContextHolder.getContext())
+                .authorizedScopes(authorizedScopes)
+                .authorizationGrantType(authorizationGrantType)
+                .authorizationGrant(customAuthentication);
+
+        OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization
+                .withRegisteredClient(registeredClient)
+                .principalName(authentication.getName())
+                .authorizationGrantType(authorizationGrantType)
+                .authorizedScopes(authorizedScopes);
+        // ----- Access token -----
+        OAuth2TokenContext tokenContext = tokenContextBuilder.tokenType(OAuth2TokenType.ACCESS_TOKEN).build();
+        OAuth2Token generatedAccessToken = this.tokenGenerator.generate(tokenContext);
+        if (generatedAccessToken == null) {
+            SasAuthUtils.throwError(OAuth2ErrorCodes.SERVER_ERROR, "The token generator failed to generate the access token.");
+        }
+        assert generatedAccessToken != null;
+        OAuth2AccessToken accessToken = new OAuth2AccessToken(OAuth2AccessToken.TokenType.BEARER,
+                generatedAccessToken.getTokenValue(), generatedAccessToken.getIssuedAt(),
+                generatedAccessToken.getExpiresAt(), tokenContext.getAuthorizedScopes());
+        if (generatedAccessToken instanceof ClaimAccessor) {
+            authorizationBuilder.id(accessToken.getTokenValue())
+                    .token(accessToken,
+                            (metadata) -> metadata.put(OAuth2Authorization.Token.CLAIMS_METADATA_NAME,
+                                    ((ClaimAccessor) generatedAccessToken).getClaims()))
                     .authorizedScopes(authorizedScopes)
-                    .authorizationGrantType(AuthorizationGrantType.PASSWORD)
-                    .authorizationGrant(customAuthentication);
-            // @formatter:on
+                    .attribute(Principal.class.getName(), authentication);
+        } else {
+            authorizationBuilder.id(accessToken.getTokenValue()).accessToken(accessToken);
+        }
+        // ----- Refresh token -----
+        OAuth2RefreshToken refreshToken = null;
+        if (registeredClient.getAuthorizationGrantTypes().contains(AuthorizationGrantType.REFRESH_TOKEN) &&
+                !clientPrincipal.getClientAuthenticationMethod().equals(ClientAuthenticationMethod.NONE)) {
 
-            OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization
-                    .withRegisteredClient(registeredClient)
-                    .principalName(usernamePasswordAuthentication.getName())
-                    .authorizationGrantType(AuthorizationGrantType.PASSWORD)
-                    .authorizedScopes(authorizedScopes);
-
-            // ----- Access token -----
-            OAuth2TokenContext tokenContext = tokenContextBuilder.tokenType(OAuth2TokenType.ACCESS_TOKEN).build();
-            OAuth2Token generatedAccessToken = this.tokenGenerator.generate(tokenContext);
-            if (generatedAccessToken == null) {
-                SasAuthUtils.throwError(OAuth2ErrorCodes.SERVER_ERROR, "The token generator failed to generate the access token.");
+            tokenContext = tokenContextBuilder.tokenType(OAuth2TokenType.REFRESH_TOKEN).build();
+            OAuth2Token generatedRefreshToken = this.tokenGenerator.generate(tokenContext);
+            if (!(generatedRefreshToken instanceof OAuth2RefreshToken)) {
+                SasAuthUtils.throwError(OAuth2ErrorCodes.SERVER_ERROR, "The token generator failed to generate the refresh token.");
             }
-            assert generatedAccessToken != null;
-            OAuth2AccessToken accessToken = new OAuth2AccessToken(OAuth2AccessToken.TokenType.BEARER,
-                    generatedAccessToken.getTokenValue(), generatedAccessToken.getIssuedAt(),
-                    generatedAccessToken.getExpiresAt(), tokenContext.getAuthorizedScopes());
-            if (generatedAccessToken instanceof ClaimAccessor) {
-                authorizationBuilder.id(accessToken.getTokenValue())
-                        .token(accessToken,
-                                (metadata) -> metadata.put(OAuth2Authorization.Token.CLAIMS_METADATA_NAME,
-                                        ((ClaimAccessor) generatedAccessToken).getClaims()))
-                        // 0.4.0 新增的方法
-                        .authorizedScopes(authorizedScopes)
-                        .attribute(Principal.class.getName(), usernamePasswordAuthentication);
-            } else {
-                authorizationBuilder.id(accessToken.getTokenValue()).accessToken(accessToken);
-            }
+            refreshToken = (OAuth2RefreshToken) generatedRefreshToken;
+            authorizationBuilder.refreshToken(refreshToken);
+        }
 
-            // ----- Refresh token -----
-            OAuth2RefreshToken refreshToken = null;
-            if (registeredClient.getAuthorizationGrantTypes().contains(AuthorizationGrantType.REFRESH_TOKEN) &&
-                    // Do not issue refresh token to public client
-                    !clientPrincipal.getClientAuthenticationMethod().equals(ClientAuthenticationMethod.NONE)) {
+        OAuth2Authorization authorization = authorizationBuilder.build();
 
-                if (this.refreshTokenGenerator != null) {
-                    Instant issuedAt = Instant.now();
-                    Instant expiresAt = issuedAt.plus(registeredClient.getTokenSettings().getRefreshTokenTimeToLive());
-                    refreshToken = new OAuth2RefreshToken(this.refreshTokenGenerator.get(), issuedAt, expiresAt);
-                } else {
-                    tokenContext = tokenContextBuilder.tokenType(OAuth2TokenType.REFRESH_TOKEN).build();
-                    OAuth2Token generatedRefreshToken = this.tokenGenerator.generate(tokenContext);
-                    if (!(generatedRefreshToken instanceof OAuth2RefreshToken)) {
-                        SasAuthUtils.throwError(OAuth2ErrorCodes.SERVER_ERROR, "The token generator failed to generate the refresh token.");
-                    }
-                    refreshToken = (OAuth2RefreshToken) generatedRefreshToken;
-                }
-                authorizationBuilder.refreshToken(refreshToken);
-            }
-            //续期token时使用
-            //authorizationBuilder.attribute(RegisteredClient.class.getName(), registeredClient);
-            OAuth2Authorization authorization = authorizationBuilder.build();
+        this.authorizationService.save(authorization);
 
-            this.authorizationService.save(authorization);
+        return new OAuth2AccessTokenAuthenticationToken(registeredClient, clientPrincipal, accessToken,
+                refreshToken, Objects.requireNonNull(authorization.getAccessToken().getClaims()));
+    }
 
-            //log.debug("returning OAuth2AccessTokenAuthenticationToken");
-
-            return new OAuth2AccessTokenAuthenticationToken(registeredClient, clientPrincipal, accessToken,
-                    refreshToken, Objects.requireNonNull(authorization.getAccessToken().getClaims()));
-
-        } catch (Exception ex) {
-            log.error("exception in authenticate: " + ex.getClass().getName(), ex);
-            throw new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR, "", ""), ex);
+    /**
+     * 客户端检查
+     *
+     * @param registeredClient
+     * @param authorizationGrantType
+     */
+    protected void checkRegisteredClient(RegisteredClient registeredClient, AuthorizationGrantType authorizationGrantType) {
+        if (registeredClient == null) {
+            throw new OAuth2AuthenticationException(OAuth2ErrorCodes.INVALID_CLIENT);
+        }
+        if (authorizationGrantType == null) {
+            throw new OAuth2AuthenticationException(OAuth2ErrorCodes.INVALID_GRANT);
+        }
+        if (!registeredClient.getAuthorizationGrantTypes().contains(authorizationGrantType)) {
+            throw new OAuth2AuthenticationException(OAuth2ErrorCodes.UNAUTHORIZED_CLIENT);
         }
     }
 
+    protected Set<String> getAuthorizedScopes(Set<String> tokenScopes, Set<String> clientScopes) {
+        Set<String> authorizedScopes;
+        if (!CollectionUtils.isEmpty(tokenScopes)) {
+            for (String requestedScope : tokenScopes) {
+                if (!clientScopes.contains(requestedScope)) {
+                    throw new OAuth2AuthenticationException(OAuth2ErrorCodes.INVALID_SCOPE);
+                }
+            }
+            authorizedScopes = new LinkedHashSet<>(tokenScopes);
+        } else {
+            authorizedScopes = new LinkedHashSet<>();
+        }
+        return authorizedScopes;
+    }
 
-    /**
-     * 当前provider是否支持此令牌类型
-     *
-     * @param authentication
-     * @return
-     */
-    @Override
-    public abstract boolean supports(Class<?> authentication);
+    protected UsernamePasswordAuthenticationToken buildPwdToken(Map<String, Object> reqParameters) {
+        String username = (String) reqParameters.get(OAuth2ParameterNames.USERNAME);
+        String password = (String) reqParameters.get(OAuth2ParameterNames.PASSWORD);
+        UsernamePasswordAuthenticationToken passwordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+        passwordAuthenticationToken.setDetails(reqParameters);
+        return passwordAuthenticationToken;
+    }
 
 }

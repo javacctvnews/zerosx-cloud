@@ -1,3 +1,6 @@
+# --compatibility以兼容的模式运行
+# docker-compose --compatibility -f docker-compose.yaml up -d
+
 #数据库一般需要将数据挂载到宿主机上,以免容器损坏导致数据丢失
 version: '3'
 services:
@@ -5,6 +8,10 @@ services:
   db-mysql:
     image: mysql:8.0.34 # 或其它mysql版本 docker pull mysql:8.0.34
     container_name: zerosx_mysql8
+    deploy:
+      resources:
+        limits:
+          cpus: '5'
     environment:
       - MYSQL_ROOT_PASSWORD=zerosx@123456
       - TZ=Asia/Shanghai

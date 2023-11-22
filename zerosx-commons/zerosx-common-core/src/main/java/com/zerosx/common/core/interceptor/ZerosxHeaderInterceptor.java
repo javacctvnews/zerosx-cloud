@@ -10,7 +10,6 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
 
-
 @Slf4j
 public class ZerosxHeaderInterceptor implements AsyncHandlerInterceptor {
 
@@ -25,7 +24,7 @@ public class ZerosxHeaderInterceptor implements AsyncHandlerInterceptor {
         if (ERROR.equals(requestURI)) {
             return true;
         }
-        String clientId = ServletUtils.getToken(request, HeadersConstants.CLIENT_ID);
+        String clientId = ServletUtils.getHeader(request, HeadersConstants.CLIENT_ID);
         ZerosSecurityContextHolder.set(HeadersConstants.CLIENT_ID, clientId);
         String token = ServletUtils.getToken(request, HeadersConstants.TOKEN);
         ZerosSecurityContextHolder.set(HeadersConstants.TOKEN, token);

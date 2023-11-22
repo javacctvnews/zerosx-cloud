@@ -41,4 +41,11 @@ public class CustomUserDetailsServiceFactory {
         return customUserDetailsService;
     }
 
+    public ICustomUserDetailsService getDetailsService(String authUserType) {
+        ICustomUserDetailsService customUserDetailsService = customUserDetailsMap.get(authUserType);
+        if (customUserDetailsService == null) {
+            SasAuthUtils.throwError(CustomOAuth2ErrorCodes.UNSUPPORTED_USER_AUTH_TYPE, "找不到鉴权用户类型为 【" + authUserType + "】 的实现类");
+        }
+        return customUserDetailsService;
+    }
 }

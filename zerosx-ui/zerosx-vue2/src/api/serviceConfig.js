@@ -10,7 +10,7 @@ const serviceConfig = {
   clientSecret: 'Zeros9999!#@',
   grantType: 'captcha',
   captcha: "captcha_pwd",
-  mobileSms: 'mobile_sms',
+  mobileSms: 'sms',
   authUserType: 'SysUser'
 
 }

@@ -8,19 +8,21 @@ import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.log.anno.OpLog;
 import com.zerosx.common.log.enums.OpTypeEnum;
+import com.zerosx.resource.dto.SmsCodeDTO;
 import com.zerosx.resource.dto.SmsSupplierDTO;
 import com.zerosx.resource.dto.SmsSupplierPageDTO;
 import com.zerosx.resource.service.ISmsSupplierService;
+import com.zerosx.resource.vo.SmsCodeVO;
 import com.zerosx.resource.vo.SmsSupplierPageVO;
 import com.zerosx.resource.vo.SmsSupplierVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -84,6 +86,18 @@ public class SmsSupplierController implements ISmsSupplierClient {
     @PostMapping("/sms/send")
     public ResultVO<?> sendSms(@Validated @RequestBody SmsSendDTO smsSendDTO) {
         return smsSupplierService.sendSms(smsSendDTO);
+    }
+
+    /**
+     * 创建验证码
+     *
+     * @throws Exception
+     */
+    @Operation(summary = "短信验证码")
+    @PostMapping("/sms/getSmsCode")
+    @OpLog(mod = "验证码", btn = "短信验证码", opType = OpTypeEnum.INSERT)
+    public ResultVO<SmsCodeVO> getSmsCode(@RequestBody SmsCodeDTO smsCodeDTO) {
+        return ResultVOUtil.success(smsSupplierService.getSmsCode(smsCodeDTO));
     }
 
 }

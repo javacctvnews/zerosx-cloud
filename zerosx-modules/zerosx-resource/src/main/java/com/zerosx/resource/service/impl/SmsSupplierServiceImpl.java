@@ -1,5 +1,6 @@
 package com.zerosx.resource.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -8,13 +9,19 @@ import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.ResultVO;
+import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.core.enums.StatusEnum;
+import com.zerosx.common.core.enums.sms.SmsBusinessCodeEnum;
+import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
 import com.zerosx.common.core.utils.EasyTransUtils;
+import com.zerosx.common.core.utils.IdGenerator;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
+import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.common.utils.JacksonUtil;
+import com.zerosx.resource.dto.SmsCodeDTO;
 import com.zerosx.resource.dto.SmsSupplierDTO;
 import com.zerosx.resource.dto.SmsSupplierPageDTO;
 import com.zerosx.resource.entity.SmsSupplier;
@@ -22,6 +29,7 @@ import com.zerosx.resource.entity.SmsSupplierBusiness;
 import com.zerosx.resource.mapper.ISmsSupplierMapper;
 import com.zerosx.resource.service.ISmsSupplierBusinessService;
 import com.zerosx.resource.service.ISmsSupplierService;
+import com.zerosx.resource.vo.SmsCodeVO;
 import com.zerosx.resource.vo.SmsSupplierPageVO;
 import com.zerosx.resource.vo.SmsSupplierVO;
 import com.zerosx.sms.core.SmsFactory;
@@ -31,6 +39,7 @@ import com.zerosx.sms.model.SmsRequest;
 import com.zerosx.sms.model.SmsResponse;
 import com.zerosx.sms.properties.CustomSmsProperties;
 import com.zerosx.sms.properties.SmsBusinessProperties;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,8 +47,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -60,6 +69,8 @@ public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper,
     private CustomSmsProperties customSmsProperties;
     @Autowired
     private ISmsSupplierBusinessService smsSupplierBusinessService;
+    @Autowired
+    private RedissonOpService redissonOpService;
 
     @Override
     public CustomPageVO<SmsSupplierPageVO> pageList(RequestVO<SmsSupplierPageDTO> requestVO, boolean searchCount) {
@@ -244,26 +255,57 @@ public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper,
         ISupplierConfig supplierConfig = BeanCopierUtils.copyProperties(supplierType, configClass);
         supplierConfig.setOperatorId(smsSupplier.getOperatorId());
         return supplierConfig;
-        /*if (SupplierTypeEnum.ALIBABA.getCode().equals(smsSupplier.getSupplierType())) {
-            AlibabaConfig alibabaConfig = AlibabaConfig.builder().build();
-            alibabaConfig.setOperatorId(smsSupplier.getOperatorId());
-            alibabaConfig.setRegionId(smsSupplier.getRegionId());
-            alibabaConfig.setSignature(smsSupplier.getRegionId());
-            alibabaConfig.setAccessKeyId(smsSupplier.getAccessKeyId());
-            alibabaConfig.setAccessKeySecret(smsSupplier.getAccessKeySecret());
-            return alibabaConfig;
-        } else if (SupplierTypeEnum.JUHE.getCode().equals(smsSupplier.getSupplierType())) {
-            JuheConfig juheConfig = JuheConfig.builder().build();
-            juheConfig.setKey(smsSupplier.getKeyValue());
-            juheConfig.setDomainAddress(smsSupplier.getDomainAddress());
-            juheConfig.setOperatorId(smsSupplier.getOperatorId());
-            return juheConfig;
-        }
-        return null;*/
     }
 
     @Override
     public void excelExport(RequestVO<SmsSupplierPageDTO> requestVO, HttpServletResponse response) {
         excelExport(PageUtils.of(requestVO, false), getWrapper(requestVO.getT()), SmsSupplierPageVO.class, response);
     }
+
+    @Override
+    public SmsCodeVO getSmsCode(SmsCodeDTO smsCodeDTO) {
+        String requestId = smsCodeDTO.getUuid();
+        String validCode = smsCodeDTO.getCode2();
+        //校验验证码
+        if (StringUtils.isBlank(requestId)) {
+            throw new BusinessException("请在请求参数中携带deviceId参数");
+        }
+        if (StringUtils.isBlank(validCode)) {
+            throw new BusinessException("请填写验证码");
+        }
+        String code = redissonOpService.get(RedisKeyNameEnum.key(RedisKeyNameEnum.IMAGE_CODE, requestId));
+        if (StringUtils.isBlank(code)) {
+            throw new BusinessException("验证码不存在或已过期");
+        }
+        if (!StrUtil.equals(code, validCode.toLowerCase())) {
+            throw new BusinessException("验证码不正确");
+        }
+        //删除验证码
+        redissonOpService.del(RedisKeyNameEnum.key(RedisKeyNameEnum.IMAGE_CODE, requestId));
+
+        Map<String, String> map = new HashMap<>();
+        String randomStr = IdGenerator.getRandomStr(6);
+        map.put("code", randomStr);
+        //发送短信
+        SmsSendDTO smsSendDTO = new SmsSendDTO();
+        smsSendDTO.setOperatorId(ZerosSecurityContextHolder.getOperatorIds());
+        smsSendDTO.setBusinessCode(SmsBusinessCodeEnum.VERIFY_CODE.getCode());
+        smsSendDTO.setPhoneNumbers(smsCodeDTO.getMobilePhone());
+        smsSendDTO.setParams(map);
+        ResultVO<?> resultVO;
+        if (customSmsProperties.getImitate()) {
+            resultVO = ResultVOUtil.success();
+        } else {
+            resultVO = sendSms(smsSendDTO);
+        }
+        if (resultVO.success()) {
+            redissonOpService.set(RedisKeyNameEnum.key(RedisKeyNameEnum.SMS_CODE, smsCodeDTO.getMobilePhone()), randomStr, customSmsProperties.getExpireTime());
+            SmsCodeVO vo = new SmsCodeVO();
+            vo.setSmsAuthCode(randomStr);
+            vo.setImitate(customSmsProperties.getImitate());
+            return vo;
+        }
+        throw new BusinessException("验证码发送失败：" + resultVO.getMsg());
+    }
+
 }

@@ -1,7 +1,7 @@
 package com.zerosx.sas.utils;
 
-import com.zerosx.common.base.constants.SecurityConstants;
 import com.zerosx.common.core.utils.IdGenerator;
+import com.zerosx.sas.auth.grant.CustomOAuth2ParameterNames;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -38,7 +38,7 @@ public class SasAuthUtils {
             return "";
         }
         Map<String, String> detailsMap = (Map<String, String>) authentication.getDetails();
-        return detailsMap.get(SecurityConstants.USER_AUTH_TYPE);
+        return detailsMap.get(CustomOAuth2ParameterNames.USER_AUTH_TYPE);
     }
 
     public static void throwError(String errorCode, String parameterName) {

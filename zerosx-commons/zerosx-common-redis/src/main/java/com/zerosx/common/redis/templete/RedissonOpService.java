@@ -261,7 +261,8 @@ public class RedissonOpService {
 
     public <V> V hGet(final String key, final String hashKey, Codec codec) {
         RMap<String, V> map = getRMap(key, codec);
-        return map.get(hashKey);
+        V v = map.get(hashKey);
+        return v;
     }
 
     /**

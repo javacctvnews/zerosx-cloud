@@ -1,15 +1,17 @@
 package com.zerosx.sas.auth.config;
 
 import com.zerosx.common.redis.templete.RedissonOpService;
-import com.zerosx.sas.auth.grant.CustomDaoAuthenticationProvider;
+import com.zerosx.sas.auth.grant.CustomPwdDaoAuthenticationProvider;
 import com.zerosx.sas.auth.grant.captcha.CaptchaAuthenticationConverter;
 import com.zerosx.sas.auth.grant.captcha.CaptchaAuthenticationProvider;
 import com.zerosx.sas.auth.grant.pwd.PwdAuthenticationConverter;
 import com.zerosx.sas.auth.grant.pwd.PwdAuthenticationProvider;
+import com.zerosx.sas.auth.grant.sms.SmsAuthenticationConverter;
+import com.zerosx.sas.auth.grant.sms.SmsAuthenticationProvider;
 import com.zerosx.sas.auth.handler.CustomAuthenticationFailureHandler;
 import com.zerosx.sas.auth.handler.CustomAuthenticationSuccessHandler;
+import com.zerosx.sas.auth.userdetails.CustomUserDetailsServiceFactory;
 import com.zerosx.sas.service.IOauthTokenRecordService;
-import com.zerosx.sas.service.IVerificationCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,16 +54,15 @@ public class AuthorizationServerConfig {
     @Autowired
     private RedissonOpService redissonOpService;
     @Autowired
-    private IVerificationCodeService verificationCodeService;
-    @Autowired
     private AuthorizationServerSettings authorizationServerSettings;
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
-    private CustomDaoAuthenticationProvider customDaoAuthenticationProvider;
+    private CustomPwdDaoAuthenticationProvider customPwdDaoAuthenticationProvider;
     @Autowired
     private IOauthTokenRecordService oauthTokenRecordService;
-
+    @Autowired
+    private CustomUserDetailsServiceFactory customUserDetailsServiceFactory;
 
     @Bean
     @Order()
@@ -101,9 +102,11 @@ public class AuthorizationServerConfig {
     private AuthenticationConverter accessTokenRequestConverter() {
         return new DelegatingAuthenticationConverter(Arrays.asList(
                 //用户名密码+验证码 授权模式
-                new CaptchaAuthenticationConverter(redissonOpService, verificationCodeService),
+                new CaptchaAuthenticationConverter(redissonOpService),
                 // 用户名密码 授权模式
-                new PwdAuthenticationConverter()
+                new PwdAuthenticationConverter(),
+                // 手机号码+验证码 授权模式
+                new SmsAuthenticationConverter(redissonOpService)
         ));
     }
 
@@ -118,8 +121,10 @@ public class AuthorizationServerConfig {
             provider.add(new PwdAuthenticationProvider(oAuth2AuthorizationService, oAuth2TokenGenerator, authenticationManager));
             //用户名密码+验证码 授权模式
             provider.add(new CaptchaAuthenticationProvider(oAuth2AuthorizationService, oAuth2TokenGenerator, authenticationManager));
+            // 手机号码+验证码 授权模式
+            provider.add(new SmsAuthenticationProvider(oAuth2AuthorizationService, oAuth2TokenGenerator, authenticationManager, customUserDetailsServiceFactory));
             //DaoAuthenticationProvider扩展
-            provider.add(customDaoAuthenticationProvider);
+            provider.add(customPwdDaoAuthenticationProvider);
         };
     }
 

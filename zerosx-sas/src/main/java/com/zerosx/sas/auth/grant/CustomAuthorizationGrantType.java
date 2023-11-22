@@ -17,10 +17,7 @@ public final class CustomAuthorizationGrantType {
     public static final AuthorizationGrantType AUTHORIZATION_CODE = new AuthorizationGrantType("authorization_code");
     public static final AuthorizationGrantType REFRESH_TOKEN = new AuthorizationGrantType("refresh_token");
     public static final AuthorizationGrantType CLIENT_CREDENTIALS = new AuthorizationGrantType("client_credentials");
-    /**
-     * @deprecated
-     */
-    @Deprecated
+
     public static final AuthorizationGrantType PASSWORD = new AuthorizationGrantType("password");
     public static final AuthorizationGrantType JWT_BEARER = new AuthorizationGrantType("urn:ietf:params:oauth:grant-type:jwt-bearer");
     public static final AuthorizationGrantType DEVICE_CODE = new AuthorizationGrantType("urn:ietf:params:oauth:grant-type:device_code");

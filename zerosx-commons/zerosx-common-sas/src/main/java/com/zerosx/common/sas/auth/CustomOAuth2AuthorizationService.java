@@ -3,6 +3,7 @@ package com.zerosx.common.sas.auth;
 import com.zerosx.common.base.constants.TokenStoreConstants;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.redisson.codec.SerializationCodec;
 import org.springframework.lang.Nullable;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
@@ -91,7 +92,9 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
      */
     @Override
     public OAuth2Authorization findByToken(String token, @Nullable OAuth2TokenType tokenType) {
-        Assert.notNull(tokenType, "tokenType cannot be empty");
+        if (StringUtils.isBlank(token) || tokenType == null) {
+            return null;
+        }
         if (OAuth2TokenType.ACCESS_TOKEN.equals(tokenType)) {
             return redissonOpService.hGet(TokenStoreConstants.SAS_ACCESS_TOKEN, token, serializationCodec);
         } else if (OAuth2TokenType.REFRESH_TOKEN.equals(tokenType)) {

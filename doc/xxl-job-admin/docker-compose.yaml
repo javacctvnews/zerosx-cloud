@@ -12,6 +12,7 @@ services:
     deploy:
       resources:
         limits:
+          cpus: '5'
           memory: 600m
     volumes:
       # 日志目录映射到主机目录

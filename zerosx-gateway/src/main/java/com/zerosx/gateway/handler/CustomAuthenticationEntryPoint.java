@@ -22,7 +22,7 @@ public class CustomAuthenticationEntryPoint implements ServerAuthenticationEntry
         HttpStatusCode statusCode = exchange.getResponse().getStatusCode();
         log.debug("Path：{} HttpStatus：{}", exchange.getRequest().getPath(), statusCode);
         exchange.getResponse().setStatusCode(HttpStatusCode.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()));
-        //log.error(e.getMessage(), e);
+        log.error(e.getMessage(), e);
         return WebFluxRespUtils.responseWrite(exchange, ResultVOUtil.error(ResultEnum.UNAUTHORIZED));
     }
 }

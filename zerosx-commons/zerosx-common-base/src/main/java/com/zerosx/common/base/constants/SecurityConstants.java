@@ -34,10 +34,6 @@ public interface SecurityConstants {
     String CLIENT_CREDENTIALS = "client_credentials";
 
     /**
-     * 授权用户类型字段
-     */
-    String USER_AUTH_TYPE = "user_auth_type";
-    /**
      * security上下文-用户信息
      */
     String SECURITY_CONTEXT = "LoginUserTenantsBO";

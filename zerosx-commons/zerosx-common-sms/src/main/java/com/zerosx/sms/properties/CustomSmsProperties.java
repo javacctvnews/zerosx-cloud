@@ -19,6 +19,15 @@ import java.util.List;
 public class CustomSmsProperties {
 
     /**
+     * 模拟发送短信
+     */
+    private Boolean imitate = false;
+    /**
+     * 短信验证码有效期(秒)
+     */
+    private Long expireTime = 300L;
+
+    /**
      * yaml配置
      */
     private Boolean yamlConfig = false;

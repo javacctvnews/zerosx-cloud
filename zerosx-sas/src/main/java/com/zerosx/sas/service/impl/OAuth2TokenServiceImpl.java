@@ -5,7 +5,6 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.zerosx.common.base.constants.HeadersConstants;
-import com.zerosx.common.base.constants.SecurityConstants;
 import com.zerosx.common.base.constants.TokenStoreConstants;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.RequestVO;
@@ -19,6 +18,7 @@ import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.core.vo.CustomUserDetails;
 import com.zerosx.common.redis.templete.RedissonOpService;
+import com.zerosx.sas.auth.grant.CustomOAuth2ParameterNames;
 import com.zerosx.sas.service.IOAuth2TokenService;
 import com.zerosx.sas.vo.TokenQueryVO;
 import com.zerosx.sas.vo.TokenVO;
@@ -100,7 +100,7 @@ public class OAuth2TokenServiceImpl implements IOAuth2TokenService {
                 tokenVO.setUsername(principal.getUsername());
                 tokenVO.setOperatorId(principal.getOperatorId());
                 Map<String, Object> details = (Map<String, Object>) authentication.getDetails();
-                tokenVO.setAuthUserType((String) details.get(SecurityConstants.USER_AUTH_TYPE));
+                tokenVO.setAuthUserType((String) details.get(CustomOAuth2ParameterNames.USER_AUTH_TYPE));
             }
             EasyTransUtils.easyTrans(tokenVO);
             res.add(tokenVO);

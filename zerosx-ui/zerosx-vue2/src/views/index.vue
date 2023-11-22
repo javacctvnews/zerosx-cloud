@@ -110,7 +110,7 @@
                 <el-collapse title="版本更新日志" v-model="activeLogs">
                   <el-collapse-item title="V0.0.3" name="3">
                     <ul>
-                      <li>1.jdk更新到17及适配</li>
+                      <li>1.JDK版本更新到JDK17</li>
                       <li>2.SpringBoot版本更新到3.x</li>
                       <li>3.SpringCloud&Alibaba版本更新到2022.x及更新对应的组件(Nacos等)</li>
                       <li>4.引入Spring Authorization Server认证授权</li>

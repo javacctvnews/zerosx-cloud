@@ -8,6 +8,7 @@ services:
     deploy:
       resources:
         limits:
+          cpus: '5'
           memory: 1g
     volumes:                            # 数据卷挂载路径设置,将本机目录映射到容器目录
       - "./logs:/home/nacos/logs"

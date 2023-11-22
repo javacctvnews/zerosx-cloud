@@ -69,8 +69,7 @@
                 </el-input>
               </el-form-item>
               <el-form-item prop="code2" v-if="captchaEnabled">
-                <el-input clearable v-model="smsLoginForm.code2" auto-complete="off" placeholder="验证码" style="width: 60%"
-                  @keyup.enter.native="handleLogin">
+                <el-input clearable v-model="smsLoginForm.code2" auto-complete="off" placeholder="验证码(纯数字)" style="width: 60%">
                   <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon" />
                 </el-input>
                 <div class="login-code">
@@ -225,8 +224,11 @@ export default {
         }
       }, 1000);
       smsCode(this.smsLoginForm).then((res) => {
-        //console.log(res)
+        //consolethis.smsL .log(res)smsAuthCode;
         Message({ message: '验证码已发送，请注意查收', type: 'success', duration: 2 * 1000 })
+        if(res.data.imitate){
+          this.smsLoginForm.smsCode = res.data.smsAuthCode;
+        }
       }).catch(err => {
         //this.smsLoginForm.code2 = undefined
         this.smsShow = true;
@@ -250,6 +252,8 @@ export default {
       this.getCookie();
     },
     getCode() {
+      this.smsLoginForm.code2 = undefined
+      this.loginForm.code = undefined
       getCodeImg().then(res => {
         this.captchaEnabled = res.captchaEnabled === undefined ? true : res.captchaEnabled;
         if (this.captchaEnabled) {

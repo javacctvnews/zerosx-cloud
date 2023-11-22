@@ -59,7 +59,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         OauthTokenRecord otr = new OauthTokenRecord();
         otr.setClientId(accessTokenAuthentication.getRegisteredClient().getClientId());
         otr.setApplyOauthTime(new Date());
-        otr.setUsername(StringUtils.isBlank((String) additionalParameters.get("sub")) ? "" : (String) additionalParameters.get("sub"));
+        otr.setUsername(ZerosSecurityContextHolder.get(OAuth2ParameterNames.USERNAME));
         otr.setRequestId(IdGenerator.getIdStr());
         UserAgent userAgent = UserAgentUtil.parse(request.getHeader(CommonConstants.USER_AGENT));
         otr.setBrowserType(userAgent.getBrowser().getName() + "/" + userAgent.getVersion());

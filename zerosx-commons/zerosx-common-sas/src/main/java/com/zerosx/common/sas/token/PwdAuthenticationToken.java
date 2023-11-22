@@ -1,6 +1,6 @@
-package com.zerosx.sas.auth.grant.pwd;
+package com.zerosx.common.sas.token;
 
-import com.zerosx.sas.auth.grant.CustomAbstractAuthenticationToken;
+import com.zerosx.common.sas.token.CustomAbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 
