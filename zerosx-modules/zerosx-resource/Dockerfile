@@ -14,6 +14,8 @@ COPY ./target/zerosx-resource.jar /home/zerosx-cloud/zerosx-resource.jar
 # 启动网关服务
 ENTRYPOINT ["java",\
             "--add-opens=java.base/java.lang=ALL-UNNAMED",\
+            "--add-opens=java.base/sun.net=ALL-UNNAMED",\
+            "--add-exports=java.base/sun.net.util=ALL-UNNAMED",\
             "-Xms300m", "-Xmx300m", \
             "-Djava.security.egd=file:/dev/./urandom",\
             "-XX:-OmitStackTraceInFastThrow",\

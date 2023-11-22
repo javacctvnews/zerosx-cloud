@@ -72,6 +72,9 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
     @Override
     public OAuth2Authorization findById(String id) {
         log.debug("OAuth2Authorization.findById():{}", id);
+        if (StringUtils.isBlank(id)) {
+            return null;
+        }
         OAuth2Authorization accessTokenOAuth2Authorization = redissonOpService.hGet(TokenStoreConstants.SAS_ACCESS_TOKEN, id, serializationCodec);
         if (accessTokenOAuth2Authorization != null) {
             return accessTokenOAuth2Authorization;

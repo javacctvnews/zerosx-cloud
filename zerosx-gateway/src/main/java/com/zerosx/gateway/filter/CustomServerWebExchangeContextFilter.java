@@ -87,7 +87,9 @@ public class CustomServerWebExchangeContextFilter extends ServerWebExchangeConte
         // 请求头
         MultiValueMap<String, String> headerValues = new LinkedMultiValueMap<>(8);
         headerValues.add(HeadersConstants.CLIENT_ID, oAuth2Authorization.getRegisteredClientId());
-        headerValues.add(HeadersConstants.OPERATOR_ID, loginUserTenantsBO.getOperatorId());
+        if (StringUtils.isNotBlank(loginUserTenantsBO.getOperatorId())) {
+            headerValues.add(HeadersConstants.OPERATOR_ID, loginUserTenantsBO.getOperatorId());
+        }
         headerValues.add(HeadersConstants.USERNAME, loginUserTenantsBO.getUsername());
         headerValues.add(HeadersConstants.USERID, String.valueOf(loginUserTenantsBO.getUserId()));
         headerValues.add(HeadersConstants.USERTYPE, loginUserTenantsBO.getUserType());

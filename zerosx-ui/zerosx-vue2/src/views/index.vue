@@ -118,6 +118,8 @@
                       <li>6.[适配]用户名密码+验证码授权模式</li>
                       <li>7.[登录、登出、令牌管理、登录日志、客户端管理]等功能重新适配Spring Authorization Server</li>
                       <li>8.更新md文档、数据库及YAML配置脚本</li>
+                      <li>9.更换Logo和平台名称</li>
+                      <li>10.Docker Compose编排脚本增加cpu限制参数</li>
                     </ul>
                   </el-collapse-item>
                   <el-collapse-item title="V0.0.2" name="2">
