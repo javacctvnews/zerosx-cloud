@@ -3,6 +3,7 @@ package com.zerosx.sas.auth.grant;
 import com.zerosx.common.sas.token.CustomAbstractAuthenticationToken;
 import com.zerosx.sas.utils.SasAuthUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -51,24 +52,37 @@ public abstract class CustomAbstractAuthenticationProvider<T extends CustomAbstr
 
         T customAuthentication = (T) authentication;
 
+        Map<String, Object> reqParameters = customAuthentication.getAdditionalParameters();
+
+        AuthorizationGrantType grantType = grantType(reqParameters);
+
         OAuth2ClientAuthenticationToken clientPrincipal = SasAuthUtils.getAuthenticatedClientElseThrowInvalidClient(customAuthentication);
 
         RegisteredClient registeredClient = clientPrincipal.getRegisteredClient();
 
-        checkRegisteredClient(registeredClient, CustomAuthorizationGrantType.PASSWORD);
+        checkRegisteredClient(registeredClient, grantType);
 
         Set<String> authorizedScopes = getAuthorizedScopes(customAuthentication.getScopes(), registeredClient.getScopes());
-
-        Map<String, Object> reqParameters = customAuthentication.getAdditionalParameters();
 
         Authentication authenticationed = executeAuthentication(reqParameters, authorizedScopes);
 
         return buildOAuth2Authorization(customAuthentication, authenticationed, registeredClient,
-                authorizedScopes, CustomAuthorizationGrantType.PASSWORD, clientPrincipal);
-
+                authorizedScopes, grantType, clientPrincipal);
     }
 
     protected abstract Authentication executeAuthentication(Map<String, Object> reqParameters, Set<String> authorizedScopes);
+
+    protected AuthorizationGrantType grantType(Map<String, Object> reqParameters){
+        String grantType = (String) reqParameters.get(OAuth2ParameterNames.GRANT_TYPE);
+        if (StringUtils.isBlank(grantType)) {
+            throw new OAuth2AuthenticationException(OAuth2ErrorCodes.INVALID_GRANT);
+        }
+        AuthorizationGrantType type = CustomAuthorizationGrantType.getGrantType(grantType);
+        if (type == null) {
+            throw new OAuth2AuthenticationException(OAuth2ErrorCodes.INVALID_GRANT);
+        }
+        return type;
+    }
 
     protected Authentication buildOAuth2Authorization(Authentication customAuthentication, Authentication authentication,
                                                       RegisteredClient registeredClient, Set<String> authorizedScopes,

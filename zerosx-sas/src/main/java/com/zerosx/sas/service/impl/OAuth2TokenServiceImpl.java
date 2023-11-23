@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.redisson.codec.SerializationCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
@@ -94,6 +95,9 @@ public class OAuth2TokenServiceImpl implements IOAuth2TokenService {
             tokenVO.setLoginExpiration(Date.from(accessToken.getIssuedAt()));
             long accessTokenDiffTime = ChronoUnit.SECONDS.between(Instant.now(), accessToken.getExpiresAt());
             tokenVO.setExpirationLength(BigDecimal.valueOf(accessTokenDiffTime));
+            if (AuthorizationGrantType.CLIENT_CREDENTIALS.equals(oAuth2Authorization.getAuthorizationGrantType())) {
+                tokenVO.setUsername(oAuth2Authorization.getRegisteredClientId());
+            }
             Authentication authentication = oAuth2Authorization.getAttribute(Principal.class.getName());
             if (authentication != null) {
                 CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();

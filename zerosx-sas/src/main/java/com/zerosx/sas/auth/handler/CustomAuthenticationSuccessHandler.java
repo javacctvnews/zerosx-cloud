@@ -13,10 +13,10 @@ import com.zerosx.sas.service.IOauthTokenRecordService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2RefreshToken;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
@@ -51,22 +51,26 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+        String grantType = request.getParameter(OAuth2ParameterNames.GRANT_TYPE);
         // 输出token
         sendAccessTokenResponse(request, response, authentication);
         // 记录登录日志
         OAuth2AccessTokenAuthenticationToken accessTokenAuthentication = (OAuth2AccessTokenAuthenticationToken) authentication;
-        Map<String, Object> additionalParameters = accessTokenAuthentication.getAdditionalParameters();
+        //Map<String, Object> additionalParameters = accessTokenAuthentication.getAdditionalParameters();
         OauthTokenRecord otr = new OauthTokenRecord();
         otr.setClientId(accessTokenAuthentication.getRegisteredClient().getClientId());
         otr.setApplyOauthTime(new Date());
         otr.setUsername(ZerosSecurityContextHolder.get(OAuth2ParameterNames.USERNAME));
+        if(AuthorizationGrantType.CLIENT_CREDENTIALS.getValue().equals(grantType)){
+            otr.setUsername(otr.getClientId());
+        }
         otr.setRequestId(IdGenerator.getIdStr());
         UserAgent userAgent = UserAgentUtil.parse(request.getHeader(CommonConstants.USER_AGENT));
         otr.setBrowserType(userAgent.getBrowser().getName() + "/" + userAgent.getVersion());
         otr.setOsType(userAgent.getPlatform() + "/" + userAgent.getOsVersion());
         otr.setSourceIp(IpUtils.getRemoteAddr(request));
         otr.setSourceLocation(IpUtils.getIpLocation(otr.getSourceIp()));
-        String grantType = StringUtils.isBlank((String) additionalParameters.get(OAuth2ParameterNames.GRANT_TYPE)) ? "" : (String) additionalParameters.get(OAuth2ParameterNames.GRANT_TYPE);
+        //String grantType = StringUtils.isBlank((String) additionalParameters.get(OAuth2ParameterNames.GRANT_TYPE)) ? "" : (String) additionalParameters.get(OAuth2ParameterNames.GRANT_TYPE);
         otr.setGrantType(grantType);
         otr.setOauthResult(0);
         otr.setOauthMsg(ResultEnum.SUCCESS.getMessage());

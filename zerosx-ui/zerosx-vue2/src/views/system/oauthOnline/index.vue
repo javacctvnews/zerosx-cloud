@@ -115,7 +115,7 @@ export default {
           attrs: {
             label: "授权类型",
             prop: "grantType",
-            minWidth: "100",
+            minWidth: "140",
             align: "center"
           },
         },

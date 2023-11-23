@@ -55,10 +55,11 @@ public abstract class CustomAbstractAuthenticationConverter<T extends CustomAbst
     protected Map<String, Object> additionalParameters(MultiValueMap<String, String> parameters) {
         Map<String, Object> additionalParameters = new HashMap<>();
         parameters.forEach((key, value) -> {
-            if (!key.equals(OAuth2ParameterNames.GRANT_TYPE) &&
+            /*if (!key.equals(OAuth2ParameterNames.GRANT_TYPE) &&
                     !key.equals(OAuth2ParameterNames.SCOPE)) {
                 additionalParameters.put(key, value.get(0));
-            }
+            }*/
+            additionalParameters.put(key, value.get(0));
         });
         return additionalParameters;
     }

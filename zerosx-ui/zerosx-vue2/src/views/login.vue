@@ -252,8 +252,8 @@ export default {
       this.getCookie();
     },
     getCode() {
-      this.smsLoginForm.code2 = undefined
-      this.loginForm.code = undefined
+      this.smsLoginForm.code2 = ''
+      //this.loginForm.code = ''
       getCodeImg().then(res => {
         this.captchaEnabled = res.captchaEnabled === undefined ? true : res.captchaEnabled;
         if (this.captchaEnabled) {
