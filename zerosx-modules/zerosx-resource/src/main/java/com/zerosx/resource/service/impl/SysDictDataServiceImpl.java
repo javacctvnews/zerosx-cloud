@@ -1,5 +1,7 @@
 package com.zerosx.resource.service.impl;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
+import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -18,6 +20,7 @@ import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.common.utils.JacksonUtil;
 import com.zerosx.common.utils.SpringUtils;
+import com.zerosx.ds.constant.DSType;
 import com.zerosx.resource.dto.SysDictDataDTO;
 import com.zerosx.resource.dto.SysDictDataUpdateDTO;
 import com.zerosx.resource.entity.SysDictData;
@@ -27,15 +30,13 @@ import com.zerosx.resource.service.ISysDictDataService;
 import com.zerosx.resource.service.ISysDictTypeService;
 import com.zerosx.resource.task.ResourceAsyncTask;
 import com.zerosx.resource.vo.SysDictDataVO;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@DS(DSType.MASTER)
 public class SysDictDataServiceImpl extends SuperServiceImpl<ISysDictDataMapper, SysDictData> implements ISysDictDataService {
 
     @Autowired
@@ -60,6 +62,7 @@ public class SysDictDataServiceImpl extends SuperServiceImpl<ISysDictDataMapper,
     private ResourceAsyncTask resourceAsyncTask;
 
     @Override
+    @DS(DSType.SLAVE)
     public CustomPageVO<SysDictDataVO> pageList(RequestVO<SysDictDataPageDTO> requestVO, boolean searchCount) {
         return PageUtils.of(baseMapper.selectPage(PageUtils.of(requestVO, searchCount), getWrapper(requestVO.getT())), SysDictDataVO.class);
     }
@@ -97,11 +100,13 @@ public class SysDictDataServiceImpl extends SuperServiceImpl<ISysDictDataMapper,
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<I18nSelectOptionVO> getDictList(String dictType) {
         return getCacheSysDictData(dictType);
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<SysDictData> dataList(SysDictDataPageDTO sysDictDataPageDTO) {
         LambdaQueryWrapper<SysDictData> pageqw = getWrapper(sysDictDataPageDTO);
         return list(pageqw);
@@ -116,7 +121,7 @@ public class SysDictDataServiceImpl extends SuperServiceImpl<ISysDictDataMapper,
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @DSTransactional(rollbackFor = Exception.class)
     public boolean deleteSysDictData(Long[] dictCode) {
         for (Long code : dictCode) {
             SysDictData sysDictData = getById(code);
@@ -129,22 +134,26 @@ public class SysDictDataServiceImpl extends SuperServiceImpl<ISysDictDataMapper,
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public void initCacheDictData(String dictType) {
         SpringUtils.getAopProxy(this).loadSysDictData("");
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public Map<Object, String> getDictDataMap(String dictType) {
         List<I18nSelectOptionVO> cacheSysDictData = getCacheSysDictData(dictType);
         return cacheSysDictData.stream().collect(Collectors.toMap(I18nSelectOptionVO::getValue, I18nSelectOptionVO::getLabel));
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public SysDictDataVO getDictById(Long id) {
         return BeanCopierUtils.copyProperties(getById(id), SysDictDataVO.class);
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public void excelExport(RequestVO<SysDictDataPageDTO> requestVO, HttpServletResponse response) {
         excelExport(PageUtils.of(requestVO, false), getWrapper(requestVO.getT()), SysDictDataVO.class, response);
     }
@@ -156,7 +165,7 @@ public class SysDictDataServiceImpl extends SuperServiceImpl<ISysDictDataMapper,
      * @return 相同queryDictType时有返回，否则为空
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @DSTransactional(rollbackFor = Exception.class)
     public List<SysDictData> loadSysDictData(String queryDictType) {
         List<SysDictData> resList = new ArrayList<>();
         Reflections reflections = new Reflections(CommonConstants.BASE_PACKAGE);

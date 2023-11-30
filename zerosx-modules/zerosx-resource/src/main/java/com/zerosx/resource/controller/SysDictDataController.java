@@ -85,7 +85,7 @@ public class SysDictDataController {
     }
 
     @Operation(summary = "按id查询字典详情")
-    @GetMapping(value = "/getDictById/{id}")
+    @GetMapping(value = "/sysDictData/queryById/{id}")
     public ResultVO<SysDictDataVO> getDictById(@PathVariable("id") Long id) {
         return ResultVOUtil.success(sysDictDataService.getDictById(id));
     }

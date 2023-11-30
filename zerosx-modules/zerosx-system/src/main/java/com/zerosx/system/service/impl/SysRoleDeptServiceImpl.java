@@ -1,8 +1,11 @@
 package com.zerosx.system.service.impl;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
+import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
+import com.zerosx.ds.constant.DSType;
 import com.zerosx.system.entity.SysRoleDept;
 import com.zerosx.system.mapper.ISysRoleDeptMapper;
 import com.zerosx.system.service.ISysRoleDeptService;
@@ -17,6 +20,8 @@ import java.util.List;
 public class SysRoleDeptServiceImpl extends SuperServiceImpl<ISysRoleDeptMapper, SysRoleDept> implements ISysRoleDeptService {
 
     @Override
+    @DS(DSType.MASTER)
+    @DSTransactional
     public boolean updateSysDeptRoles(Long deptId, List<Long> roleIds, boolean delete) {
         if (delete) {
             LambdaQueryWrapper<SysRoleDept> rm = Wrappers.lambdaQuery(SysRoleDept.class);
@@ -34,7 +39,10 @@ public class SysRoleDeptServiceImpl extends SuperServiceImpl<ISysRoleDeptMapper,
             srd.setRoleId(roleId);
             srdList.add(srd);
         }
-        return saveBatch(srdList);
+        for (SysRoleDept sysRoleDept : srdList) {
+            save(sysRoleDept);
+        }
+        return true;
     }
 
     @Override

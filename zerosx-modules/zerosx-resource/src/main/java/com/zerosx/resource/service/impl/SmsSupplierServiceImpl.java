@@ -1,6 +1,8 @@
 package com.zerosx.resource.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.dynamic.datasource.annotation.DS;
+import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -21,6 +23,7 @@ import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.common.utils.JacksonUtil;
+import com.zerosx.ds.constant.DSType;
 import com.zerosx.resource.dto.SmsCodeDTO;
 import com.zerosx.resource.dto.SmsSupplierDTO;
 import com.zerosx.resource.dto.SmsSupplierPageDTO;
@@ -45,9 +48,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@DS(DSType.MASTER)
 public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper, SmsSupplier> implements ISmsSupplierService {
 
     @Autowired
@@ -73,11 +75,13 @@ public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper,
     private RedissonOpService redissonOpService;
 
     @Override
+    @DS(DSType.SLAVE)
     public CustomPageVO<SmsSupplierPageVO> pageList(RequestVO<SmsSupplierPageDTO> requestVO, boolean searchCount) {
         return PageUtils.of(baseMapper.selectPage(PageUtils.of(requestVO, searchCount), getWrapper(requestVO.getT())), SmsSupplierPageVO.class);
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<SmsSupplier> dataList(SmsSupplierPageDTO query) {
         return list(getWrapper(query));
     }
@@ -151,12 +155,13 @@ public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper,
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public SmsSupplierVO queryById(Long id) {
         return EasyTransUtils.copyTrans(getById(id), SmsSupplierVO.class);
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @DSTransactional(rollbackFor = Exception.class)
     public boolean deleteRecord(Long[] ids) {
         for (Long id : ids) {
             //删除短信业务
@@ -170,10 +175,14 @@ public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper,
             }
         }
         //删除短信配置
-        return removeByIds(Arrays.asList(ids));
+        for (Long id : ids) {
+            baseMapper.deleteById(id);
+        }
+        return true;
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public ResultVO<?> sendSms(SmsSendDTO smsSendDTO) {
         ISupplierConfig smsConfig;
         SmsRequest smsRequest;
@@ -258,11 +267,13 @@ public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper,
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public void excelExport(RequestVO<SmsSupplierPageDTO> requestVO, HttpServletResponse response) {
         excelExport(PageUtils.of(requestVO, false), getWrapper(requestVO.getT()), SmsSupplierPageVO.class, response);
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public SmsCodeVO getSmsCode(SmsCodeDTO smsCodeDTO) {
         String requestId = smsCodeDTO.getUuid();
         String validCode = smsCodeDTO.getCode2();

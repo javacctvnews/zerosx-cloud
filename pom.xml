@@ -6,7 +6,7 @@
     <groupId>com.zerosx.cloud</groupId>
     <artifactId>zerosx-cloud</artifactId>
     <name>zerosx-cloud</name>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -107,7 +107,7 @@
             <dependency>
                 <groupId>com.zerosx.cloud</groupId>
                 <artifactId>zerosx-common-bom</artifactId>
-                <version>0.0.3</version>
+                <version>0.0.4</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -155,6 +155,12 @@
                 <artifactId>mybatis-plus</artifactId>
                 <version>${mybatis-plus-boot-starter.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
+                <version>4.2.0</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk15to18</artifactId>

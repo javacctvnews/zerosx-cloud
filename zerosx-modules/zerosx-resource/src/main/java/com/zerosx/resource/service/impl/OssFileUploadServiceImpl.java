@@ -1,5 +1,6 @@
 package com.zerosx.resource.service.impl;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -18,6 +19,7 @@ import com.zerosx.common.oss.model.OssObjectVO;
 import com.zerosx.common.oss.properties.DefaultOssProperties;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.JacksonUtil;
+import com.zerosx.ds.constant.DSType;
 import com.zerosx.resource.dto.OssFileUploadDTO;
 import com.zerosx.resource.entity.OssFileUpload;
 import com.zerosx.resource.mapper.IOssFileUploadMapper;
@@ -38,6 +40,7 @@ import java.util.List;
 
 @Service
 @Slf4j
+@DS(DSType.MASTER)
 public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMapper, OssFileUpload> implements IOssFileUploadService {
 
     private static final Long ONE_DAY_SEC = 3600L * 1000 * 24;
@@ -67,6 +70,7 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public OssFileUpload getByObjectName(String objectName) {
         return baseMapper.selectByObjectName(objectName);
     }
@@ -99,6 +103,7 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<OssObjectVO> batchUploadFile(MultipartFile[] multipartFile) {
         List<OssObjectVO> objectVOS = new ArrayList<>();
         for (MultipartFile file : multipartFile) {
@@ -112,6 +117,7 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public String getObjectViewUrl(String objectName) {
         if (StringUtils.isBlank(objectName)) {
             return StringUtils.EMPTY;
@@ -130,6 +136,7 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public boolean deleteFile(String objectName) {
         OssFileUpload ossFileUpload = getByObjectName(objectName);
         if (ossFileUpload == null) {
@@ -149,6 +156,7 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public CustomPageVO<OssFileUploadPageVO> listPages(RequestVO<OssFileUploadDTO> requestVO) {
         OssFileUploadDTO t = requestVO.getT() == null ? new OssFileUploadDTO() : requestVO.getT();
         LambdaQueryWrapper<OssFileUpload> qw = Wrappers.lambdaQuery(OssFileUpload.class);
@@ -166,6 +174,7 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
     }
 
     @Override
+    @DS(DSType.MASTER)
     public boolean fullDelete(Long[] ids) {
         for (Long id : ids) {
             OssFileUpload ossFileUpload = getById(id);
@@ -181,6 +190,7 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public OssFileUploadPageVO queryById(Long id) {
         OssFileUpload fileUpload = getById(id);
         handleOssFileUpload(fileUpload);

@@ -2,6 +2,9 @@ server:
   port: 19106
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
   application:
     name: zerosx-resource
 

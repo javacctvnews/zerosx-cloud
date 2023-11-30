@@ -1,5 +1,7 @@
 package com.zerosx.system.service.impl;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
+import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.common.base.exception.BusinessException;
@@ -14,6 +16,7 @@ import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.BeanCopierUtils;
+import com.zerosx.ds.constant.DSType;
 import com.zerosx.system.dto.MutiTenancyGroupEditDTO;
 import com.zerosx.system.dto.MutiTenancyGroupQueryDTO;
 import com.zerosx.system.dto.MutiTenancyGroupSaveDTO;
@@ -26,12 +29,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -43,6 +44,7 @@ import java.util.Locale;
  * @Version 1.0
  */
 @Service
+@DS(DSType.MASTER)
 public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGroupMapper, MutiTenancyGroup> implements IMutiTenancyGroupService {
 
     @Autowired
@@ -51,6 +53,7 @@ public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGr
     private RedissonOpService redissonOpService;
 
     @Override
+    @DS(DSType.SLAVE)
     public CustomPageVO<MutiTenancyGroupPageVO> listPages(RequestVO<MutiTenancyGroupQueryDTO> requestVO, boolean searchCount) {
         return PageUtils.of(baseMapper.selectPage(PageUtils.of(requestVO, searchCount), lambdaQW(requestVO.getT())), MutiTenancyGroupPageVO.class);
     }
@@ -93,6 +96,7 @@ public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGr
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<SelectOptionVO> selectOptions() {
         LambdaQueryWrapper<MutiTenancyGroup> listAllQw = Wrappers.lambdaQuery(MutiTenancyGroup.class);
         listAllQw.eq(MutiTenancyGroup::getValidStatus, StatusEnum.NORMAL.getCode());
@@ -124,23 +128,29 @@ public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGr
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<MutiTenancyGroup> listData(MutiTenancyGroupQueryDTO query) {
         return list(lambdaQW(query));
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public MutiTenancyGroupVO getTenantById(Long id) {
         MutiTenancyGroup record = getById(id);
         return EasyTransUtils.copyTrans(record, MutiTenancyGroupVO.class);
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @DSTransactional(rollbackFor = Exception.class)
     public boolean deleteGroupCompany(Long[] ids) {
-        return removeByIds(Arrays.asList(ids));
+        for (Long id : ids) {
+            removeById(id);
+        }
+        return true;
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public String transIdName(String operatorId) {
         if (StringUtils.isBlank(operatorId)) {
             return StringUtils.EMPTY;
@@ -154,6 +164,7 @@ public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGr
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public void excelExport(RequestVO<MutiTenancyGroupQueryDTO> requestVO, HttpServletResponse response) {
         excelExport(PageUtils.of(requestVO, false), lambdaQW(requestVO.getT()), MutiTenancyGroupPageVO.class, response);
     }

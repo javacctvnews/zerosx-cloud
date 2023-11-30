@@ -1,5 +1,7 @@
 package com.zerosx.resource.service.impl;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
+import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.common.base.exception.BusinessException;
@@ -10,6 +12,7 @@ import com.zerosx.common.core.utils.EasyTransUtils;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.utils.BeanCopierUtils;
+import com.zerosx.ds.constant.DSType;
 import com.zerosx.resource.dto.SmsSupplierBusinessDTO;
 import com.zerosx.resource.dto.SmsSupplierBusinessPageDTO;
 import com.zerosx.resource.entity.SmsSupplierBusiness;
@@ -17,12 +20,10 @@ import com.zerosx.resource.mapper.ISmsSupplierBusinessMapper;
 import com.zerosx.resource.service.ISmsSupplierBusinessService;
 import com.zerosx.resource.vo.SmsSupplierBusinessPageVO;
 import com.zerosx.resource.vo.SmsSupplierBusinessVO;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -34,14 +35,17 @@ import java.util.List;
  */
 @Slf4j
 @Service
+@DS(DSType.MASTER)
 public class SmsSupplierBusinessServiceImpl extends SuperServiceImpl<ISmsSupplierBusinessMapper, SmsSupplierBusiness> implements ISmsSupplierBusinessService {
 
     @Override
+    @DS(DSType.SLAVE)
     public CustomPageVO<SmsSupplierBusinessPageVO> pageList(RequestVO<SmsSupplierBusinessPageDTO> requestVO, boolean searchCount) {
         return PageUtils.of(baseMapper.selectPage(PageUtils.of(requestVO, searchCount), getWrapper(requestVO.getT())), SmsSupplierBusinessPageVO.class);
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<SmsSupplierBusiness> dataList(SmsSupplierBusinessPageDTO query) {
         return list(getWrapper(query));
     }
@@ -86,17 +90,22 @@ public class SmsSupplierBusinessServiceImpl extends SuperServiceImpl<ISmsSupplie
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public SmsSupplierBusinessVO queryById(Long id) {
         return EasyTransUtils.copyTrans(getById(id), SmsSupplierBusinessVO.class);
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @DSTransactional(rollbackFor = Exception.class)
     public boolean deleteRecord(Long[] ids) {
-        return removeByIds(Arrays.asList(ids));
+        for (Long id : ids) {
+            baseMapper.deleteById(id);
+        }
+        return true;
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public void excelExport(RequestVO<SmsSupplierBusinessPageDTO> requestVO, HttpServletResponse response) {
         excelExport(PageUtils.of(requestVO, false), getWrapper(requestVO.getT()), SmsSupplierBusinessPageVO.class, response);
     }

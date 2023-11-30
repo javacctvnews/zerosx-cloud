@@ -14,13 +14,11 @@ import com.zerosx.system.service.ISystemOperatorLogService;
 import com.zerosx.system.vo.SystemOperatorLogPageVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * 操作日志
@@ -75,7 +73,7 @@ public class SystemOperatorLogController {
     @Operation(summary = "导出")
     @OpLog(mod = "操作日志", btn = "导出", opType = OpTypeEnum.EXPORT)
     @PostMapping("/system_operator_log/export")
-    public void operatorExport(@RequestBody RequestVO<SystemOperatorLogPageDTO> requestVO, HttpServletResponse response) throws IOException {
+    public void operatorExport(@RequestBody RequestVO<SystemOperatorLogPageDTO> requestVO, HttpServletResponse response) {
         systemOperatorLogService.excelExport(requestVO, response);
     }
 

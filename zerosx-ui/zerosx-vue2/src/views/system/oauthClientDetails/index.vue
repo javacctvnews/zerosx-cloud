@@ -256,7 +256,7 @@ import serviceConfig from '@/api/serviceConfig'
 
 export default {
   name: 'OauthClientDetails',
-  dicts: ['StatusEnum', 'GranterTypeEnum', 'resource_ids', 'EnableEnum', 'SignatureAlgorithmEnum'],
+  dicts: ['StatusEnum', 'GranterTypeEnum', 'EnableEnum', 'SignatureAlgorithmEnum'],
   data() {
     return {
       openPwd: false,

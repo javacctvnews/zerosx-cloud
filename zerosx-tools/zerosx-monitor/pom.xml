@@ -7,7 +7,7 @@
     <parent>
         <artifactId>zerosx-tools</artifactId>
         <groupId>com.zerosx.cloud</groupId>
-        <version>0.0.3</version>
+        <version>0.0.4</version>
     </parent>
 
     <artifactId>zerosx-monitor</artifactId>

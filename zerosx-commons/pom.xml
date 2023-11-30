@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.zerosx.cloud</groupId>
         <artifactId>zerosx-cloud</artifactId>
-        <version>0.0.3</version>
+        <version>0.0.4</version>
     </parent>
 
     <artifactId>zerosx-commons</artifactId>
@@ -31,6 +31,7 @@
         <module>zerosx-common-sms</module>
         <module>zerosx-common-utils</module>
         <module>zerosx-common-xxljob</module>
+        <module>zerosx-common-dynamic-datasource</module>
     </modules>
 
 </project>

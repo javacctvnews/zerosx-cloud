@@ -13,7 +13,7 @@ services:
       resources:
         limits:
           cpus: '5'
-          memory: 600m
+          memory: 650m
     volumes:
       # 日志目录映射到主机目录
       - ./logs:/data/applogs
@@ -22,7 +22,7 @@ services:
       - "8808:8800"
     environment:
       #jvm参数
-      JAVA_OPTS: '-Xms412m -Xmx412m'
+      JAVA_OPTS: '-Xms512m -Xmx512m'
       # 设置启动参数 token是116个8
       PARAMS: '
       --server.port=8800

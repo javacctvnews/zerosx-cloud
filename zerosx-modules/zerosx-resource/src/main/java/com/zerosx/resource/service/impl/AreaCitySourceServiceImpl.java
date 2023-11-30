@@ -1,5 +1,6 @@
 package com.zerosx.resource.service.impl;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -15,6 +16,7 @@ import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.common.utils.JacksonUtil;
+import com.zerosx.ds.constant.DSType;
 import com.zerosx.resource.dto.AreaCitySourceDTO;
 import com.zerosx.resource.dto.AreaCitySourcePageDTO;
 import com.zerosx.resource.entity.AreaCitySource;
@@ -42,6 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 @Service
+@DS(DSType.MASTER)
 public class AreaCitySourceServiceImpl extends SuperServiceImpl<IAreaCitySourceMapper, AreaCitySource> implements IAreaCitySourceService {
 
     private static final String ROOT_NODE = "000000";
@@ -56,6 +59,7 @@ public class AreaCitySourceServiceImpl extends SuperServiceImpl<IAreaCitySourceM
     private RedissonOpService redissonOpService;
 
     @Override
+    @DS(DSType.SLAVE)
     public CustomPageVO<AreaCitySourcePageVO> pageList(RequestVO<AreaCitySourcePageDTO> requestVO, boolean searchCount) {
         AreaCitySourcePageDTO query = requestVO.getT() == null ? new AreaCitySourcePageDTO() : requestVO.getT();
         LambdaQueryWrapper<AreaCitySource> listqw = getWrapper(query);
@@ -103,6 +107,7 @@ public class AreaCitySourceServiceImpl extends SuperServiceImpl<IAreaCitySourceM
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<AreaCitySourceTreeVO> lazyTreeData(String parentCode) {
         String parentTitle;
         if (ROOT_NODE.equals(parentCode)) {
@@ -131,6 +136,7 @@ public class AreaCitySourceServiceImpl extends SuperServiceImpl<IAreaCitySourceM
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<RegionSelectVO> getAllArea() {
         long t1 = System.currentTimeMillis();
         try {
@@ -172,6 +178,7 @@ public class AreaCitySourceServiceImpl extends SuperServiceImpl<IAreaCitySourceM
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public String getAreaName(String regionCode) {
         if (StringUtils.isBlank(regionCode)) {
             return StringUtils.EMPTY;
@@ -196,6 +203,7 @@ public class AreaCitySourceServiceImpl extends SuperServiceImpl<IAreaCitySourceM
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public void excelExport(RequestVO<AreaCitySourcePageDTO> requestVO, HttpServletResponse response) {
         excelExport(PageUtils.of(requestVO, false), getWrapper(requestVO.getT()), AreaCitySourcePageVO.class, response);
     }

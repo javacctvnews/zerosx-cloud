@@ -2,6 +2,7 @@ package com.zerosx.system.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.common.base.constants.CommonConstants;
@@ -21,6 +22,7 @@ import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.common.utils.JacksonUtil;
+import com.zerosx.ds.constant.DSType;
 import com.zerosx.system.dto.SysMenuDTO;
 import com.zerosx.system.dto.SysMenuPageDTO;
 import com.zerosx.system.dto.SysRoleMenuQueryDTO;
@@ -54,6 +56,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@DS(DSType.MASTER)
 public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu> implements ISysMenuService {
 
     @Autowired
@@ -71,6 +74,7 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
 
 
     @Override
+    @DS(DSType.SLAVE)
     public CustomPageVO<SysMenuPageVO> pageList(RequestVO<SysMenuPageDTO> requestVO, boolean searchCount) {
         LambdaQueryWrapper<SysMenu> listqw = Wrappers.lambdaQuery(SysMenu.class);
         listqw.orderByDesc(SysMenu::getCreateTime);
@@ -128,6 +132,7 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<SysMenu> selectMenuTreeByUserId(Long userId) {
         SysUser sysUser = sysUserService.getById(userId);
         List<SysMenu> menus;
@@ -150,6 +155,7 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<RouterVO> buildMenus(List<SysMenu> menus) {
         List<RouterVO> routers = new LinkedList<RouterVO>();
         for (SysMenu menu : menus) {
@@ -359,6 +365,7 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
 
 
     @Override
+    @DS(DSType.SLAVE)
     public List<SysMenu> selectMenuList(SysMenuPageDTO menu) {
         List<SysMenu> menuList;
         String userType = ZerosSecurityContextHolder.getUserType();
@@ -388,11 +395,13 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public SysMenu getMenuById(Long menuId) {
         return getById(menuId);
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public SysRoleMenuTreeVO roleMenuTree(SysRoleMenuQueryDTO sysRoleMenuQueryDTO) {
         SysMenuPageDTO sysMenuPageDTO = new SysMenuPageDTO();
         sysMenuPageDTO.setStatus("0");//不展示停用的菜单
@@ -434,6 +443,7 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public SysPermissionBO queryPermsByRoleIds(RolePermissionDTO rolePermissionDTO) {
         List<Long> roles = rolePermissionDTO.getRoles();
         if (CollectionUtils.isEmpty(roles)) {
@@ -453,6 +463,7 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<SysMenuBO> findByRoleCodes(List<Long> roleIds) {
         if (CollectionUtils.isEmpty(roleIds)) {
             return new ArrayList<>();
@@ -461,6 +472,7 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public Set<String> queryPermList(Set<Long> roles) {
         if (CollectionUtils.isEmpty(roles)) {
             return null;

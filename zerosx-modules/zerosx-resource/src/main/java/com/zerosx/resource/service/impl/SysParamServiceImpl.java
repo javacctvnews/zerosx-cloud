@@ -1,5 +1,7 @@
 package com.zerosx.resource.service.impl;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
+import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.common.base.enums.ResultEnum;
@@ -10,6 +12,7 @@ import com.zerosx.common.core.utils.EasyTransUtils;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.utils.BeanCopierUtils;
+import com.zerosx.ds.constant.DSType;
 import com.zerosx.resource.dto.SysParamDTO;
 import com.zerosx.resource.dto.SysParamPageDTO;
 import com.zerosx.resource.entity.SysParam;
@@ -17,12 +20,11 @@ import com.zerosx.resource.mapper.ISysParamMapper;
 import com.zerosx.resource.service.ISysParamService;
 import com.zerosx.resource.vo.SysParamPageVO;
 import com.zerosx.resource.vo.SysParamVO;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import jakarta.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -34,14 +36,17 @@ import java.util.List;
  */
 @Slf4j
 @Service
+@DS(DSType.MASTER)
 public class SysParamServiceImpl extends SuperServiceImpl<ISysParamMapper, SysParam> implements ISysParamService {
 
     @Override
+    @DS(DSType.SLAVE)
     public CustomPageVO<SysParamPageVO> pageList(RequestVO<SysParamPageDTO> requestVO, boolean searchCount) {
         return PageUtils.of(baseMapper.selectPage(PageUtils.of(requestVO, searchCount), getWrapper(requestVO.getT())), SysParamPageVO.class);
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<SysParam> dataList(SysParamPageDTO query) {
         LambdaQueryWrapper<SysParam> listqw = getWrapper(query);
         return list(listqw);
@@ -113,16 +118,22 @@ public class SysParamServiceImpl extends SuperServiceImpl<ISysParamMapper, SysPa
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public SysParamVO queryById(Long id) {
         return EasyTransUtils.copyTrans(getById(id), SysParamVO.class);
     }
 
     @Override
+    @DSTransactional
     public boolean deleteRecord(Long[] ids) {
-        return removeByIds(Arrays.asList(ids));
+        for (Long id : ids) {
+            baseMapper.deleteById(id);
+        }
+        return true;
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public SysParamVO queryByKey(SysParamPageDTO sysParamPageDTO) {
         LambdaQueryWrapper<SysParam> qw = Wrappers.lambdaQuery(SysParam.class);
         qw.eq(SysParam::getParamKey, sysParamPageDTO.getParamKey());
@@ -139,6 +150,7 @@ public class SysParamServiceImpl extends SuperServiceImpl<ISysParamMapper, SysPa
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public void excelExport(RequestVO<SysParamPageDTO> requestVO, HttpServletResponse response) {
         excelExport(PageUtils.of(requestVO, false), getWrapper(requestVO.getT()), SysParamPageVO.class, response);
     }

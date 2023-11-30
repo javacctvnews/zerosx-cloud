@@ -1,6 +1,8 @@
 package com.zerosx.system.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.baomidou.dynamic.datasource.annotation.DS;
+import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.common.base.exception.BusinessException;
@@ -12,6 +14,7 @@ import com.zerosx.common.core.utils.IdGenerator;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.utils.BeanCopierUtils;
+import com.zerosx.ds.constant.DSType;
 import com.zerosx.system.dto.SysDeptDTO;
 import com.zerosx.system.dto.SysDeptPageDTO;
 import com.zerosx.system.entity.SysDept;
@@ -22,14 +25,13 @@ import com.zerosx.system.service.ISysRoleDeptService;
 import com.zerosx.system.vo.SysDeptPageVO;
 import com.zerosx.system.vo.SysDeptVO;
 import com.zerosx.system.vo.SysTreeSelectVO;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -43,17 +45,20 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@DS(DSType.MASTER)
 public class SysDeptServiceImpl extends SuperServiceImpl<ISysDeptMapper, SysDept> implements ISysDeptService {
 
     @Autowired
     private ISysRoleDeptService sysRoleDeptService;
 
     @Override
+    @DS(DSType.SLAVE)
     public CustomPageVO<SysDeptPageVO> pageList(RequestVO<SysDeptPageDTO> requestVO, boolean searchCount) {
         return PageUtils.of(baseMapper.selectPage(PageUtils.of(requestVO, searchCount), lambdaQW(requestVO.getT())), SysDeptPageVO.class);
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<SysDept> dataList(SysDeptPageDTO query) {
         LambdaQueryWrapper<SysDept> listqw = lambdaQW(query);
         return list(listqw);
@@ -73,7 +78,7 @@ public class SysDeptServiceImpl extends SuperServiceImpl<ISysDeptMapper, SysDept
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @DSTransactional(rollbackFor = Exception.class)
     public boolean add(SysDeptDTO sysDeptDTO) {
         SysDept addEntity = BeanCopierUtils.copyProperties(sysDeptDTO, SysDept.class);
         addEntity.setDeptCode(IdGenerator.getIdStr());
@@ -84,7 +89,7 @@ public class SysDeptServiceImpl extends SuperServiceImpl<ISysDeptMapper, SysDept
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @DSTransactional(rollbackFor = Exception.class)
     public boolean update(SysDeptDTO sysDeptDTO) {
         SysDept dbUpdate = getById(sysDeptDTO.getId());
         if (dbUpdate == null) {
@@ -108,6 +113,7 @@ public class SysDeptServiceImpl extends SuperServiceImpl<ISysDeptMapper, SysDept
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public SysDeptVO queryById(Long id) {
         SysDeptVO sysDeptVO = EasyTransUtils.copyTrans(getById(id), SysDeptVO.class);
         LambdaQueryWrapper<SysRoleDept> rm = Wrappers.lambdaQuery(SysRoleDept.class);
@@ -120,13 +126,17 @@ public class SysDeptServiceImpl extends SuperServiceImpl<ISysDeptMapper, SysDept
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @DSTransactional(rollbackFor = Exception.class)
     public boolean deleteRecord(Long[] ids) {
         sysRoleDeptService.removeByDeptIds(ids);
-        return removeByIds(Arrays.asList(ids));
+        for (Long id : ids) {
+            removeById(id);
+        }
+        return true;
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<SysDept> tableTree(SysDeptPageDTO sysDeptPageDTO) {
         List<SysDept> sysDepts = dataList(sysDeptPageDTO);
         EasyTransUtils.easyTrans(sysDepts);
@@ -197,6 +207,7 @@ public class SysDeptServiceImpl extends SuperServiceImpl<ISysDeptMapper, SysDept
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<SysTreeSelectVO> treeSelect(BaseTenantDTO baseTenantDTO) {
         SysDeptPageDTO sysDeptPageDTO = new SysDeptPageDTO();
         sysDeptPageDTO.setOperatorId(baseTenantDTO.getOperatorId());
@@ -205,6 +216,7 @@ public class SysDeptServiceImpl extends SuperServiceImpl<ISysDeptMapper, SysDept
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public Set<Long> getDeptRoleIds(Long deptId) {
         LambdaQueryWrapper<SysRoleDept> srdqw = Wrappers.lambdaQuery(SysRoleDept.class);
         srdqw.eq(SysRoleDept::getDeptId, deptId);
@@ -216,6 +228,7 @@ public class SysDeptServiceImpl extends SuperServiceImpl<ISysDeptMapper, SysDept
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public void excelExport(RequestVO<SysDeptPageDTO> requestVO, HttpServletResponse response) {
         excelExport(PageUtils.of(requestVO, false), lambdaQW(requestVO.getT()), SysDeptPageVO.class, response);
     }

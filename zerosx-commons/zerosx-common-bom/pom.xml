@@ -7,12 +7,12 @@
     <!--<parent>
         <groupId>com.zerosx.cloud</groupId>
         <artifactId>zerosx-commons</artifactId>
-        <version>0.0.3</version>
+        <version>0.0.4</version>
     </parent>-->
 
     <groupId>com.zerosx.cloud</groupId>
     <artifactId>zerosx-common-bom</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <packaging>pom</packaging>
     <description>公共组件的依赖</description>
 
@@ -51,6 +51,11 @@
             <dependency>
                 <groupId>com.zerosx.cloud</groupId>
                 <artifactId>zerosx-common-redis</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zerosx.cloud</groupId>
+                <artifactId>zerosx-common-dynamic-datasource</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!--<dependency>
@@ -120,6 +125,10 @@
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-loadbalancer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-dynamic-datasource</artifactId>
         </dependency>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>

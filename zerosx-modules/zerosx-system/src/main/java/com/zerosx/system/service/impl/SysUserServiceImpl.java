@@ -1,5 +1,7 @@
 package com.zerosx.system.service.impl;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
+import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -9,6 +11,7 @@ import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.LoginUserTenantsBO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.SysRoleBO;
+import com.zerosx.ds.constant.DSType;
 import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.core.enums.system.UserTypeEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
@@ -29,15 +32,14 @@ import com.zerosx.system.task.SystemAsyncTask;
 import com.zerosx.system.vo.SysRoleVO;
 import com.zerosx.system.vo.SysUserPageVO;
 import com.zerosx.system.vo.SysUserVO;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -77,6 +79,7 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     private ISysDeptService sysDeptService;
 
     @Override
+    @DS(DSType.SLAVE)
     public CustomPageVO<SysUserPageVO> pageList(RequestVO<SysUserPageDTO> requestVO, boolean searchCount) {
         return PageUtils.of(sysUserMapper.selectPage(PageUtils.of(requestVO, searchCount), getWrapper(requestVO.getT())).convert((e) -> {
             SysUserPageVO tarVO = EasyTransUtils.copyTrans(e, SysUserPageVO.class);
@@ -97,35 +100,15 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<SysUser> dataList(SysUserPageDTO query) {
         return list(getWrapper(query));
     }
 
-    private LambdaQueryWrapper<SysUser> getWrapper(SysUserPageDTO query) {
-        LambdaQueryWrapper<SysUser> qw = Wrappers.lambdaQuery(SysUser.class);
-        qw.eq(StringUtils.isNotBlank(query.getOperatorId()), SysUser::getOperatorId, query.getOperatorId());
-        qw.eq(StringUtils.isNotBlank(query.getStatus()), SysUser::getStatus, query.getStatus());
-        qw.eq(StringUtils.isNotBlank(query.getPhoneNumber()), SysUser::getPhoneNumber, query.getPhoneNumber());
-        qw.and(StringUtils.isNotBlank(query.getUserKeyword()), wq -> wq.like(SysUser::getUserName, query.getUserKeyword()).or().like(SysUser::getNickName, query.getUserKeyword()));
-        return qw;
-    }
-
     @Override
-    @Transactional(rollbackFor = {Exception.class})
-    public boolean add(SysUserDTO sysUserDTO) {
-        SysUser addEntity = BeanCopierUtils.copyProperties(sysUserDTO, SysUser.class);
-        addEntity.setUserCode(IdGenerator.getIdStr());
-        addEntity.setPassword(passwordEncoder.encode(sysUserDTO.getPassword()));
-        boolean save = save(addEntity);
-        //保存用户与角色的关系
-        sysUserRoleService.saveUserRoleIds(addEntity.getId(), sysUserDTO.getRoleIds(), false);
-        //保存用户与岗位的关系
-        sysUserPostService.saveUserPostIds(addEntity.getId(), sysUserDTO.getPostIds(), false);
-        return save;
-    }
-
-    @Override
-    @Transactional(rollbackFor = {Exception.class})
+    //@Transactional(rollbackFor = {Exception.class})
+    @DSTransactional(rollbackFor = {Exception.class})
+    @DS(DSType.MASTER)
     public boolean update(SysUserDTO sysUserDTO) {
         SysUser dbUpdate = getById(sysUserDTO.getId());
         if (dbUpdate == null) {
@@ -150,7 +133,33 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
         return updateById;
     }
 
+    private LambdaQueryWrapper<SysUser> getWrapper(SysUserPageDTO query) {
+        LambdaQueryWrapper<SysUser> qw = Wrappers.lambdaQuery(SysUser.class);
+        qw.eq(StringUtils.isNotBlank(query.getOperatorId()), SysUser::getOperatorId, query.getOperatorId());
+        qw.eq(StringUtils.isNotBlank(query.getStatus()), SysUser::getStatus, query.getStatus());
+        qw.eq(StringUtils.isNotBlank(query.getPhoneNumber()), SysUser::getPhoneNumber, query.getPhoneNumber());
+        qw.and(StringUtils.isNotBlank(query.getUserKeyword()), wq -> wq.like(SysUser::getUserName, query.getUserKeyword()).or().like(SysUser::getNickName, query.getUserKeyword()));
+        return qw;
+    }
+
     @Override
+    //@Transactional(rollbackFor = {Exception.class})
+    @DSTransactional(rollbackFor = {Exception.class})
+    @DS(DSType.MASTER)
+    public boolean add(SysUserDTO sysUserDTO) {
+        SysUser addEntity = BeanCopierUtils.copyProperties(sysUserDTO, SysUser.class);
+        addEntity.setUserCode(IdGenerator.getIdStr());
+        addEntity.setPassword(passwordEncoder.encode(sysUserDTO.getPassword()));
+        boolean save = save(addEntity);
+        //保存用户与角色的关系
+        sysUserRoleService.saveUserRoleIds(addEntity.getId(), sysUserDTO.getRoleIds(), false);
+        //保存用户与岗位的关系
+        sysUserPostService.saveUserPostIds(addEntity.getId(), sysUserDTO.getPostIds(), false);
+        return save;
+    }
+
+    @Override
+    @DS(DSType.SLAVE)
     public SysUserVO queryById(Long id) {
         SysUserVO sysUserVO = EasyTransUtils.copyTrans(getById(id), SysUserVO.class);
         LambdaQueryWrapper<SysUserRole> surqw = Wrappers.lambdaQuery(SysUserRole.class);
@@ -169,7 +178,9 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    //@Transactional(rollbackFor = {Exception.class})
+    @DSTransactional(rollbackFor = {Exception.class})
+    @DS(DSType.MASTER)
     public boolean deleteRecord(Long[] ids) {
         for (Long userId : ids) {
             //删除用户与角色的关系
@@ -183,6 +194,7 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public LoginUserVO queryLoginUser(UserLoginDTO userLoginDTO) {
         SysUser sysUser = sysUserMapper.selectLoginSysUser(userLoginDTO.getUsername(), userLoginDTO.getMobilePhone());
         if (sysUser == null) {
@@ -205,6 +217,7 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public LoginUserTenantsBO currentLoginUser(String userName) {
         if (StringUtils.isBlank(userName)) {
             return null;
@@ -239,6 +252,7 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public Map<String, Object> getCurrentUserInfo() {
         String userName = ZerosSecurityContextHolder.getUserName();
         SysUserVO sysUserVO = getSysUserVO(userName);
@@ -262,6 +276,7 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public Map<String, Object> getUserProfile() {
         String userName = ZerosSecurityContextHolder.getUserName();
         SysUserVO sysUserVO = getSysUserVO(userName);
@@ -279,6 +294,7 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     }
 
     @Override
+    @DS(DSType.MASTER)
     public boolean updateProfile(SysUserDTO sysUserDTO) {
         if (StringUtils.isNotBlank(sysUserDTO.getNewPassword())) {
             SysUserVO sysUserVO = getSysUserVO(ZerosSecurityContextHolder.getUserName());
@@ -315,6 +331,7 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public void excelExport(RequestVO<SysUserPageDTO> requestVO, HttpServletResponse response) {
         excelExport(PageUtils.of(requestVO, false), getWrapper(requestVO.getT()), SysUserPageVO.class, response);
     }

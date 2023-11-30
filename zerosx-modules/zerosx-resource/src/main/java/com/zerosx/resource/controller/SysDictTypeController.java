@@ -69,7 +69,7 @@ public class SysDictTypeController {
     }
 
     @Operation(summary = "按id查询")
-    @GetMapping(value = "/getDictTypeById/{dictId}")
+    @GetMapping(value = "/sysDictType/queryById/{dictId}")
     public ResultVO<SysDictTypeVO> getDictTypeById(@PathVariable("dictId") Long dictId) {
         return ResultVOUtil.success(sysDictTypeService.getDictTypeById(dictId));
     }

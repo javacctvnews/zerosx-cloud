@@ -288,33 +288,33 @@ INSERT INTO zerosx_system.t_sys_menu (menu_id,menu_name,parent_id,order_num,`pat
 	 (1649,'删除',1614,2,'',NULL,NULL,1,0,'F','0','0','resource:ossfile:delete','#','admin','2023-07-30 22:53:44','admin123','2023-09-28 00:13:11','get','/api-resource/oss_file/full_delete/{ids}','',0);
 INSERT INTO zerosx_system.t_sys_menu (menu_id,menu_name,parent_id,order_num,`path`,component,query_param,is_frame,is_cache,menu_type,visible,status,perms,icon,create_by,create_time,update_by,update_time,request_method,request_url,remark,deleted) VALUES
 	 (1650,'详情',1614,3,'',NULL,NULL,1,0,'F','0','0','resource:ossfile:detail','#','admin','2023-07-30 22:55:47','admin123','2023-09-28 00:13:17','get','/api-resource/oss-file/detail/{id}','',0),
-	 (1651,'列表查询',105,1,'',NULL,NULL,1,0,'F','0','0','system:dict:list','#','admin','2023-07-30 23:03:23','','2023-07-30 23:03:23','post','/api-system/sysDictType_page','',0),
-	 (1652,'新增',105,2,'',NULL,NULL,1,0,'F','0','0','system:dict:add','#','admin','2023-07-30 23:06:40','admin','2023-07-30 23:06:46','post','/api-system/sysDictType_insert','',0),
-	 (1653,'编辑',105,3,'',NULL,NULL,1,0,'F','0','0','system:dict:update','#','admin','2023-07-30 23:07:29','','2023-07-30 23:07:29','put','/api-system/sysDictType_update','',0),
-	 (1654,'删除',105,4,'',NULL,NULL,1,0,'F','0','0','system:dict:delete','#','admin','2023-07-30 23:08:16','','2023-07-30 23:08:16','delete','/api-system/sysDictType_delete/{dictId}','',0),
-	 (1655,'导出',105,5,'',NULL,NULL,1,0,'F','0','0','system:dict:export','#','admin','2023-07-30 23:09:10','','2023-07-30 23:09:10','post','/api-system/sysDictType/export','',0),
-	 (1656,'刷新缓存',105,6,'',NULL,NULL,1,0,'F','0','0','system:dict:initCache','#','admin','2023-07-30 23:10:52','','2023-07-30 23:10:52','get','/api-system/sysDictData/init','',0),
-	 (1657,'字典数据',105,7,'',NULL,NULL,1,0,'F','0','0','system:dict:dictdata','#','admin','2023-07-30 23:20:51','','2023-07-30 23:20:51','post','/api-system/sysDictData_page','',0),
-	 (1658,'新增',1657,1,'',NULL,NULL,1,0,'F','0','0','system:dict:dictdata:add','#','admin','2023-07-30 23:23:17','','2023-07-30 23:23:17','post','/api-system/sysDictData_insert','',0),
-	 (1659,'编辑',1657,2,'',NULL,NULL,1,0,'F','0','0','system:dict:dictdata:update','#','admin','2023-07-30 23:24:09','','2023-07-30 23:24:09','put','/api-system/sysDictData_update','',0);
+	 (1651,'列表查询',105,1,'',NULL,NULL,1,0,'F','0','0','system:dict:list','#','admin','2023-07-30 23:03:23','admin123','2023-11-30 10:29:21','post','/api-resource/sysDictType_page','',0),
+	 (1652,'新增',105,2,'',NULL,NULL,1,0,'F','0','0','system:dict:add','#','admin','2023-07-30 23:06:40','admin123','2023-11-30 10:29:27','post','/api-resource/sysDictType_insert','',0),
+	 (1653,'编辑',105,3,'',NULL,NULL,1,0,'F','0','0','system:dict:update','#','admin','2023-07-30 23:07:29','admin123','2023-11-30 10:29:32','put','/api-resource/sysDictType_update','',0),
+	 (1654,'删除',105,4,'',NULL,NULL,1,0,'F','0','0','system:dict:delete','#','admin','2023-07-30 23:08:16','admin123','2023-11-30 10:29:37','delete','/api-resource/sysDictType_delete/{dictId}','',0),
+	 (1655,'导出',105,5,'',NULL,NULL,1,0,'F','0','0','system:dict:export','#','admin','2023-07-30 23:09:10','admin123','2023-11-30 10:29:46','post','/api-resource/sysDictType/export','',0),
+	 (1656,'刷新缓存',105,6,'',NULL,NULL,1,0,'F','0','0','system:dict:initCache','#','admin','2023-07-30 23:10:52','admin123','2023-11-30 10:30:25','get','/api-resource/sysDictData/init','',0),
+	 (1657,'字典数据',105,7,'',NULL,NULL,1,0,'F','0','0','system:dict:dictdata','#','admin','2023-07-30 23:20:51','admin123','2023-11-30 10:30:35','post','/api-resource/sysDictData_page','',0),
+	 (1658,'新增',1657,1,'',NULL,NULL,1,0,'F','0','0','system:dict:dictdata:add','#','admin','2023-07-30 23:23:17','admin123','2023-11-30 10:30:40','post','/api-resource/sysDictData_insert','',0),
+	 (1659,'编辑',1657,2,'',NULL,NULL,1,0,'F','0','0','system:dict:dictdata:update','#','admin','2023-07-30 23:24:09','admin123','2023-11-30 10:30:44','put','/api-resource/sysDictData_update','',0);
 INSERT INTO zerosx_system.t_sys_menu (menu_id,menu_name,parent_id,order_num,`path`,component,query_param,is_frame,is_cache,menu_type,visible,status,perms,icon,create_by,create_time,update_by,update_time,request_method,request_url,remark,deleted) VALUES
-	 (1660,'删除',1657,3,'',NULL,NULL,1,0,'F','0','0','system:dict:dictdata:delete','#','admin','2023-07-30 23:26:18','','2023-07-30 23:26:18','delete','/api-system/sysDictData_delete/{dictCode}','',0),
-	 (1661,'导出',1657,4,'',NULL,NULL,1,0,'F','0','0','system:dict:dictdata:export','#','admin','2023-07-30 23:27:13','','2023-07-30 23:27:13','post','/api-system/sysDictData/export','',0),
+	 (1660,'删除',1657,3,'',NULL,NULL,1,0,'F','0','0','system:dict:dictdata:delete','#','admin','2023-07-30 23:26:18','admin123','2023-11-30 10:30:49','delete','/api-resource/sysDictData_delete/{dictCode}','',0),
+	 (1661,'导出',1657,4,'',NULL,NULL,1,0,'F','0','0','system:dict:dictdata:export','#','admin','2023-07-30 23:27:13','admin123','2023-11-30 10:30:53','post','/api-resource/sysDictData/export','',0),
 	 (1662,'列表查询',500,1,'',NULL,NULL,1,0,'F','0','0','system:operatorlog:list','#','admin','2023-07-30 23:37:57','','2023-07-30 23:37:57','post','/api-system/system_operator_log/page_list','',0),
 	 (1663,'删除',500,2,'',NULL,NULL,1,0,'F','0','0','system:operatorlog:delete','#','admin','2023-07-30 23:38:43','','2023-07-30 23:38:43','delete','/api-system/system_operator_log/delete/{id}','',0),
 	 (1664,'清空',500,3,'',NULL,NULL,1,0,'F','0','0','system:operatorlog:clean','#','admin','2023-07-30 23:40:11','','2023-07-30 23:40:11','post','/api-system/system_operator_log/clean','',0),
 	 (1665,'导出',500,4,'',NULL,NULL,1,0,'F','0','0','system:operatorlog:export','#','admin','2023-07-30 23:40:54','','2023-07-30 23:40:54','post','/api-system/system_operator_log/export','',0),
 	 (1666,'详情',500,6,'',NULL,NULL,1,0,'F','0','0','system:operatorlog:detail','#','admin','2023-07-30 23:42:01','','2023-07-30 23:42:01','post','/api-system/system_operator_log/page_list','',0),
-	 (1667,'列表查询',501,1,'',NULL,NULL,1,0,'F','0','0','system:loginlog:list','#','admin','2023-07-30 23:43:25','admin123','2023-07-31 12:07:16','post','/api-auth/oauth_token_record/page_list','',0),
-	 (1668,'删除',501,2,'',NULL,NULL,1,0,'F','0','0','system:loginlog:delete','#','admin','2023-07-30 23:44:19','admin123','2023-07-31 11:53:38','delete','/api-auth/oauth_token_record/delete/{id}','',0),
-	 (1669,'清空',501,3,'',NULL,NULL,1,0,'F','0','0','system:loginlog:clean','#','admin','2023-07-30 23:45:00','admin123','2023-07-31 11:53:44','delete','/api-auth/oauth_token_record/delete_all','',0);
+	 (1667,'列表查询',501,1,'',NULL,NULL,1,0,'F','0','0','system:loginlog:list','#','admin','2023-07-30 23:43:25','admin123','2023-11-30 10:49:31','post','/api-sas/oauth_token_record/page_list','',0),
+	 (1668,'删除',501,2,'',NULL,NULL,1,0,'F','0','0','system:loginlog:delete','#','admin','2023-07-30 23:44:19','admin123','2023-11-30 10:08:13','delete','/api-sas/oauth_token_record/delete/{id}','',0),
+	 (1669,'清空',501,3,'',NULL,NULL,1,0,'F','0','0','system:loginlog:clean','#','admin','2023-07-30 23:45:00','admin123','2023-11-30 10:08:18','delete','/api-sas/oauth_token_record/delete_all','',0);
 INSERT INTO zerosx_system.t_sys_menu (menu_id,menu_name,parent_id,order_num,`path`,component,query_param,is_frame,is_cache,menu_type,visible,status,perms,icon,create_by,create_time,update_by,update_time,request_method,request_url,remark,deleted) VALUES
-	 (1670,'导出',501,5,'',NULL,NULL,1,0,'F','0','0','system:loginin:export','#','admin','2023-07-30 23:45:40','admin123','2023-07-31 11:53:56','post','/api-auth/oauth_token_record/export','',0),
-	 (1671,'列表查询',106,1,'',NULL,NULL,1,0,'F','0','0','system:param:list','#','admin','2023-07-30 23:46:36','','2023-07-30 23:46:36','post','/api-system/sys_param/page_list','',0),
-	 (1672,'新增',106,2,'',NULL,NULL,1,0,'F','0','0','system:param:add','#','admin','2023-07-30 23:47:13','','2023-07-30 23:47:13','post','/api-system/sys_param/save','',0),
-	 (1673,'编辑',106,3,'',NULL,NULL,1,0,'F','0','0','system:param:update','#','admin','2023-07-30 23:47:48','','2023-07-30 23:47:48','post','/api-system/sys_param/update','',0),
-	 (1674,'删除',106,4,'',NULL,NULL,1,0,'F','0','0','system:param:delete','#','admin','2023-07-30 23:48:38','','2023-07-30 23:48:38','delete','/api-system/sys_param/delete/{ids}','',0),
-	 (1675,'导出',106,6,'',NULL,NULL,1,0,'F','0','0','system:param:export','#','admin','2023-07-30 23:49:15','','2023-07-30 23:49:15','post','/api-system/sys_param/export','',0),
+	 (1670,'导出',501,5,'',NULL,NULL,1,0,'F','0','0','system:loginin:export','#','admin','2023-07-30 23:45:40','admin123','2023-11-30 10:08:23','post','/api-sas/oauth_token_record/export','',0),
+	 (1671,'列表查询',106,1,'',NULL,NULL,1,0,'F','0','0','system:param:list','#','admin','2023-07-30 23:46:36','admin123','2023-11-30 10:22:19','post','/api-resource/sys_param/page_list','',0),
+	 (1672,'新增',106,2,'',NULL,NULL,1,0,'F','0','0','system:param:add','#','admin','2023-07-30 23:47:13','admin123','2023-11-30 10:22:24','post','/api-resource/sys_param/save','',0),
+	 (1673,'编辑',106,3,'',NULL,NULL,1,0,'F','0','0','system:param:update','#','admin','2023-07-30 23:47:48','admin123','2023-11-30 10:22:29','post','/api-resource/sys_param/update','',0),
+	 (1674,'删除',106,4,'',NULL,NULL,1,0,'F','0','0','system:param:delete','#','admin','2023-07-30 23:48:38','admin123','2023-11-30 10:22:35','delete','/api-resource/sys_param/delete/{ids}','',0),
+	 (1675,'导出',106,6,'',NULL,NULL,1,0,'F','0','0','system:param:export','#','admin','2023-07-30 23:49:15','admin123','2023-11-30 10:22:39','post','/api-resource/sys_param/export','',0),
 	 (1676,'个人中心-更新',1621,7,'',NULL,NULL,1,0,'F','0','0','perms:sysUser:updateProfile','#','admin123','2023-08-02 00:03:53','admin123','2023-08-02 00:04:52','put','/api-system/sys_user/update_profile','',0),
 	 (1677,'个人中心-更换头像',1621,8,'',NULL,NULL,1,0,'F','0','0','perms:sysUser:updateavatar','#','admin123','2023-08-02 00:04:40','','2023-08-02 00:04:40','post','/api-system/sys_user/profile/avatar','',0),
 	 (1678,'个人中心-查看',1621,9,'',NULL,NULL,1,0,'F','0','0','perms:sysUser:query','#','admin123','2023-08-03 00:07:32','','2023-08-03 00:07:32','get','/api-system/sys_user/profile','',0),
@@ -351,17 +351,17 @@ INSERT INTO zerosx_system.t_sys_menu (menu_id,menu_name,parent_id,order_num,`pat
 	 (1706,'分页列表',1693,0,'',NULL,NULL,1,0,'F','0','0','resource:ossFileUpload:list','#','admin123','2023-09-11 23:38:10','admin123','2023-09-28 00:36:18','post','/api-resource/oss_file/list_pages','',0),
 	 (1707,'分页列表',1684,0,'',NULL,NULL,1,0,'F','0','0','resource:smsSupplier:index','#','admin123','2023-09-11 23:38:57','admin123','2023-09-28 00:36:40','post','/api-resource/sms_supplier/page_list','',0),
 	 (1708,'分页列表',1700,0,'',NULL,NULL,1,0,'F','0','0','system:sms_supplier_business:page_list','#','admin123','2023-09-11 23:39:34','admin123','2023-09-28 00:37:17','post','/api-resource/sms_supplier_business/page_list','',0),
-	 (1709,'分页列表',1683,0,'',NULL,NULL,1,0,'F','0','0','system:oauthOnline:index','#','admin123','2023-09-11 23:42:24','admin123','2023-09-11 23:42:35','post','/api-auth/token/page_list','',0);
+	 (1709,'分页列表',1683,0,'',NULL,NULL,1,0,'F','0','0','system:oauthOnline:index','#','admin123','2023-09-11 23:42:24','admin123','2023-11-30 10:09:40','post','/api-sas/token2/page_list','',0);
 INSERT INTO zerosx_system.t_sys_menu (menu_id,menu_name,parent_id,order_num,`path`,component,query_param,is_frame,is_cache,menu_type,visible,status,perms,icon,create_by,create_time,update_by,update_time,request_method,request_url,remark,deleted) VALUES
-	 (1710,'强退',1683,1,'',NULL,NULL,1,0,'F','0','0','auth:oauthClientDetails:delete','#','admin123','2023-09-11 23:43:46','admin123','2023-09-11 23:43:46','post','/api-auth/token/logout','',0),
-	 (1711,'强退所有',1683,2,'',NULL,NULL,1,0,'F','0','0','auth:oauthClientDetails:deleteAll','#','admin123','2023-09-11 23:45:02','admin123','2023-09-11 23:45:02','post','/api-auth/token/logout','',0),
-	 (1712,'清空过期TOKEN',1683,4,'',NULL,NULL,1,0,'F','0','0','auth:oauthClientDetails:deleteExpire','#','admin123','2023-09-11 23:46:15','admin123','2023-09-11 23:46:41','post','/api-auth/token/clean_token_data','',0),
-	 (1713,'导出',1683,6,'',NULL,NULL,1,0,'F','0','0','auth:oauthClientDetails:export','#','admin123','2023-09-11 23:47:20','admin123','2023-09-11 23:47:20','post','/api-auth/token/export','',0),
-	 (1714,'分页查询',1681,0,'',NULL,NULL,1,0,'F','0','0','system:oauthClientDetails:index','#','admin123','2023-09-11 23:48:11','admin123','2023-09-11 23:48:11','post','/api-auth/oauth_client_details/list_page','',0),
+	 (1710,'强退',1683,1,'',NULL,NULL,1,0,'F','0','0','auth:oauthClientDetails:delete','#','admin123','2023-09-11 23:43:46','admin123','2023-11-30 10:09:59','post','/api-sas/token2/logout','',0),
+	 (1711,'强退所有',1683,2,'',NULL,NULL,1,0,'F','0','0','auth:oauthClientDetails:deleteAll','#','admin123','2023-09-11 23:45:02','admin123','2023-11-30 10:10:40','post','/api-sas/token2/logout','',0),
+	 (1712,'清空过期TOKEN',1683,4,'',NULL,NULL,1,0,'F','0','0','auth:oauthClientDetails:deleteExpire','#','admin123','2023-09-11 23:46:15','admin123','2023-11-30 10:10:45','post','/api-sas/token2/clean_token_data','',0),
+	 (1713,'导出',1683,6,'',NULL,NULL,1,0,'F','0','0','auth:oauthClientDetails:export','#','admin123','2023-09-11 23:47:20','admin123','2023-11-30 10:10:51','post','/api-sas/token2/export','',0),
+	 (1714,'分页查询',1681,0,'',NULL,NULL,1,0,'F','0','0','system:oauthClientDetails:index','#','admin123','2023-09-11 23:48:11','admin123','2023-11-30 10:07:30','post','/api-sas/oauth_client_details/list_page','',0),
 	 (1715,'新增',1681,1,'',NULL,NULL,1,0,'F','0','0','auth:oauthClientDetails:add','#','admin123','2023-09-11 23:48:51','admin123','2023-09-11 23:48:51','post','/api-auth/oauth_client_details/save','',0),
-	 (1716,'编辑',1681,2,'',NULL,NULL,1,0,'F','0','0','auth:oauthClientDetails:update','#','admin123','2023-09-11 23:49:21','admin123','2023-09-11 23:49:21','post','/api-auth/oauth_client_details/edit','',0),
-	 (1717,'删除',1681,4,'',NULL,NULL,1,0,'F','0','0','auth:oauthClientDetails:delete','#','admin123','2023-09-11 23:49:51','admin123','2023-09-11 23:49:51','delete','/api-auth/oauth_client_details/delete/{ids}','',0),
-	 (1718,'导出',1681,5,'',NULL,NULL,1,0,'F','0','0','auth:oauthClientDetails:export','#','admin123','2023-09-11 23:50:19','admin123','2023-09-11 23:50:19','post','/api-auth/oauth_client_details/export','',0);
+	 (1716,'编辑',1681,2,'',NULL,NULL,1,0,'F','0','0','auth:oauthClientDetails:update','#','admin123','2023-09-11 23:49:21','admin123','2023-11-30 10:07:36','post','/api-sas/oauth_client_details/edit','',0),
+	 (1717,'删除',1681,4,'',NULL,NULL,1,0,'F','0','0','auth:oauthClientDetails:delete','#','admin123','2023-09-11 23:49:51','admin123','2023-11-30 10:07:42','delete','/api-sas/oauth_client_details/delete/{ids}','',0),
+	 (1718,'导出',1681,5,'',NULL,NULL,1,0,'F','0','0','auth:oauthClientDetails:export','#','admin123','2023-09-11 23:50:19','admin123','2023-11-30 10:07:51','post','/api-sas/oauth_client_details/export','',0);
 
 
 /*初始用户（超级管理员）用户名：admin123 密码：Admin123 */

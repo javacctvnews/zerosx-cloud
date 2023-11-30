@@ -32,7 +32,7 @@ public class DefaultExceptionAdvice {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({IllegalArgumentException.class})
-    public ResultVO badRequestException(IllegalArgumentException e) {
+    public ResultVO<?> badRequestException(IllegalArgumentException e) {
         return defHandler("参数解析异常", e);
     }
 
@@ -42,7 +42,7 @@ public class DefaultExceptionAdvice {
      */
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler({AccessDeniedException.class})
-    public ResultVO badMethodExpressException(AccessDeniedException e) {
+    public ResultVO<?> badMethodExpressException(AccessDeniedException e) {
         return defHandler("权限不足", e);
     }
 
@@ -51,7 +51,7 @@ public class DefaultExceptionAdvice {
      */
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
-    public ResultVO handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+    public ResultVO<?> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         return defHandler("不允许的方法", e);
     }
 
@@ -60,7 +60,7 @@ public class DefaultExceptionAdvice {
      */
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     @ExceptionHandler({HttpMediaTypeNotSupportedException.class})
-    public ResultVO handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException e) {
+    public ResultVO<?> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException e) {
         return defHandler("不支持的媒体类型", e);
     }
 
@@ -70,7 +70,7 @@ public class DefaultExceptionAdvice {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler({SQLException.class})
-    public ResultVO handleSQLException(SQLException e) {
+    public ResultVO<?> handleSQLException(SQLException e) {
         return defHandler("SQLException异常", e);
     }
 
@@ -80,7 +80,7 @@ public class DefaultExceptionAdvice {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler({BusinessException.class})
-    public ResultVO zerosxBusinessException(BusinessException e) {
+    public ResultVO<?> businessException(BusinessException e) {
         log.error(e.getMessage(), e);
         return ResultVOUtil.error(e.getCode(), e.getMessage());
     }
@@ -106,7 +106,7 @@ public class DefaultExceptionAdvice {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public ResultVO handleException(Exception e) {
+    public ResultVO<?> handleException(Exception e) {
         return defHandler("异常描述:"+e.getMessage(), e);
     }
 
