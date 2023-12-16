@@ -109,6 +109,22 @@
                   </el-timeline>
                 </div> -->
                 <el-collapse title="版本更新日志" v-model="activeLogs">
+                  <el-collapse-item title="V1.0.0" name="3">
+                    <ul>
+                      <li style="color: red;">
+                        Zerosx Cloud多租户开发平台的初个基于JDK8的RC版本，后续基于JDK8的版本号规则是1.x.x，对应代码分支是1.x.x。此次更新的特性如下：
+                      </li>
+                      <li>1.添加版本管理插件</li>
+                      <li>2.Springboot版本更新为2.7.18</li>
+                      <li>3.将验证码、短信发送功能移入zerosx-resource服务</li>
+                      <li>4.修复管理平台[系统管理-客户端管理-认证客户端]的历史遗留BUG（多选框无法正常选中和回显的问题）</li>
+                      <li>5.集成美团Leaf分布式ID生成方案</li>
+                      <li>6.补全逻辑：用户和运营商非正常状态下无法操作任何数据</li>
+                      <li>7.重新整理MD说明文档和组件部署文档</li>
+                      <li>8.其他功能优化：1）字段翻译功能；2）Redis的key定义规范化和简单化；3）前端删除提示语优化等等</li>
+                
+                    </ul>
+                  </el-collapse-item>
                   <el-collapse-item title="V0.0.2" name="2">
                     <ul>
                       <li>1.分离zerosx-resource资源微服务</li>
@@ -146,7 +162,7 @@ export default {
     return {
       activeNames: ['1', '2', '3', '4'],
       logActiveNames: ['32'],
-      activeLogs: ['2'],
+      activeLogs: ['3'],
       lyrics: [
         '天青色等烟雨，而我在等你，炊烟袅袅升起，隔江千万里',
         '翻着我们的照片，想念若隐若现，去年的冬天，我们笑得很甜',

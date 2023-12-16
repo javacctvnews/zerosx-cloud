@@ -181,6 +181,21 @@ CREATE TABLE `t_oss_file_upload` (
   UNIQUE KEY `key_UN` (`object_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='文件上传记录';
 
+DROP TABLE IF EXISTS `leaf_alloc`;
+CREATE TABLE `leaf_alloc` (
+  `biz_tag` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '业务标识',
+  `max_id` bigint NOT NULL DEFAULT '1' COMMENT '号段最大ID',
+  `step` int NOT NULL COMMENT '每次分配号段的步长',
+  `description` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '业务描述',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最新更新时间',
+  PRIMARY KEY (`biz_tag`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='美团分布式ID';
+
+INSERT INTO zerosx_resource.leaf_alloc (biz_tag, max_id, step, description, update_time) VALUES('default_biz', 1, 5000, '通用标识', '2023-12-15 14:37:04');
+INSERT INTO zerosx_resource.leaf_alloc (biz_tag, max_id, step, description, update_time) VALUES('leaf', 1, 5000, 'Test leaf Segment Mode Get Id', '2023-12-15 14:19:48');
+INSERT INTO zerosx_resource.leaf_alloc (biz_tag, max_id, step, description, update_time) VALUES('op_log', 1, 5000, '操作日志', '2023-12-16 17:25:38');
+INSERT INTO zerosx_resource.leaf_alloc (biz_tag, max_id, step, description, update_time) VALUES('user_code', 1, 5000, '系统管理用户编码ID', '2023-12-15 17:14:56');
+
 /*系统参数*/
 INSERT INTO zerosx_resource.t_sys_param (param_name,param_key,param_value,param_scope,status,remark,create_time,create_by,update_time,update_by,operator_id,deleted) VALUES
 ('最大日期查询范围','query_date_scope','180','0','0','限制最大的日期查询范围，默认无限制','2023-08-02 12:05:53','admin123','2023-08-19 17:30:04','admin123',NULL,0),
