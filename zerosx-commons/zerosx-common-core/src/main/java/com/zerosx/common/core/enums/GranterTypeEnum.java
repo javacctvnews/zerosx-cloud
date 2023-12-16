@@ -1,8 +1,12 @@
 package com.zerosx.common.core.enums;
 
-import com.zerosx.common.anno.AutoDictData;
 import com.zerosx.common.base.BaseEnum;
+import com.zerosx.common.core.anno.AutoDictData;
 import lombok.Getter;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 授权类型
@@ -11,13 +15,15 @@ import lombok.Getter;
 @AutoDictData(name = "授权类型")
 public enum GranterTypeEnum implements BaseEnum<String> {
 
-    AUTHORIZATION_CODE("authorization_code", "授权码"),
+    /**
+     * 默认的几种授权模式：authorization_code、implicit、client_credentials、password、REFRESH_TOKEN
+     */
 
-    /*IMPLICIT("implicit", "隐式授权模式"),*/
+    AUTHORIZATION_CODE("authorization_code", "授权码模式"),
 
-    CLIENT_CREDENTIALS("client_credentials", "客户端"),
-    JWT_BEARER("urn:ietf:params:oauth:grant-type:jwt-bearer", "JwtBearer"),
-    DEVICE_CODE("urn:ietf:params:oauth:grant-type:device_code", "设备码"),
+    IMPLICIT("implicit", "隐式授权模式"),
+
+    CLIENT_CREDENTIALS("client_credentials", "客户端模式"),
 
     /**
      * 进行了多账户类型的扩展
@@ -33,7 +39,7 @@ public enum GranterTypeEnum implements BaseEnum<String> {
     /**
      * 用户名密码+验证码模式
      */
-    captcha("captcha_pwd", "密码验证码"),
+    CAPTCHA("captcha_pwd", "密码验证码"),
     /**
      * 手机号码验证码模式
      */
@@ -48,6 +54,11 @@ public enum GranterTypeEnum implements BaseEnum<String> {
         this.message = message;
     }
 
+    @Override
+    public String getCss() {
+        return CssTypeEnum.DEFAULT.getCss();
+    }
+
     public static String getMessageByCode(String obj) {
         GranterTypeEnum[] values = GranterTypeEnum.values();
         for (GranterTypeEnum value : values) {
@@ -58,4 +69,13 @@ public enum GranterTypeEnum implements BaseEnum<String> {
         return "";
     }
 
+    public static void main(String[] args) {
+        GranterTypeEnum[] values = GranterTypeEnum.values();
+        List<GranterTypeEnum> collect = Arrays.stream(values).collect(Collectors.toList());
+        String s = "";
+        for (GranterTypeEnum granterTypeEnum : collect) {
+            s = s + granterTypeEnum.getCode() + ",";
+        }
+        System.out.println("s = " + s);
+    }
 }

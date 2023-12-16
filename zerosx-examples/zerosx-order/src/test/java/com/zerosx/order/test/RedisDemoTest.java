@@ -10,7 +10,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.redisson.client.protocol.ScoredEntry;
-import org.redisson.codec.SerializationCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -29,20 +28,6 @@ public class RedisDemoTest {
 
     @Autowired
     private RedissonOpService redissonOpService;
-    @Autowired
-    private SerializationCodec serializationCodec;
-
-
-    @Test
-    public void testSortedSet(){
-        redissonOpService.zAdd("key01", 100, 12.0, 300, serializationCodec);
-        redissonOpService.zAdd("key01", 200, 13.0, 300, serializationCodec);
-        redissonOpService.zAdd("key01", 300, 14.0, 300, serializationCodec);
-
-        boolean b = redissonOpService.zRem("key01", 100, serializationCodec);
-        System.out.println("b = " + b);
-
-    }
 
     @Test
     public void testString() {

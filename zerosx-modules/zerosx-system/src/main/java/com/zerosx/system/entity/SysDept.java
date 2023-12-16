@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zerosx.common.base.anno.Trans;
-import com.zerosx.common.base.constants.CommonConstants;
+import com.zerosx.common.base.constants.TranslConstants;
 import com.zerosx.common.core.model.SuperEntity;
 import com.zerosx.encrypt2.anno.EncryptClass;
 import com.zerosx.encrypt2.anno.EncryptField;
@@ -79,7 +79,7 @@ public class SysDept extends SuperEntity<SysDept> {
     /**
      * 租户标识
      */
-    @Trans(type = CommonConstants.TRANS_OPERATOR_ID, ref = "operatorName")
+    @Trans(type = TranslConstants.OPERATOR, ref = "operatorName")
     private String operatorId;
 
     @TableField(exist = false)

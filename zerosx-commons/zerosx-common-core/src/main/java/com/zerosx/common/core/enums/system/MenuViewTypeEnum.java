@@ -1,6 +1,7 @@
 package com.zerosx.common.core.enums.system;
 
 import com.zerosx.common.base.BaseEnum;
+import com.zerosx.common.core.enums.CssTypeEnum;
 import lombok.Getter;
 
 @Getter
@@ -16,5 +17,11 @@ public enum MenuViewTypeEnum implements BaseEnum<String> {
     MenuViewTypeEnum(String code, String message) {
         this.code = code;
         this.message = message;
+    }
+
+
+    @Override
+    public String getCss() {
+        return CssTypeEnum.DEFAULT.getCss();
     }
 }

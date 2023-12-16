@@ -7,22 +7,21 @@
     <!--<parent>
         <groupId>com.zerosx.cloud</groupId>
         <artifactId>zerosx-commons</artifactId>
-        <version>0.0.4</version>
+        <version>${revision}</version>
     </parent>-->
 
     <groupId>com.zerosx.cloud</groupId>
     <artifactId>zerosx-common-bom</artifactId>
-    <version>0.0.4</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
     <description>公共组件的依赖</description>
 
+    <properties>
+        <revision>1.0.0</revision>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>com.zerosx.cloud</groupId>
-                <artifactId>zerosx-common-sas</artifactId>
-                <version>${project.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.zerosx.cloud</groupId>
                 <artifactId>zerosx-common-base</artifactId>
@@ -55,14 +54,9 @@
             </dependency>
             <dependency>
                 <groupId>com.zerosx.cloud</groupId>
-                <artifactId>zerosx-common-dynamic-datasource</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <!--<dependency>
-                <groupId>com.zerosx.cloud</groupId>
                 <artifactId>zerosx-common-security</artifactId>
                 <version>${project.version}</version>
-            </dependency>-->
+            </dependency>
             <dependency>
                 <groupId>com.zerosx.cloud</groupId>
                 <artifactId>zerosx-common-oss</artifactId>
@@ -104,10 +98,6 @@
     <dependencies>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
-            <artifactId>zerosx-common-sas</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-base</artifactId>
         </dependency>
         <dependency>
@@ -128,16 +118,12 @@
         </dependency>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
-            <artifactId>zerosx-common-dynamic-datasource</artifactId>
+            <artifactId>zerosx-common-redis</artifactId>
         </dependency>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
-            <artifactId>zerosx-common-redis</artifactId>
-        </dependency>
-        <!--<dependency>
-            <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-security</artifactId>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-oss</artifactId>

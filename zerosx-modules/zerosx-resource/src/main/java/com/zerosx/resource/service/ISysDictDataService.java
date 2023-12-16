@@ -10,8 +10,7 @@ import com.zerosx.resource.dto.SysDictDataUpdateDTO;
 import com.zerosx.resource.entity.SysDictData;
 import com.zerosx.resource.vo.SysDictDataVO;
 
-import jakarta.servlet.http.HttpServletResponse;
-
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +18,9 @@ import java.util.Map;
  * <p>
  * 字典数据表 服务类
  * </p>
+ *
+ * @author junmy
+ * @since 2020-11-18
  */
 public interface ISysDictDataService extends IService<SysDictData> {
 

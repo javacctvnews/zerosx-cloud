@@ -1,6 +1,6 @@
 package com.zerosx.auth.service.auth;
 
-import com.zerosx.common.core.enums.RedisKeyNameEnum;
+import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class CustomJdbcClientDetailsService extends JdbcClientDetailsService {
     @Override
     public ClientDetails loadClientByClientId(String clientId) throws InvalidClientException {
         //return super.loadClientByClientId(clientId);
-        String cacheKey = RedisKeyNameEnum.key(RedisKeyNameEnum.OAUTH_CLIENT_DETAILS, clientId);
+        String cacheKey = ZCache.OAUTH_CLIENT_DETAILS.key(clientId);
         ClientDetails object = redissonOpService.get(cacheKey);
         if (object != null) {
             return object;

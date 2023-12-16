@@ -40,7 +40,7 @@ public class OAuth2RequestController {
 
     @Operation(summary = "退出登录")
     @OpLog(mod = "TOKEN管理", btn = "退出登录", opType = OpTypeEnum.QUERY)
-    @PostMapping("/token/logout")
+    @PostMapping("/oauth/token/logout")
     public ResultVO<?> logout(@RequestBody TokenQueryVO tokenQueryVO) {
         return ResultVOUtil.success(oauthClientDetailsService.logout(tokenQueryVO));
     }

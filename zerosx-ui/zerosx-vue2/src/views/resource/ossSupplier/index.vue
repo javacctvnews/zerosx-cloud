@@ -133,7 +133,7 @@
     </el-dialog>
 
     <!-- 存储桶---弹窗 -->
-    <el-dialog center :lock-scroll="true" :title="title" :visible.sync="openBucket" width="80vw" class="el-dialog-custom"
+    <el-dialog center :lock-scroll="true" :title="titleBucket" :visible.sync="openBucket" width="80vw" class="el-dialog-custom"
       append-to-body :close-on-click-modal="false">
       <ossFiles v-if="openBucket" :bucketData="bucketData"></ossFiles>
     </el-dialog>
@@ -144,7 +144,7 @@
 import { pageList, addOssSupplier, queryById, updateOssSupplier, deleteOssSupplier } from '@/api/resource/ossSupplier.js';
 import serviceConfig from '@/api/serviceConfig'
 import { operators } from '@/api/common.js'
-import ossFiles from './ossFiles.vue'
+import ossFiles from '@/views/resource/ossSupplier/ossFiles.vue'
 
 export default {
   name: 'OssSupplier',
@@ -302,15 +302,15 @@ export default {
             align: "center",
           },
         },
-        {
-          slot: 'accessKeySecret',
-          attrs: {
-            label: "AccessSecret",
-            prop: "accessKeySecret",
-            minWidth: "240",
-            align: "center",
-          },
-        },
+        // {
+        //   slot: 'accessKeySecret',
+        //   attrs: {
+        //     label: "AccessSecret",
+        //     prop: "accessKeySecret",
+        //     minWidth: "240",
+        //     align: "center",
+        //   },
+        // },
         {
           attrs: {
             label: "所属地域",
@@ -402,7 +402,8 @@ export default {
     },
     queryFiles(row) {
       this.openBucket = true;
-      console.log(row);
+      this.titleBucket = '存储桶【'+row.bucketName+'】的文件列表';
+      //console.log(row);
       this.bucketData = row;
     },
 
@@ -469,7 +470,7 @@ export default {
     },
     handleDelete(row) {
       const idList = row.id || this.ids;
-      this.$modal.confirm('是否确认删除编号为[' + idList + ']的数据项？').then(function () {
+      this.$modal.confirm('是否确认删除已选择的数据项？').then(function () {
         return deleteOssSupplier(idList);
       }).then(() => {
         this.getList();

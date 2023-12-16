@@ -16,19 +16,9 @@ public interface CommonConstants {
 
     String BEARER_TYPE = "Bearer";
 
+    String BASIC_TYPE = "Basic";
+
     String AT = "@";
-
-    int ROCKET_REPEAT = 100;
-
-    /**
-     * 授权的账户类型
-     */
-    String AUTH_ACCOUNT_TYPE = "auth_account_type";
-
-    /**
-     * 租户ID
-     */
-    String OPERATOR_ID = "operator_id";
 
     /**
      * User-Agent
@@ -51,15 +41,6 @@ public interface CommonConstants {
     String HTTPS = "https://";
 
     /**
-     * com.zerosx.common.api.anno.Trans.type()
-     */
-    String TRANS_ENUMS = "enums";
-    String TRANS_DICT = "dict";
-    String TRANS_OSS = "oss";
-    String TRANS_REGION = "region";
-    String TRANS_OPERATOR_ID = "operatorId";
-
-    /**
      * 授权记录requestId
      */
     String OAUTH_REQUEST_ID = "oauth_request_id";
@@ -73,4 +54,5 @@ public interface CommonConstants {
      * 包路径
      */
     String BASE_PACKAGE = "com.zerosx";
+
 }

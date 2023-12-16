@@ -13,7 +13,7 @@ export function listData(query) {
 // 查询字典数据详细
 export function getData(dictCode) {
   return request({
-    url: serviceConfig.resource + '/sysDictData/queryById/' + dictCode,
+    url: serviceConfig.resource + '/getDictById/' + dictCode,
     method: 'get'
   })
 }

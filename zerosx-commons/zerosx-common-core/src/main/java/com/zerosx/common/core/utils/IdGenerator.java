@@ -31,7 +31,7 @@ public class IdGenerator {
      * @return: java.lang.String
      */
     public static String getRandomStr(int length) {
-        if(length <= 0){
+        if (length <= 0) {
             return "";
         }
         length = Math.abs(length);
@@ -53,4 +53,18 @@ public class IdGenerator {
         return value;
     }
 
+    /**
+     * 唯一ID
+     *
+     * @param minLen 最小长度
+     * @return 唯一ID
+     */
+    public static String getIdLen(Integer minLen) {
+        String uuid = getIdStr();
+        int length = uuid.length();
+        if (length >= minLen) {
+            return uuid;
+        }
+        return uuid + IdGenerator.getRandomStr(minLen - length);
+    }
 }

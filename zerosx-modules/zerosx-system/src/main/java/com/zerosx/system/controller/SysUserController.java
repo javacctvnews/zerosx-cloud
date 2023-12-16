@@ -11,9 +11,10 @@ import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.LoginUserTenantsBO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.ResultVO;
+import com.zerosx.common.core.enums.BizTagEnum;
 import com.zerosx.common.core.enums.system.UserTypeEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
-import com.zerosx.common.core.utils.IdGenerator;
+import com.zerosx.common.core.utils.LeafUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.log.anno.OpLog;
 import com.zerosx.common.log.enums.OpTypeEnum;
@@ -26,6 +27,7 @@ import com.zerosx.system.vo.SysUserVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,8 +36,10 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -147,22 +151,33 @@ public class SysUserController implements ISysUserClient {
     }
 
     @Operation(summary = "新增测试用户")
-    @GetMapping("/sys_user/add_test_users/{num}")
-    public ResultVO<?> test001(@PathVariable("num") Integer num) {
+    @GetMapping("/sys_user/add_test_users/{num}/{prefix}")
+    public ResultVO<?> test001(@PathVariable("num") Integer num, @PathVariable("prefix") String prefix) throws Exception {
+        List<SysUser> srs = new ArrayList<>();
+        String admin123 = passwordEncoder.encode("Admin123");
         for (Integer i = 1; i <= num; i++) {
+            //long t1 = System.currentTimeMillis();
             SysUser sysUser = new SysUser();
-            sysUser.setUserCode(IdGenerator.getIdStr());
-            sysUser.setPassword(passwordEncoder.encode("Admin123"));
-            sysUser.setUserName("zeros" + i);
+            sysUser.setId(LeafUtils.uid(BizTagEnum.USER_CODE));
+            sysUser.setUserCode(sysUser.getId().toString());
+            sysUser.setPassword(admin123);
+            sysUser.setUserName(prefix + i);
             sysUser.setNickName("测试账号" + i);
-            sysUser.setEmail("1232424" + String.format("%08d", i) + "@qq.com");
-            sysUser.setPhoneNumber("136" + String.format("%08d", i));
+            sysUser.setEmail("12324" + String.format("%08d", i) + "@qq.com");
+            sysUser.setPhoneNumber("188" + String.format("%08d", i));
             sysUser.setUserType(UserTypeEnum.TENANT_OPERATOR.getCode());
-            sysUser.setDeptId(115L);
+            //sysUser.setDeptId(1L);
             sysUser.setSex("2");
             sysUser.setOperatorId("000000");
-            sysUser.setRemark("测试账号");
-            sysUserService.save(sysUser);
+            sysUser.setRemark("测试账号" + i);
+            //sysUserService.save(sysUser);
+            //log.debug("创建测试用户 耗时{}ms", System.currentTimeMillis() - t1);
+            srs.add(sysUser);
+        }
+        List<List<SysUser>> partitions = ListUtils.partition(srs, 1000);
+        for (List<SysUser> users : partitions) {
+            sysUserService.saveBatch(users);
+            Thread.sleep(1000);
         }
         return ResultVOUtil.success();
     }

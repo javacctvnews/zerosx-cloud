@@ -30,15 +30,6 @@ export function updateOauthClientDetails(data) {
   })
 }
 
-// 修改应用密码
-export function updatePwd(data) {
-  return request({
-    url: serviceConfig.auth + '/oauth_client_details/edit_pwd',
-    data: data,
-    method: 'post'
-  })
-}
-
 export function deleteOauthClientDetails(id) {
   return request({
     url: serviceConfig.auth + '/oauth_client_details/delete/' + id,

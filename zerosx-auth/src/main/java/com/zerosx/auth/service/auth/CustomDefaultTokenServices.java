@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.Set;
-import java.util.UUID;
 
 public class CustomDefaultTokenServices extends DefaultTokenServices {
 
@@ -148,7 +147,7 @@ public class CustomDefaultTokenServices extends DefaultTokenServices {
     }
 
     private static String getTokenValue() {
-        return UUID.randomUUID().toString().replace("-", "") + IdGenerator.getIdStr();
+        return IdGenerator.getIdStr();
     }
 
     private OAuth2RefreshToken createRefreshToken(OAuth2Authentication authentication) {

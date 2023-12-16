@@ -95,6 +95,7 @@ public class OauthTokenRecordServiceImpl extends SuperServiceImpl<IOauthTokenRec
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean saveBeforeOauthRecord(String clientId, Map<String, String> parameters) {
         String grantType = parameters.get(OAuth2Utils.GRANT_TYPE);
         String username = parameters.get("username");
@@ -131,6 +132,7 @@ public class OauthTokenRecordServiceImpl extends SuperServiceImpl<IOauthTokenRec
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateOauthResult(String tokenValue, String resultMsg) {
         String oauthRequestId = ZerosSecurityContextHolder.get(CommonConstants.OAUTH_REQUEST_ID);
         LambdaUpdateWrapper<OauthTokenRecord> uw = Wrappers.lambdaUpdate(OauthTokenRecord.class);
@@ -146,6 +148,7 @@ public class OauthTokenRecordServiceImpl extends SuperServiceImpl<IOauthTokenRec
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteAll() {
         LambdaQueryWrapper<OauthTokenRecord> deleteqw = Wrappers.lambdaQuery(OauthTokenRecord.class);
         deleteqw.le(OauthTokenRecord::getCreateTime, LocalDateTime.now());

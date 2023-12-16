@@ -1,23 +1,23 @@
 package com.zerosx.system.service.impl;
 
-import com.baomidou.dynamic.datasource.annotation.DS;
-import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zerosx.api.system.dto.UserLoginDTO;
 import com.zerosx.api.system.vo.LoginUserVO;
+import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.LoginUserTenantsBO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.SysRoleBO;
-import com.zerosx.ds.constant.DSType;
-import com.zerosx.common.core.enums.RedisKeyNameEnum;
+import com.zerosx.common.core.enums.BizTagEnum;
+import com.zerosx.common.core.enums.StatusEnum;
 import com.zerosx.common.core.enums.system.UserTypeEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
 import com.zerosx.common.core.utils.EasyTransUtils;
-import com.zerosx.common.core.utils.IdGenerator;
+import com.zerosx.common.core.utils.LeafUtils;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.redis.templete.RedissonOpService;
@@ -25,23 +25,26 @@ import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.common.utils.JacksonUtil;
 import com.zerosx.system.dto.SysUserDTO;
 import com.zerosx.system.dto.SysUserPageDTO;
-import com.zerosx.system.entity.*;
+import com.zerosx.system.entity.SysPost;
+import com.zerosx.system.entity.SysUser;
+import com.zerosx.system.entity.SysUserPost;
+import com.zerosx.system.entity.SysUserRole;
 import com.zerosx.system.mapper.ISysUserMapper;
 import com.zerosx.system.service.*;
 import com.zerosx.system.task.SystemAsyncTask;
 import com.zerosx.system.vo.SysRoleVO;
 import com.zerosx.system.vo.SysUserPageVO;
 import com.zerosx.system.vo.SysUserVO;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -54,8 +57,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser> implements ISysUserService {
-
-    private static final Map<Long, String> deptMap = new ConcurrentHashMap<>();
 
     @Autowired
     private ISysUserMapper sysUserMapper;
@@ -75,62 +76,18 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     private SystemAsyncTask systemAsyncTask;
     @Autowired
     private ISysPostService sysPostService;
-    @Autowired
-    private ISysDeptService sysDeptService;
 
     @Override
-    @DS(DSType.SLAVE)
     public CustomPageVO<SysUserPageVO> pageList(RequestVO<SysUserPageDTO> requestVO, boolean searchCount) {
-        return PageUtils.of(sysUserMapper.selectPage(PageUtils.of(requestVO, searchCount), getWrapper(requestVO.getT())).convert((e) -> {
-            SysUserPageVO tarVO = EasyTransUtils.copyTrans(e, SysUserPageVO.class);
-            EasyTransUtils.easyTrans(tarVO);
-            if (e.getDeptId() != null) {
-                String deptName = deptMap.get(e.getDeptId());
-                if (StringUtils.isBlank(deptName)) {
-                    SysDept sysDept = sysDeptService.getById(e.getDeptId());
-                    if (sysDept != null) {
-                        deptMap.put(e.getDeptId(), sysDept.getDeptName());
-                        deptName = sysDept.getDeptName();
-                    }
-                }
-                tarVO.setDeptName(deptName);
-            }
-            return tarVO;
-        }));
+        long t1 = System.currentTimeMillis();
+        Page<SysUser> sysUserPage = sysUserMapper.selectPage(PageUtils.of(requestVO, searchCount), getWrapper(requestVO.getT()));
+        log.debug("DB分页查询耗时:{}ms", System.currentTimeMillis() - t1);
+        return PageUtils.of(sysUserPage, SysUserPageVO.class);
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public List<SysUser> dataList(SysUserPageDTO query) {
         return list(getWrapper(query));
-    }
-
-    @Override
-    //@Transactional(rollbackFor = {Exception.class})
-    @DSTransactional(rollbackFor = {Exception.class})
-    @DS(DSType.MASTER)
-    public boolean update(SysUserDTO sysUserDTO) {
-        SysUser dbUpdate = getById(sysUserDTO.getId());
-        if (dbUpdate == null) {
-            throw new BusinessException("编辑记录不存在");
-        }
-        //先删除缓存在更新 删除后会查询数据库
-        redissonOpService.del(RedisKeyNameEnum.key(RedisKeyNameEnum.CURRENT_USER, sysUserDTO.getUserName()));
-
-        SysUser updateEntity = BeanCopierUtils.copyProperties(sysUserDTO, SysUser.class);
-        //重新保存关系表
-        sysUserRoleService.saveUserRoleIds(dbUpdate.getId(), sysUserDTO.getRoleIds(), true);
-        //保存用户与岗位的关系
-        sysUserPostService.saveUserPostIds(dbUpdate.getId(), sysUserDTO.getPostIds(), true);
-        LambdaUpdateWrapper<SysUser> updateWrapper = Wrappers.lambdaUpdate(SysUser.class)
-                .set(SysUser::getDeptId, updateEntity.getDeptId())
-                .eq(SysUser::getId, updateEntity.getId());
-        boolean updateById = update(updateEntity, updateWrapper);
-        if (updateById) {
-            //等数据更新完成后删除(延时删除)
-            systemAsyncTask.asyncRedisDelOptions(RedisKeyNameEnum.key(RedisKeyNameEnum.CURRENT_USER, sysUserDTO.getUserName()));
-        }
-        return updateById;
     }
 
     private LambdaQueryWrapper<SysUser> getWrapper(SysUserPageDTO query) {
@@ -143,12 +100,12 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     }
 
     @Override
-    //@Transactional(rollbackFor = {Exception.class})
-    @DSTransactional(rollbackFor = {Exception.class})
-    @DS(DSType.MASTER)
+    @Transactional(rollbackFor = {Exception.class})
     public boolean add(SysUserDTO sysUserDTO) {
         SysUser addEntity = BeanCopierUtils.copyProperties(sysUserDTO, SysUser.class);
-        addEntity.setUserCode(IdGenerator.getIdStr());
+        Long userId = LeafUtils.uid(BizTagEnum.USER_CODE);
+        addEntity.setId(userId);
+        addEntity.setUserCode(userId.toString());
         addEntity.setPassword(passwordEncoder.encode(sysUserDTO.getPassword()));
         boolean save = save(addEntity);
         //保存用户与角色的关系
@@ -159,7 +116,32 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     }
 
     @Override
-    @DS(DSType.SLAVE)
+    @Transactional(rollbackFor = {Exception.class})
+    public boolean update(SysUserDTO sysUserDTO) {
+        SysUser dbUpdate = getById(sysUserDTO.getId());
+        if (dbUpdate == null) {
+            throw new BusinessException("编辑记录不存在");
+        }
+        //先删除缓存在更新 删除后会查询数据库
+        redissonOpService.del(ZCache.CURRENT_USER.key(sysUserDTO.getUserName()));
+
+        SysUser updateEntity = BeanCopierUtils.copyProperties(sysUserDTO, SysUser.class);
+        //重新保存关系表
+        sysUserRoleService.saveUserRoleIds(dbUpdate.getId(), sysUserDTO.getRoleIds(), true);
+        //保存用户与岗位的关系
+        sysUserPostService.saveUserPostIds(dbUpdate.getId(), sysUserDTO.getPostIds(), true);
+        LambdaUpdateWrapper<SysUser> updateWrapper = Wrappers.lambdaUpdate(SysUser.class)
+                .set(SysUser::getDeptId, updateEntity.getDeptId())
+                .eq(SysUser::getId, updateEntity.getId());
+        boolean updateById = update(updateEntity, updateWrapper);
+        if (updateById) {
+            //等数据更新完成后删除(延时删除)
+            systemAsyncTask.asyncRedisDelOptions(ZCache.CURRENT_USER.key(sysUserDTO.getUserName()));
+        }
+        return updateById;
+    }
+
+    @Override
     public SysUserVO queryById(Long id) {
         SysUserVO sysUserVO = EasyTransUtils.copyTrans(getById(id), SysUserVO.class);
         LambdaQueryWrapper<SysUserRole> surqw = Wrappers.lambdaQuery(SysUserRole.class);
@@ -178,9 +160,7 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     }
 
     @Override
-    //@Transactional(rollbackFor = {Exception.class})
-    @DSTransactional(rollbackFor = {Exception.class})
-    @DS(DSType.MASTER)
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteRecord(Long[] ids) {
         for (Long userId : ids) {
             //删除用户与角色的关系
@@ -194,7 +174,6 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public LoginUserVO queryLoginUser(UserLoginDTO userLoginDTO) {
         SysUser sysUser = sysUserMapper.selectLoginSysUser(userLoginDTO.getUsername(), userLoginDTO.getMobilePhone());
         if (sysUser == null) {
@@ -217,7 +196,6 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public LoginUserTenantsBO currentLoginUser(String userName) {
         if (StringUtils.isBlank(userName)) {
             return null;
@@ -231,6 +209,7 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
         tenantsBO.setUserId(sysUser.getId());
         tenantsBO.setUserType(sysUser.getUserType());
         tenantsBO.setUsername(sysUser.getUserName());
+        tenantsBO.setStatus(sysUser.getStatus());
         String operatorId = sysUser.getOperatorId();
         if (StringUtils.isNotBlank(operatorId)) {
             tenantsBO.setOperatorId(operatorId);
@@ -240,19 +219,11 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
         }
         //用户所有的角色
         tenantsBO.setRoleIds(sysRoleService.selectUserRoleIds(sysUser.getId(), sysUser.getDeptId()));
-        //权限
-        /*List<SysMenuBO> sysMenuBOList = sysMenuService.findByRoleCodes(new ArrayList<>(tenantsBO.getRoleIds()));
-        if (CollectionUtils.isEmpty(sysMenuBOList)) {
-            sysMenuBOList = new ArrayList<>();
-        }
-        tenantsBO.setPerms(sysMenuBOList);*/
-        //tenantsBO.setPermsSet(sysMenuBOList.stream().map(e -> (e.getRequestMethod() + ":" + e.getRequestUrl()).toLowerCase(Locale.ROOT)).collect(Collectors.toSet()));
-        redissonOpService.set(RedisKeyNameEnum.key(RedisKeyNameEnum.CURRENT_USER, userName), JacksonUtil.toJSONString(tenantsBO));
+        redissonOpService.set(ZCache.CURRENT_USER.key(userName), JacksonUtil.toJSONString(tenantsBO));
         return tenantsBO;
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public Map<String, Object> getCurrentUserInfo() {
         String userName = ZerosSecurityContextHolder.getUserName();
         SysUserVO sysUserVO = getSysUserVO(userName);
@@ -276,7 +247,6 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public Map<String, Object> getUserProfile() {
         String userName = ZerosSecurityContextHolder.getUserName();
         SysUserVO sysUserVO = getSysUserVO(userName);
@@ -294,7 +264,7 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     }
 
     @Override
-    @DS(DSType.MASTER)
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateProfile(SysUserDTO sysUserDTO) {
         if (StringUtils.isNotBlank(sysUserDTO.getNewPassword())) {
             SysUserVO sysUserVO = getSysUserVO(ZerosSecurityContextHolder.getUserName());
@@ -331,7 +301,6 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public void excelExport(RequestVO<SysUserPageDTO> requestVO, HttpServletResponse response) {
         excelExport(PageUtils.of(requestVO, false), getWrapper(requestVO.getT()), SysUserPageVO.class, response);
     }

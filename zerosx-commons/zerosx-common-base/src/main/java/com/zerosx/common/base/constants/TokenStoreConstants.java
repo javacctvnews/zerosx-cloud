@@ -42,12 +42,4 @@ public interface TokenStoreConstants {
      * redis的set、list集合的过期时间是按照整个key来设置的，如果一直有人登录，则过期时间会重置，导致数据越来越大
      */
     String UNAME_TO_ACCESS = PREFIX + "uname_to_access:";
-
-    /**
-     * Spring Authorization Server 的token存储
-     */
-    String SAS_ACCESS_TOKEN = ServiceIdConstants.SAS + ":authorization:access_token";
-    String SAS_REFRESH_TOKEN = ServiceIdConstants.SAS + ":authorization:refresh_token";
-    String SAS_TOKEN_PAGE = ServiceIdConstants.SAS + ":authorization:page_list:";
-
 }

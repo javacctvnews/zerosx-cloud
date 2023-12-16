@@ -5,13 +5,13 @@
 
 <div style="text-align: center">逝者如斯夫，不舍昼夜！</div>
 <div style="text-align: center">
-  <img src="https://img.shields.io/badge/Zerosx_Cloud-v1.1.0.Developer.Beta-critical" alt="">
+  <img src="https://img.shields.io/badge/Zerosx_Cloud-v1.0.0-critical" alt="">
   <img src="https://img.shields.io/badge/copyright-javacctvnews@163.com-blue" alt="">
 </div>
 <div style="text-align: center">
   <img src="https://img.shields.io/badge/JDK-1.8+-blue?logo=openjdk" alt="">
-  <img src="https://img.shields.io/badge/Spring_Boot-2.7.16-blue?logo=spring-boot" alt="">
-  <img src="https://img.shields.io/badge/Spring_Cloud-2021.0.5-blue?logo=spring-boot" alt="">
+  <img src="https://img.shields.io/badge/Spring_Boot-2.7.18-blue?logo=spring-boot" alt="">
+  <img src="https://img.shields.io/badge/Spring_Cloud-2021.0.8-blue?logo=spring-boot" alt="">
   <img src="https://img.shields.io/badge/Spring_Cloud_Alibaba-2021.0.5.0-blue?logo=alibabadotcom" alt="">
   <img src="https://img.shields.io/badge/Nacos-2.2.0-critical?logo=alibabadotcom" alt="">
   <img src="https://img.shields.io/badge/Seata-1.6.1-blue?logo=statamic" alt="">
@@ -33,12 +33,12 @@
 
 此平台是由作者个人兴趣下搭建及开发，开源，免费，仅供学习参考。
 
-* 基于JDK8、SpringBoot2.7.16、SpringCloud2021.0.5和SpringCloudAlibaba2021.0.5.0且采用前后端分离的微服务多租户体系架构；
+* 基于JDK8、SpringBoot2.7.18、SpringCloud2021.0.8和SpringCloudAlibaba2021.0.5.0且采用前后端分离的微服务多租户体系架构；
 * 采用自定义starter组件化的思想，结构解耦，易于扩展；
-* 实现了SpringCloudGateway集成OAuth2统一认证授权及URL级功能权限校验（适用于网络隔离场景，即网关是统一入口），且可自定义扩展OAuth2授权模式；
+* 实现了SpringCloudGateway集成OAuth2统一认证授权及URL级功能权限校验（适用于网络隔离场景，即网关是统一入口），且可自定义扩展OAuth2.0授权模式；
 * 集成Knife4j基于OpenAPI3的接口文档，方便前后端对接；
 * 代码生成器一键生成基础CRUD功能，节约开发时间，更多注重业务开发；
-* 提供一套基于Vue2.x的前端项目[zerosx-vue2]，此项目是参考【若依】前端开源改造适配，感谢若依。
+* 提供一套基于Vue2.x的前端项目[zerosx-vue2]，此项目是参考【若依】前端开源改造适配，感谢若依（我是Vue2.x初学者，还不具备从零搭建一个完整的Vue项目，所以目前只能借鉴改造，勿喷^_^）。
 
 ### 软件架构图
 
@@ -55,6 +55,7 @@
 │   └─zerosx-api-auth		              	#授权服务api
 │   └─zerosx-api-examples	              	#示例工程api
 │   └─zerosx-api-system		              	#系统服务api
+│   └─zerosx-api-resource		            #资源服务api
 │ └─zerosx-auth			                  	#授权认证服务
 │ └─zerosx-commons		                  	#通用模块
 │   └─zerosx-common-base					#公共POJO、工具类
@@ -72,13 +73,13 @@
 │   └─zerosx-common-sms						#多家SMS短信集成
 │   └─zerosx-common-utils					#工具类包
 │   └─zerosx-common-xxljob					#分布式任务调度XXL-JOB
-│ └─zerosx-examples		                  	#示例工程
+│ └─zerosx-examples		                  	#示例工程(Seata、分布式锁)
 │ └─zerosx-gateway		                  	#网关服务
 │ └─zerosx-modules		                  	#业务模块
 │   └─zerosx-resource						#Resource服务
 │   └─zerosx-system							#System服务
 │ └─zerosx-tools			              	#工具工程
-│   └─code-generator				      	#项目的代码生成器
+│   └─code-generator				      	#项目配套的代码生成器
 │   └─zerosx-monitor						#SpringBootAdmin应用监控
 │ └─zerosx-ui				              	#前端
 │   └─zerosx-vue2			              	#前端-vue2版本
@@ -92,7 +93,7 @@
 #### 1. 非业务功能
 
 * 网关统一权限控制：URL级的功能按钮的权限控制，支持配置不同客户端及白名单URL；
-* 网关统一鉴权：OAuth2令牌Token的有效性校验，支持配置忽略认证的URL；
+* 网关统一鉴权：OAuth2令牌Token的有效性校验，支持配置忽略认证的URL、Token令牌自动续签等；
 * 网关聚合文档：集成Knife4j基于OpenAPI3规范的接口文档，聚合所有微服务，方便前后端对接
 * OAuth2.0认证授权：
   * 支持OAuth2.0默认的4种鉴权方式；
@@ -108,6 +109,7 @@
 * 分布式任务调用：集成XXL-JOB分布式任务调度；
 * 分布式事务：集成Seata分布式事务；
 * 分布式锁：集成Redisson分布式锁，有测试案例；
+* 分布式ID：基于美团Leaf分布式ID生成方案适配此项目，实现了基于MySQL数据库表方案；
 * 代码生成器：高度符合阿里巴巴开发手册规范的前后端代码一键生成，减少CRUD基础开发，更专注业务开发；
 * 系统监控：集成SpringBootAdmin应用监控；
 
@@ -125,20 +127,25 @@
     * 部门管理：配置租户的组织部门，也可用作用户组，简化新用户的权限分配
     * 岗位管理：岗位管理，用户所担任的职务
 * 系统管理
-    * 菜单管理：菜单、按钮、功能权限的管理，生成动态路由
+    * 菜单权限：菜单、按钮、功能权限的管理，生成动态路由
     * 字典管理：数据字典的维护
     * 参数设置：系统动态参数的维护
+    * 客户端管理：
+        * 令牌管理：系统颁发授权令牌的管理
+        * 认证客户端：基于OAuth2授权认证的客户端维护
     * 日志管理
         * 操作日志：操作记录日志
-        * 登录日志：OAuth2授权登录日志
+        * 登录日志：OAuth2.0授权登录日志
 * 资源管理
     * 行政区域：中华人民共和国行政区域的维护
     * 对象存储：集成多家对象存储，配置管理及上传文件管理
     * 短信配置：集成多家短信服务商及短信业务模板的配置
 * 系统工具
+    * 分布式ID：基于美团Leaf分布式ID生成方案适配
     * 系统监控：SpringBootAdmin系统监控
     * 接口文档：OpenAPI3聚合接口文档
     * 任务调度中心：XXL-JOB任务调度中心
+    
 
 ### 本地开发说明
 
@@ -177,37 +184,45 @@
    </tr>
    <tr>
       <td><img src="./doc/images/img03.png" /></td>
-      <td><img src="./doc/images/img04.png" /></td>
+      <td><img src="./doc/images/ten00.png" /></td>
    </tr>
    <tr>
-      <td><img src="./doc/images/img05.png" /></td>
-      <td><img src="./doc/images/img06.png" /></td>
+      <td><img src="./doc/images/ten01.png" /></td>
+      <td><img src="./doc/images/ten02.png" /></td>
    </tr>
    <tr>
-      <td><img src="./doc/images/img07.png" /></td>
-      <td><img src="./doc/images/img08.png" /></td>
+      <td><img src="./doc/images/ten03.png" /></td>
+      <td><img src="./doc/images/ten04.png" /></td>
    </tr>
    <tr>
-      <td><img src="./doc/images/img09.png" /></td>
-      <td><img src="./doc/images/img10.png" /></td>
+      <td><img src="./doc/images/res00.png" /></td>
+      <td><img src="./doc/images/res01.png" /></td>
    </tr>
    <tr>
-      <td><img src="./doc/images/img11.png" /></td>
-      <td><img src="./doc/images/img12.png" /></td>
+      <td><img src="./doc/images/res02.png" /></td>
+      <td><img src="./doc/images/res04.png" /></td>
    </tr>
    <tr>
-      <td><img src="./doc/images/img13.png" /></td>
-      <td><img src="./doc/images/img15.png" /></td>
+      <td><img src="./doc/images/res05.png" /></td>
+      <td><img src="./doc/images/sys00.png" /></td>
    </tr>
    <tr>
-      <td><img src="./doc/images/img15-1.png" /></td>
-      <td><img src="./doc/images/img15-2.png" /></td>
+      <td><img src="./doc/images/sys01.png" /></td>
+      <td><img src="./doc/images/sys02.png" /></td>
    </tr>
    <tr>
-      <td><img src="./doc/images/img16-1.png" /></td>
-      <td><img src="./doc/images/img16-2.png" /></td>
+      <td><img src="./doc/images/sys03.png" /></td>
+      <td><img src="./doc/images/sys05.png" /></td>
    </tr>
    <tr>
+      <td><img src="./doc/images/sys06.png" /></td>
+      <td><img src="./doc/images/sys07.png" /></td>
+   </tr>
+    <tr>
+      <td><img src="./doc/images/sys08.png" /></td>
+      <td><img src="./doc/images/to00.png" /></td>
+   </tr>
+    <tr>
       <td><img src="./doc/images/img17-1.png" /></td>
       <td><img src="./doc/images/img17-2.png" /></td>
    </tr>
@@ -217,24 +232,3 @@
    </tr>
 </table>
 
-### 更新日志
-
-#### V0.0.2
-
-* 1.分离zerosx-resource资源微服务
-* 2.规范部分代码命名
-
-* 3.修复encrypt组件验证BUG（丢失自增ID等一些字段的值）
-
-* 4.导出功能增加nacos配置项
-
-* 5.seata分布式事务案例优化
-* 6.多租户前后逻辑优化（针对一个账户管理一个租户和多个租户情况）
-* 7.个人中心模块优化（头像上传、基本信息展示更多信息等）
-* 8.图片上传组件的删除按钮在删除时会删除服务器oss源文件
-* 9.修复数据字典翻译feign接口BUG
-* 10.补全更新md文档、数据库及YAML配置脚本
-
-#### V0.0.1
-
-* 初始版本，包括非业务功能及内置业务功能

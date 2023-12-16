@@ -1,6 +1,7 @@
 package com.zerosx.api.system;
 
 import com.zerosx.api.system.factory.MutiTenancyGroupClientFallback;
+import com.zerosx.api.system.vo.MutiTenancyGroupBO;
 import com.zerosx.common.base.constants.ServiceIdConstants;
 import com.zerosx.common.base.vo.ResultVO;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -12,5 +13,8 @@ public interface IMutiTenancyGroupClient {
 
     @PostMapping("/muti_tenancy/tenantName")
     ResultVO<String> transIdName(@RequestParam(value = "operatorId", required = false) String operatorId);
+
+    @PostMapping("/muti_tenancy/queryOperator")
+    ResultVO<MutiTenancyGroupBO> queryOperator(@RequestParam(value = "operatorId", required = false) String operatorId);
 
 }

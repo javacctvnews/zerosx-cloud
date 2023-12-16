@@ -9,9 +9,14 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="OSS类型" prop="ossType">
+      <!-- <el-form-item label="OSS类型" prop="ossType">
         <el-input v-model="queryParams.t.ossType" placeholder="请输入OSS类型" clearable @keyup.enter.native="handleQuery"
           style="width: 210px;" />
+      </el-form-item> -->
+      <el-form-item label="服务商" prop="supplierType">
+        <el-select v-model="queryParams.t.supplierType" placeholder="服务商" clearable style="width: 220px;">
+          <el-option v-for="dict in dict.type.OssTypeEnum" :key="dict.value" :label="dict.label" :value="dict.value" />
+        </el-select>
       </el-form-item>
       <el-form-item label="文件名" prop="fileName">
         <el-input v-model="queryParams.t.fileName" placeholder="请输入文件名关键字" clearable @keyup.enter.native="handleQuery"
@@ -41,7 +46,7 @@
     <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
       @pagination="getList" />
 
-    <el-dialog title="文件预览" :visible.sync="open" width="900px" append-to-body :close-on-click-modal="false">
+    <el-dialog title="文件预览" :visible.sync="open" width="900px" append-to-body :close-on-click-modal="false" center>
       <el-form label-position="left" ref="form" :model="form" label-width="100px" size="mini">
         <el-row>
           <el-col :span="24" style="display: flex;justify-content: center;">
@@ -49,14 +54,27 @@
               :preview-src-list="prewList"></el-image>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="源文件名：">{{ form.originalFileName }}</el-form-item>
+            <el-form-item label="访问URL:">{{ form.objectViewUrl }}</el-form-item>
+          </el-col>
+          <el-col :span="23">
             <el-form-item label="文件标识名：">{{ form.objectName }}</el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="访问URL:">{{ form.objectViewUrl }}</el-form-item>
+            <el-form-item label="源文件名：">{{ form.originalFileName }}</el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="租户名称：">{{ form.operatorName }}</el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="服务商：">{{ form.ossTypeName }}</el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="存储桶名称：">{{ form.bucketName }}</el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="创建时间：">{{ form.createTime }}</el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item label="过期时间：">{{ form.expirationTime }}</el-form-item>
           </el-col>
         </el-row>
@@ -69,12 +87,12 @@
 </template>
 
 <script>
-import { pageList, fullDelete,queryById } from '@/api/resource/ossFileUpload.js'
+import { pageList, fullDelete, queryById } from '@/api/resource/ossFileUpload.js'
 import { operators } from '@/api/common.js'
 
 export default {
   name: 'OssFileUpload',
-  dicts: ['tenant_valid_status', 'StatusEnum'],
+  dicts: ['tenant_valid_status', 'StatusEnum', 'OssTypeEnum'],
   data() {
     return {
       searching: false,
@@ -103,28 +121,29 @@ export default {
         }
       },
       columns: [
-        {
-          attrs: {
-            label: '记录ID',
-            prop: 'id',
-            minWidth: '100',
-            align: 'center',
-            sortable: 'custom',
-          },
-        },
-        {
-          attrs: {
-            label: 'OSS类型',
-            prop: 'ossType',
-            minWidth: '100',
-            align: 'center'
-          },
-        },
+        // {
+        //   attrs: {
+        //     label: '记录ID',
+        //     prop: 'id',
+        //     minWidth: '100',
+        //     align: 'center',
+        //     sortable: 'custom',
+        //   },
+        // },
+
         {
           attrs: {
             label: '存储标识',
             prop: 'objectName',
             minWidth: '320',
+            align: 'center'
+          },
+        },
+        {
+          attrs: {
+            label: '服务商',
+            prop: 'ossTypeName',
+            minWidth: '100',
             align: 'center'
           },
         },
@@ -284,7 +303,7 @@ export default {
     handleUpload() { },
     handleDelete(row) {
       let ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除编号为"' + ids + '"的数据项？').then(function () {
+      this.$modal.confirm('是否确认删除已选择的数据项？').then(function () {
         return fullDelete(ids);
       }).then(() => {
         this.getList();

@@ -6,9 +6,6 @@ import com.alibaba.excel.write.metadata.WriteSheet;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.zerosx.common.core.utils.EasyTransUtils;
 import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.common.utils.JacksonUtil;
@@ -34,18 +31,11 @@ public class TestCase {
     private ISysUserMapper sysUserMapper;
     @Autowired
     private ISystemOperatorLogService systemOperatorLogService;
-    @Autowired
-    private SimpleFilterProvider simpleFilterProvider;
 
 
     @Test
-    public void Test011() throws JsonProcessingException {
-        String jos = "{\"deptId\":115,\"userName\":\"as1232\",\"nickName\":\"as1232\",\"userType\":\"saas_operator\",\"email\":\"123@qq.com\",\"phoneNumber\":\"19892292899\",\"sex\":\"1\",\"password\":\"Admin123\",\"status\":\"0\",\"remark\":\"Admin123\",\"roleIds\":[2],\"postIds\":[1],\"oldPassword\":\"\",\"newPassword\":\"\",\"operatorId\":\"423956\"}";
-        SysUser sysUser = JacksonUtil.toObject(jos, SysUser.class);
+    public void Test011() {
 
-        ObjectMapper instance = JacksonUtil.getInstance();
-        String s = instance.writer(simpleFilterProvider).writeValueAsString(sysUser);
-        log.debug("{}", s);
     }
 
 

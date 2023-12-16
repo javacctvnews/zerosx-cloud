@@ -1,7 +1,7 @@
 package com.zerosx.system.vo;
 
 import com.zerosx.common.base.anno.Trans;
-import com.zerosx.common.base.constants.CommonConstants;
+import com.zerosx.common.base.constants.TranslConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,7 +49,7 @@ public class SysUserVO implements Serializable {
     private String sex;
 
     @Schema(description = "头像地址")
-    @Trans(type = CommonConstants.TRANS_OSS, ref = "avatarUrl")
+    @Trans(type = TranslConstants.OSS, ref = "avatarUrl")
     private String avatar;
 
     @Schema(description = "头像地址")

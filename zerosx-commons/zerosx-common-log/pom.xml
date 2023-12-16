@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.zerosx.cloud</groupId>
         <artifactId>zerosx-commons</artifactId>
-        <version>0.0.4</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>zerosx-common-log</artifactId>
@@ -47,8 +47,8 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
         <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>

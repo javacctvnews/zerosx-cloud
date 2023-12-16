@@ -3,17 +3,12 @@ zeros-ui-vue3
 # 组件日志
 doc/mysql8/mysql8.0.34/data
 doc/mysql8/mysql8.0.34/logs
-doc/mysql8-master-slave/master/data
-doc/mysql8-master-slave/master/log
-doc/mysql8-master-slave/slave/data
-doc/mysql8-master-slave/slave/log
-doc/nacos/logs
-doc/nacos2.2.1/logs
+doc/nacos2.2.0/logs
 doc/redis/data
-doc/seata/logs
-doc/seata1.7.0/logs
+doc/docker/seata161/logs
 doc/nginx/nginx/log
 doc/nginx
+doc/docker/**/logs
 .DS_store
 版本简介.md
 
@@ -22,7 +17,7 @@ doc/nginx
 
 # Log file
 *.log
-
+.flattened-pom.xml
 # BlueJ files
 *.ctxt
 

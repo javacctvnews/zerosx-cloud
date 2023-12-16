@@ -11,7 +11,7 @@ import com.zerosx.system.entity.SysPost;
 import com.zerosx.system.vo.SysPostPageVO;
 import com.zerosx.system.vo.SysPostVO;
 
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**

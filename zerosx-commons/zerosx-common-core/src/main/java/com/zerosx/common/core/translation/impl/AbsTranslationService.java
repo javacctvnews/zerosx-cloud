@@ -34,7 +34,7 @@ public abstract class AbsTranslationService<T> implements ITranslationService<T>
      */
     protected AsyncCache<String, String> cache = Caffeine.newBuilder()
             .expireAfterWrite(5, TimeUnit.SECONDS)//过期时间
-            .maximumSize(100)//最大条数1000
+            .maximumSize(1000)//最大条数1000
             .buildAsync();//定义cache
 
     /**
@@ -95,14 +95,14 @@ public abstract class AbsTranslationService<T> implements ITranslationService<T>
         if (key == null || ObjectUtils.isEmpty(key)) {
             return EMPTY;
         }
-        String objectName = (String) key;
+        String objectName = String.valueOf(key);
         String cacheName = getCaffeineCache(objectName);
         if (StringUtils.isNotBlank(cacheName)) {
             return cacheName;
         }
         //先从Redis获取
         String redissonCache = getRedissonCache(objectName);
-        if (StringUtils.isNotBlank(redissonCache)) {
+        if (redissonCache != null){
             putCache(objectName, redissonCache);
             return redissonCache;
         }

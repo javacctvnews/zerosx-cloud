@@ -1,7 +1,7 @@
 package com.zerosx.gateway.auth;
 
 import com.zerosx.common.core.utils.AntPathMatcherUtils;
-import com.zerosx.common.sas.properties.CustomSecurityProperties;
+import com.zerosx.common.security.properties.CustomSecurityProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
 import org.springframework.web.server.ServerWebExchange;

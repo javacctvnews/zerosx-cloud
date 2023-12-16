@@ -42,7 +42,7 @@
             v-hasPerms="['perms:sysuser:export']">导出</el-button>
         </el-col>
       </div>
-      <right-toolbar :showSearch.sync="showSearch" :searching="searching" @handleQuery="getList"
+      <right-toolbar :showSearch.sync="showSearch" :searching="searching" @handleQuery="handleQuery"
         @resetQuery="resetQuery" />
     </el-row>
 
@@ -345,15 +345,15 @@ export default {
         // ],
       },
       columns: [
-        {
-          attrs: {
-            label: "用户ID",
-            prop: "id",
-            minWidth: "90",
-            sortable: 'custom',
-            align: "center",
-          },
-        },
+        // {
+        //   attrs: {
+        //     label: "用户ID",
+        //     prop: "id",
+        //     minWidth: "90",
+        //     sortable: 'custom',
+        //     align: "center",
+        //   },
+        // },
         {
           attrs: {
             label: "用户账号",
@@ -422,22 +422,22 @@ export default {
             align: "center",
           },
         },
-        {
-          attrs: {
-            label: "最后登录IP",
-            prop: "loginIp",
-            minWidth: "140",
-            align: "center",
-          },
-        },
-        {
-          attrs: {
-            label: "最后登录时间",
-            prop: "loginDate",
-            minWidth: "140",
-            align: "center",
-          },
-        },
+        // {
+        //   attrs: {
+        //     label: "最后登录IP",
+        //     prop: "loginIp",
+        //     minWidth: "140",
+        //     align: "center",
+        //   },
+        // },
+        // {
+        //   attrs: {
+        //     label: "最后登录时间",
+        //     prop: "loginDate",
+        //     minWidth: "140",
+        //     align: "center",
+        //   },
+        // },
         {
           attrs: {
             label: "创建者",
@@ -478,6 +478,7 @@ export default {
             prop: "remark",
             minWidth: "140",
             align: "center",
+            showOverflowTooltip: true,
           },
         },
         {
@@ -558,12 +559,13 @@ export default {
       this.multiple = !selection.length
     },
     handleQuery() {
-      this.queryParams.pageNum = 1;
       this.getList();
+
     },
     resetQuery() {
       this.resetForm("queryForm");
       //清除排序（默认自动排序的列）
+      this.queryParams.pageNum = 1;
       this.$refs.tables.$refs.tablePlus.sort(this.defaultSort.prop, this.defaultSort.order)
     },
     handleAdd() {
@@ -598,7 +600,7 @@ export default {
     },
     handleDelete(row) {
       const idList = row.id || this.ids;
-      this.$modal.confirm('是否确认删除编号为[' + idList + ']的数据项？').then(function () {
+      this.$modal.confirm('是否确认删除已选择的数据项？').then(function () {
         return deleteSysUser(idList);
       }).then(() => {
         this.getList();

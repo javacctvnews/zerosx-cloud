@@ -1,7 +1,10 @@
 package com.zerosx.auth.granter;
 
-import com.zerosx.auth.service.IVerificationCodeService;
+import cn.hutool.core.util.StrUtil;
+import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.base.exception.BusinessException;
+import com.zerosx.common.core.enums.GranterTypeEnum;
+import com.zerosx.common.redis.templete.RedissonOpService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
@@ -21,19 +24,19 @@ import java.util.Map;
  */
 public class CaptchaTokenGranter extends AbstractTokenGranter {
 
-    private static final String GRANT_TYPE = "captcha";
+    private static final String GRANT_TYPE = GranterTypeEnum.CAPTCHA.getCode();
 
     private final AuthenticationManager authenticationManager;
 
-    private final IVerificationCodeService verificationCodeService;
+    private final RedissonOpService redissonOpService;
 
     public CaptchaTokenGranter(AuthorizationServerTokenServices tokenServices,
-                                  ClientDetailsService clientDetailsService,
-                                  OAuth2RequestFactory requestFactory,
-                                  AuthenticationManager authenticationManager,
-                                  IVerificationCodeService verificationCodeService) {
+                               ClientDetailsService clientDetailsService,
+                               OAuth2RequestFactory requestFactory,
+                               AuthenticationManager authenticationManager,
+                               RedissonOpService redissonOpService) {
         super(tokenServices, clientDetailsService, requestFactory, GRANT_TYPE);
-        this.verificationCodeService = verificationCodeService;
+        this.redissonOpService = redissonOpService;
         this.authenticationManager = authenticationManager;
     }
 
@@ -43,11 +46,26 @@ public class CaptchaTokenGranter extends AbstractTokenGranter {
         // 验证码校验逻辑
         String validateCode = parameters.get("code");
         String uuid = parameters.get("uuid");
-        if(StringUtils.isBlank(validateCode)){
+        if (StringUtils.isBlank(validateCode)) {
             throw new BusinessException("验证码不能为空");
         }
         //校验验证码
-        verificationCodeService.validateImgCode(uuid, validateCode);
+        if (StrUtil.isBlank(uuid)) {
+            throw new InvalidGrantException("请在请求参数中携带deviceId参数");
+        }
+        if (StrUtil.isBlank(validateCode)) {
+            throw new InvalidGrantException("请填写验证码");
+        }
+        String code = redissonOpService.get(ZCache.CAPTCHA.key(uuid));
+        if (StringUtils.isBlank(code)) {
+            throw new InvalidGrantException("验证码不存在或已过期");
+        }
+        if (!StrUtil.equals(code, validateCode.toLowerCase())) {
+            throw new InvalidGrantException("验证码不正确");
+        }
+        //删除验证码
+        redissonOpService.del(ZCache.CAPTCHA.key(uuid));
+
         //用户名、密码
         String username = parameters.get("username");
         String password = parameters.get("password");

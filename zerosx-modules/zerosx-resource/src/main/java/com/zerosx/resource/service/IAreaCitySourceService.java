@@ -10,7 +10,7 @@ import com.zerosx.resource.entity.AreaCitySource;
 import com.zerosx.resource.vo.AreaCitySourcePageVO;
 import com.zerosx.resource.vo.AreaCitySourceTreeVO;
 
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**

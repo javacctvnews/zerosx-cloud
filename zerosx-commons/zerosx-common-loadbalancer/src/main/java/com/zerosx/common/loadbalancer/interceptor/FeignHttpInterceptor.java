@@ -3,11 +3,11 @@ package com.zerosx.common.loadbalancer.interceptor;
 import com.zerosx.common.base.constants.HeadersConstants;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;

@@ -37,9 +37,9 @@ public class SmsSupplierVO implements Serializable {
     @Schema(description = "Access Key")
     private String accessKeyId;
 
-    @Schema(description = "accessKeySecret")
+    /*@Schema(description = "accessKeySecret")
     @Sensitive(strategy = SensitiveStrategy.PASSWORD)
-    private String accessKeySecret;
+    private String accessKeySecret;*/
 
     @Schema(description = "短信签名")
     private String signature;

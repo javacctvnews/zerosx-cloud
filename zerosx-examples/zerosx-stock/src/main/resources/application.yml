@@ -1,7 +1,7 @@
 spring:
 
   datasource:
-    url: jdbc:mysql://127.0.0.1:13306/zerosx_stock?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://192.168.3.6:13306/zerosx_stock?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true
     username: root
     password: zerosx@123456
     driver-class-name: com.mysql.cj.jdbc.Driver

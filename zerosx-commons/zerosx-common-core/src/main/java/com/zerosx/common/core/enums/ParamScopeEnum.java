@@ -1,6 +1,6 @@
 package com.zerosx.common.core.enums;
 
-import com.zerosx.common.anno.AutoDictData;
+import com.zerosx.common.core.anno.AutoDictData;
 import com.zerosx.common.base.BaseEnum;
 import lombok.Getter;
 
@@ -20,6 +20,11 @@ public enum ParamScopeEnum implements BaseEnum<String> {
     ParamScopeEnum(String code, String message) {
         this.code = code;
         this.message = message;
+    }
+
+    @Override
+    public String getCss() {
+        return CssTypeEnum.DEFAULT.getCss();
     }
 
 }

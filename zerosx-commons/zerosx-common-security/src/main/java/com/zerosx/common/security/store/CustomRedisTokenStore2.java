@@ -2,7 +2,7 @@ package com.zerosx.common.security.store;
 
 import com.zerosx.common.base.constants.SecurityConstants;
 import com.zerosx.common.base.constants.TokenStoreConstants;
-import com.zerosx.common.core.enums.RedisKeyNameEnum;
+import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.security.properties.CustomSecurityProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -85,7 +85,7 @@ public class CustomRedisTokenStore2 implements TokenStore {
      * @param clientId 应用id
      */
     private int getAccessTokenValiditySeconds(String clientId) {
-        String clientDetailsClientId = RedisKeyNameEnum.key(RedisKeyNameEnum.OAUTH_CLIENT_DETAILS, clientId);
+        String clientDetailsClientId = ZCache.OAUTH_CLIENT_DETAILS.key(clientId);
         ClientDetails object = redissonOpService.get(clientDetailsClientId);
         if (object == null) {
             return SecurityConstants.ACCESS_TOKEN_VALIDITY_SECONDS;

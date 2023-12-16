@@ -3,7 +3,7 @@ package com.zerosx.auth.vo;
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.zerosx.common.base.anno.Trans;
-import com.zerosx.common.base.constants.CommonConstants;
+import com.zerosx.common.base.constants.TranslConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -50,7 +50,7 @@ public class TokenVO implements Serializable {
 
     @ExcelIgnore
     @Schema(description = "租户标识")
-    @Trans(type = CommonConstants.TRANS_OPERATOR_ID, ref = "operatorName")
+    @Trans(type = TranslConstants.OPERATOR, ref = "operatorName")
     private String operatorId;
 
 }

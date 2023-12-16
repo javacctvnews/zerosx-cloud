@@ -13,7 +13,7 @@ export function listType(query) {
 // 查询字典类型详细
 export function getType(dictId) {
   return request({
-    url: serviceConfig.resource + '/sysDictType/queryById/' + dictId,
+    url: serviceConfig.resource + '/getDictTypeById/' + dictId,
     method: 'get'
   })
 }

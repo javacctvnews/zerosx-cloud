@@ -13,7 +13,7 @@
                 <h3>体验账号</h3>
                 <ul>
                   <li>超级管理员账号：admin123/Admin123</li>
-                  <li>租户管理员账号：zuo123/Zuo123456</li>
+                  <li>租户管理员账号：zerosx/Admin123</li>
                 </ul>
               </div>
             </div>
@@ -224,7 +224,7 @@ export default {
         }
       }, 1000);
       smsCode(this.smsLoginForm).then((res) => {
-        //consolethis.smsL .log(res)smsAuthCode;
+        //console.log(res)
         Message({ message: '验证码已发送，请注意查收', type: 'success', duration: 2 * 1000 })
         if(res.data.imitate){
           this.smsLoginForm.smsCode = res.data.smsAuthCode;
@@ -252,8 +252,6 @@ export default {
       this.getCookie();
     },
     getCode() {
-      this.smsLoginForm.code2 = ''
-      //this.loginForm.code = ''
       getCodeImg().then(res => {
         this.captchaEnabled = res.captchaEnabled === undefined ? true : res.captchaEnabled;
         if (this.captchaEnabled) {

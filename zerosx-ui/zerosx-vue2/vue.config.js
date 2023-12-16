@@ -35,7 +35,7 @@ module.exports = {
     proxy: {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
-        target: `http://localhost:9100`,
+        target: `http://192.168.3.100:9100`,
         // target: `http://172.19.54.164:9100`,
         changeOrigin: true,
         pathRewrite: {
@@ -54,9 +54,9 @@ module.exports = {
   },
   configureWebpack: {
     //关闭 webpack 的性能提示
-    performance: {
-      hints:false
-    },
+    // performance: {
+    //   hints:false
+    // },
 
     //或者
 
@@ -150,7 +150,7 @@ module.exports = {
              from: path.resolve(__dirname, './public/robots.txt'), //防爬虫文件
              to: './' //到根目录下
           }
-          
+
     })
   }
 }

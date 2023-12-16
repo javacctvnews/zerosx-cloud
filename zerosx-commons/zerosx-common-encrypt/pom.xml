@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.zerosx.cloud</groupId>
         <artifactId>zerosx-commons</artifactId>
-        <version>0.0.4</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>zerosx-common-encrypt</artifactId>
@@ -16,10 +16,6 @@
     <description>mybatis-plus敏感数据加解密</description>
 
     <dependencies>
-        <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>

@@ -3,7 +3,6 @@ package com.zerosx.gateway.filter;
 import com.zerosx.common.core.utils.MDCTraceUtils;
 import com.zerosx.common.log.properties.CustomLogProperties;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.Ordered;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -14,7 +13,7 @@ import reactor.core.publisher.Mono;
  * 生成日志链路追踪id，并传入header中
  */
 @Slf4j
-public class TraceIDFilter implements WebFilter, Ordered {
+public class TraceIDFilter implements WebFilter {
 
     private final CustomLogProperties customLogProperties;
 
@@ -38,10 +37,5 @@ public class TraceIDFilter implements WebFilter, Ordered {
             return chain.filter(build);
         }
         return chain.filter(exchange);
-    }
-
-    @Override
-    public int getOrder() {
-        return HIGHEST_PRECEDENCE;
     }
 }

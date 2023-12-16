@@ -1,6 +1,6 @@
 package com.zerosx.common.core.enums;
 
-import com.zerosx.common.anno.AutoDictData;
+import com.zerosx.common.core.anno.AutoDictData;
 import com.zerosx.common.base.BaseEnum;
 import lombok.Getter;
 
@@ -15,16 +15,19 @@ import lombok.Getter;
 @AutoDictData(code = "StatusEnum", name = "状态")
 public enum StatusEnum implements BaseEnum<String> {
 
-    NORMAL("0", "正常"),
+    NORMAL("0", "正常", CssTypeEnum.PRIMARY.getCss()),
 
-    ABNORMAL("1", "停用");
+    ABNORMAL("1", "停用", CssTypeEnum.WARNING.getCss());
 
     private final String code;
 
     private final String message;
 
-    StatusEnum(String code, String message) {
+    private final String css;
+
+    StatusEnum(String code, String message, String css) {
         this.code = code;
         this.message = message;
+        this.css = css;
     }
 }

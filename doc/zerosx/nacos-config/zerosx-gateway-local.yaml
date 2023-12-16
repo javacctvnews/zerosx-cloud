@@ -28,25 +28,21 @@ spring:
         - id: oauth-token
           uri: lb://zerosx-auth
           predicates:
-            - Path=/oauth/token
+            - Path=/oauth/**
           filters:
             - PreserveHostHeader
-        - id: oauth-authorize
-          uri: lb://zerosx-auth
-          predicates:
-            - Path=/oauth/authorize
-          filters:
-            - PreserveHostHeader
-        - id: oauth-check-token
-          uri: lb://zerosx-auth
-          predicates:
-            - Path=/oauth/check_token
-          filters:
-            - PreserveHostHeader
+
         - id: zerosx-system
           uri: lb://zerosx-system
           predicates:
             - Path=/api-system/**
+          filters:
+            - StripPrefix=1
+            - PreserveHostHeader
+        - id: zerosx-resource
+          uri: lb://zerosx-resource
+          predicates:
+            - Path=/api-resource/**
           filters:
             - StripPrefix=1
             - PreserveHostHeader

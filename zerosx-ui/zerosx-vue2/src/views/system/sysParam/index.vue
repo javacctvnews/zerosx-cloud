@@ -195,15 +195,15 @@ export default {
         ],
       },
       columns: [
-        {
-          attrs: {
-            label: "记录ID",
-            prop: "id",
-            minWidth: "100",
-            sortable: 'custom',
-            align: "center",
-          },
-        },
+        // {
+        //   attrs: {
+        //     label: "记录ID",
+        //     prop: "id",
+        //     minWidth: "100",
+        //     sortable: 'custom',
+        //     align: "center",
+        //   },
+        // },
         {
           attrs: {
             label: "参数名",
@@ -368,7 +368,7 @@ export default {
     },
     handleDelete(row) {
       const idList = row.id || this.ids;
-      this.$modal.confirm('是否确认删除编号为[' + idList + ']的数据项？').then(function () {
+      this.$modal.confirm('是否确认删除已选择的数据项？').then(function () {
         return deleteSysParam(idList);
       }).then(() => {
         this.getList();

@@ -4,7 +4,7 @@ import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.zerosx.common.base.anno.Trans;
-import com.zerosx.common.base.constants.CommonConstants;
+import com.zerosx.common.base.constants.TranslConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -105,7 +105,7 @@ public class SystemOperatorLogPageVO implements Serializable {
 
     //租户ID
     @ExcelIgnore
-    @Trans(type = CommonConstants.TRANS_OPERATOR_ID, ref = "operatorIdName")
+    @Trans(type = TranslConstants.OPERATOR, ref = "operatorIdName")
     private String operatorId;
     //租户ID名称
     @ExcelProperty(value = {"运营商名称"})

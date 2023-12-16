@@ -1,6 +1,6 @@
 package com.zerosx.common.core.enums;
 
-import com.zerosx.common.anno.AutoDictData;
+import com.zerosx.common.core.anno.AutoDictData;
 import com.zerosx.common.base.BaseEnum;
 import lombok.Getter;
 
@@ -12,7 +12,7 @@ import lombok.Getter;
  * @create: 2023-09-01 13:11
  **/
 @Getter
-@AutoDictData(code = "SignatureAlgorithmEnum", name = "签名算法(OIDC)")
+@AutoDictData(code = "SignatureAlgorithmEnum", name = "签名算法(OIDC)",desc = "签名算法(OIDC)")
 public enum SignatureAlgorithmEnum implements BaseEnum<String> {
 
     RS256("RS256", "RS256"),
@@ -32,6 +32,11 @@ public enum SignatureAlgorithmEnum implements BaseEnum<String> {
     SignatureAlgorithmEnum(String code, String message) {
         this.code = code;
         this.message = message;
+    }
+
+    @Override
+    public String getCss() {
+        return CssTypeEnum.DEFAULT.getCss();
     }
 
 }

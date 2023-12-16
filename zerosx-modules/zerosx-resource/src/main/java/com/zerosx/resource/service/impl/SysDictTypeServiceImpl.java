@@ -1,7 +1,5 @@
 package com.zerosx.resource.service.impl;
 
-import com.baomidou.dynamic.datasource.annotation.DS;
-import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.common.base.exception.BusinessException;
@@ -10,7 +8,6 @@ import com.zerosx.common.core.service.impl.SuperServiceImpl;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.utils.BeanCopierUtils;
-import com.zerosx.ds.constant.DSType;
 import com.zerosx.resource.dto.SysDictTypeDTO;
 import com.zerosx.resource.dto.SysDictTypeRetrieveDTO;
 import com.zerosx.resource.dto.SysDictTypeUpdateDTO;
@@ -20,30 +17,30 @@ import com.zerosx.resource.mapper.ISysDictTypeMapper;
 import com.zerosx.resource.service.ISysDictDataService;
 import com.zerosx.resource.service.ISysDictTypeService;
 import com.zerosx.resource.vo.SysDictTypeVO;
-import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
  * 字典类型表 服务实现类
  */
 @Service
-@DS(DSType.MASTER)
 public class SysDictTypeServiceImpl extends SuperServiceImpl<ISysDictTypeMapper, SysDictType> implements ISysDictTypeService {
 
     @Autowired
     private ISysDictDataService sysDictDataService;
 
     @Override
-    @DS(DSType.SLAVE)
     public CustomPageVO<SysDictTypeVO> pageList(RequestVO<SysDictTypeRetrieveDTO> requestVO, boolean searchCount) {
         return PageUtils.of(baseMapper.selectPage(PageUtils.of(requestVO, true), getWrapper(requestVO.getT())), SysDictTypeVO.class);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean saveDictType(SysDictTypeDTO sysDictTypeDTO) {
         //检查是否存在dictType
         LambdaQueryWrapper<SysDictType> countQw = Wrappers.lambdaQuery(SysDictType.class);
@@ -57,13 +54,13 @@ public class SysDictTypeServiceImpl extends SuperServiceImpl<ISysDictTypeMapper,
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateSysDictType(SysDictTypeUpdateDTO sysDictType) {
         SysDictType dictType = BeanCopierUtils.copyProperties(sysDictType, SysDictType.class);
         return updateById(dictType);
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public List<SysDictType> dataList(SysDictTypeRetrieveDTO queryDto) {
         return list(getWrapper(queryDto));
     }
@@ -78,7 +75,7 @@ public class SysDictTypeServiceImpl extends SuperServiceImpl<ISysDictTypeMapper,
     }
 
     @Override
-    @DSTransactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteDictType(Long[] ids) {
         for (Long id : ids) {
             SysDictType sysDictType = getById(id);
@@ -96,7 +93,6 @@ public class SysDictTypeServiceImpl extends SuperServiceImpl<ISysDictTypeMapper,
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public List<SysDictTypeVO> selectByMap(SysDictTypeRetrieveDTO sysDictType) {
         LambdaQueryWrapper<SysDictType> pageqw = Wrappers.lambdaQuery(SysDictType.class);
         pageqw.like(StringUtils.isNotBlank(sysDictType.getDictType()), SysDictType::getDictType, sysDictType.getDictType());
@@ -107,14 +103,12 @@ public class SysDictTypeServiceImpl extends SuperServiceImpl<ISysDictTypeMapper,
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public SysDictTypeVO getDictTypeById(Long dictId) {
         SysDictType dictType = getById(dictId);
         return BeanCopierUtils.copyProperties(dictType, SysDictTypeVO.class);
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public void excelExport(RequestVO<SysDictTypeRetrieveDTO> requestVO, HttpServletResponse response) {
         excelExport(PageUtils.of(requestVO, false), getWrapper(requestVO.getT()), SysDictTypeVO.class, response);
     }

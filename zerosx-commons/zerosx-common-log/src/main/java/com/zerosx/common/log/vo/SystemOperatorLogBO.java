@@ -69,6 +69,6 @@ public class SystemOperatorLogBO implements Serializable {
     private String operatorId;
 
     @Schema(description = "请求标识")
-    private String requestId;
+    private Long requestId;
 
 }

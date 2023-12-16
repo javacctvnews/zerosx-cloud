@@ -1,8 +1,10 @@
 package com.zerosx.auth.granter;
 
-import com.zerosx.auth.service.IVerificationCodeService;
-import com.zerosx.common.base.exception.BusinessException;
+import com.zerosx.common.base.constants.ZCache;
+import com.zerosx.common.core.enums.GranterTypeEnum;
+import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.security.tokens.SmsAuthenticationToken;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -22,18 +24,17 @@ import java.util.Map;
  */
 public class SmsTokenGranter extends AbstractTokenGranter {
 
-    private static final String GRANT_TYPE = "mobile_sms";
+    private static final String GRANT_TYPE = GranterTypeEnum.MOBILE_SMS.getCode();
 
     private final AuthenticationManager authenticationManager;
 
-    private final IVerificationCodeService verificationCodeService;
+    private final RedissonOpService redissonOpService;
 
     public SmsTokenGranter(AuthorizationServerTokenServices tokenServices, ClientDetailsService clientDetailsService,
-                           OAuth2RequestFactory requestFactory,AuthenticationManager authenticationManager,
-                           IVerificationCodeService verificationCodeService) {
+                           OAuth2RequestFactory requestFactory, AuthenticationManager authenticationManager, RedissonOpService redissonOpService) {
         super(tokenServices, clientDetailsService, requestFactory, GRANT_TYPE);
         this.authenticationManager = authenticationManager;
-        this.verificationCodeService = verificationCodeService;
+        this.redissonOpService = redissonOpService;
     }
 
     @Override
@@ -41,9 +42,18 @@ public class SmsTokenGranter extends AbstractTokenGranter {
         Map<String, String> parameters = new LinkedHashMap<String, String>(tokenRequest.getRequestParameters());
         String smsCode = parameters.get("smsCode");
         String mobilePhone = parameters.get("mobilePhone");
-        boolean smsCodeValid = verificationCodeService.checkSmsCode(mobilePhone, smsCode);
-        if (!smsCodeValid) {
-            throw new BusinessException("验证码不正确或已过期");
+        if (StringUtils.isBlank(mobilePhone)) {
+            throw new InvalidGrantException("手机号码为空");
+        }
+        if (StringUtils.isBlank(smsCode)) {
+            throw new InvalidGrantException("验证码为空");
+        }
+        String cacheCode = redissonOpService.get(ZCache.SMS_CODE.key(mobilePhone));
+        if (StringUtils.isBlank(cacheCode)) {
+            throw new InvalidGrantException("验证码不存在或已过期");
+        }
+        if (!smsCode.equals(cacheCode.toLowerCase())) {
+            throw new InvalidGrantException("验证码不正确");
         }
         Authentication userAuth = new SmsAuthenticationToken(mobilePhone);
         // 当然该参数传null也行

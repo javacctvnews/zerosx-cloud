@@ -1,13 +1,13 @@
 package com.zerosx.system.service.impl;
 
-import com.baomidou.dynamic.datasource.annotation.DS;
-import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.zerosx.api.system.vo.MutiTenancyGroupBO;
+import com.zerosx.common.base.constants.TranslConstants;
+import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.SelectOptionVO;
-import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.core.enums.StatusEnum;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
 import com.zerosx.common.core.utils.EasyTransUtils;
@@ -16,25 +16,29 @@ import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.BeanCopierUtils;
-import com.zerosx.ds.constant.DSType;
+import com.zerosx.common.utils.JacksonUtil;
 import com.zerosx.system.dto.MutiTenancyGroupEditDTO;
 import com.zerosx.system.dto.MutiTenancyGroupQueryDTO;
 import com.zerosx.system.dto.MutiTenancyGroupSaveDTO;
 import com.zerosx.system.entity.MutiTenancyGroup;
 import com.zerosx.system.mapper.IMutiTenancyGroupMapper;
 import com.zerosx.system.service.IMutiTenancyGroupService;
+import com.zerosx.system.task.SystemAsyncTask;
 import com.zerosx.system.vo.MutiTenancyGroupPageVO;
 import com.zerosx.system.vo.MutiTenancyGroupVO;
-import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import javax.servlet.http.HttpServletResponse;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * @ClassName MutiTenancyGroupServiceImpl
@@ -43,22 +47,24 @@ import java.util.Locale;
  * @Date 2023/3/13 10:45
  * @Version 1.0
  */
+@Slf4j
 @Service
-@DS(DSType.MASTER)
 public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGroupMapper, MutiTenancyGroup> implements IMutiTenancyGroupService {
 
     @Autowired
     private IMutiTenancyGroupMapper mutiTenancyGroupMapper;
     @Autowired
     private RedissonOpService redissonOpService;
+    @Autowired
+    private SystemAsyncTask systemAsyncTask;
 
     @Override
-    @DS(DSType.SLAVE)
     public CustomPageVO<MutiTenancyGroupPageVO> listPages(RequestVO<MutiTenancyGroupQueryDTO> requestVO, boolean searchCount) {
         return PageUtils.of(baseMapper.selectPage(PageUtils.of(requestVO, searchCount), lambdaQW(requestVO.getT())), MutiTenancyGroupPageVO.class);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean saveMutiTenancyGroup(MutiTenancyGroupSaveDTO mutiTenancyGroupSaveDTO) {
         //随机生成租户ID 6位长度
         String tenantId = IdGenerator.getRandomStr(6);
@@ -73,7 +79,9 @@ public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGr
         return save(mutiTenancyGroup);
     }
 
+
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean editMutiTenancyGroup(MutiTenancyGroupEditDTO editDTO) {
         MutiTenancyGroup dbGroup = getById(editDTO.getId());
         if (dbGroup == null) {
@@ -87,16 +95,15 @@ public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGr
             }
         }
         MutiTenancyGroup mutiTenancyGroup = BeanCopierUtils.copyProperties(editDTO, MutiTenancyGroup.class);
-        redissonOpService.hRemove(RedisKeyNameEnum.key(RedisKeyNameEnum.OPERATOR, dbGroup.getOperatorId()), "operatorId");
+        redissonOpService.hDel(ZCache.OPERATOR.key(dbGroup.getOperatorId()));
         boolean b = updateById(mutiTenancyGroup);
         if (b) {
-            redissonOpService.hRemove(RedisKeyNameEnum.key(RedisKeyNameEnum.OPERATOR, dbGroup.getOperatorId()), "operatorId");
+            systemAsyncTask.asyncHRemove(ZCache.OPERATOR.key(dbGroup.getOperatorId()), null);
         }
         return b;
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public List<SelectOptionVO> selectOptions() {
         LambdaQueryWrapper<MutiTenancyGroup> listAllQw = Wrappers.lambdaQuery(MutiTenancyGroup.class);
         listAllQw.eq(MutiTenancyGroup::getValidStatus, StatusEnum.NORMAL.getCode());
@@ -128,20 +135,18 @@ public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGr
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public List<MutiTenancyGroup> listData(MutiTenancyGroupQueryDTO query) {
         return list(lambdaQW(query));
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public MutiTenancyGroupVO getTenantById(Long id) {
         MutiTenancyGroup record = getById(id);
         return EasyTransUtils.copyTrans(record, MutiTenancyGroupVO.class);
     }
 
     @Override
-    @DSTransactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteGroupCompany(Long[] ids) {
         for (Long id : ids) {
             removeById(id);
@@ -150,21 +155,35 @@ public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGr
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public String transIdName(String operatorId) {
         if (StringUtils.isBlank(operatorId)) {
             return StringUtils.EMPTY;
         }
+        String cacheName = StringUtils.EMPTY;
         MutiTenancyGroup mutiTenancyGroup = baseMapper.selectTenancy(operatorId);
-        if (mutiTenancyGroup == null) {
-            return StringUtils.EMPTY;
+        if (mutiTenancyGroup != null) {
+            cacheName = mutiTenancyGroup.getTenantGroupName();
         }
-        redissonOpService.hPut(RedisKeyNameEnum.key(RedisKeyNameEnum.OPERATOR, operatorId), "operatorId", mutiTenancyGroup.getTenantGroupName());
-        return mutiTenancyGroup.getTenantGroupName();
+        redissonOpService.hPut(ZCache.OPERATOR.key(operatorId), TranslConstants.OPERATOR_NAME, cacheName);
+        return cacheName;
     }
 
     @Override
-    @DS(DSType.SLAVE)
+    public MutiTenancyGroupBO queryOperator(String operatorId) {
+        if (StringUtils.isBlank(operatorId)) {
+            return null;
+        }
+        MutiTenancyGroup mutiTenancyGroup = baseMapper.selectTenancy(operatorId);
+        if (mutiTenancyGroup == null) {
+            return null;
+        }
+        MutiTenancyGroupBO mutiTenancyGroupBO = BeanCopierUtils.copyProperties(mutiTenancyGroup, MutiTenancyGroupBO.class);
+        Map<String, Object> map = JacksonUtil.toMap(mutiTenancyGroupBO);
+        redissonOpService.hPut(ZCache.OPERATOR.key(operatorId), map);
+        return mutiTenancyGroupBO;
+    }
+
+    @Override
     public void excelExport(RequestVO<MutiTenancyGroupQueryDTO> requestVO, HttpServletResponse response) {
         excelExport(PageUtils.of(requestVO, false), lambdaQW(requestVO.getT()), MutiTenancyGroupPageVO.class, response);
     }

@@ -1,7 +1,8 @@
 package com.zerosx.common.core.enums.sms;
 
-import com.zerosx.common.anno.AutoDictData;
+import com.zerosx.common.core.anno.AutoDictData;
 import com.zerosx.common.base.BaseEnum;
+import com.zerosx.common.core.enums.CssTypeEnum;
 import lombok.Getter;
 
 /**
@@ -35,5 +36,10 @@ public enum SmsBusinessCodeEnum implements BaseEnum<String> {
         return "";
     }
 
+
+    @Override
+    public String getCss() {
+        return CssTypeEnum.DEFAULT.getCss();
+    }
 
 }

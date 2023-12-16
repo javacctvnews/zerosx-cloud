@@ -1,6 +1,6 @@
 package com.zerosx.common.core.enums;
 
-import com.zerosx.common.anno.AutoDictData;
+import com.zerosx.common.core.anno.AutoDictData;
 import com.zerosx.common.base.BaseEnum;
 import lombok.Getter;
 
@@ -15,16 +15,19 @@ import lombok.Getter;
 @AutoDictData(code = "OperatorResEnum", name = "操作结果")
 public enum OperatorResEnum implements BaseEnum<String> {
 
-    NORMAL("0", "成功"),
+    NORMAL("0", "成功", CssTypeEnum.PRIMARY.getCss()),
 
-    ABNORMAL("1", "失败");
+    ABNORMAL("1", "失败", CssTypeEnum.DANGER.getCss());
 
     private final String code;
 
     private final String message;
 
-    OperatorResEnum(String code, String message) {
+    private final String css;
+
+    OperatorResEnum(String code, String message, String css) {
         this.code = code;
         this.message = message;
+        this.css = css;
     }
 }

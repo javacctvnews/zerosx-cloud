@@ -187,13 +187,13 @@ export default {
         ]
       },
       columns: [
-        {
-          attrs: {
-            label: '记录ID',
-            prop: 'id',
-            minWidth: '70'
-          },
-        },
+        // {
+        //   attrs: {
+        //     label: '记录ID',
+        //     prop: 'id',
+        //     minWidth: '70'
+        //   },
+        // },
         {
           attrs: {
             label: '字典类型编码',

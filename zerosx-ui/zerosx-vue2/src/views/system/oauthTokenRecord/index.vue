@@ -100,15 +100,15 @@ export default {
         }
       },
       columns: [
-        {
-          attrs: {
-            label: '记录ID',
-            prop: 'id',
-            minWidth: '100',
-            sortable: 'custom',
-            align: "center",
-          },
-        },
+        // {
+        //   attrs: {
+        //     label: '记录ID',
+        //     prop: 'id',
+        //     minWidth: '100',
+        //     sortable: 'custom',
+        //     align: "center",
+        //   },
+        // },
         {
           attrs: {
             label: '访问编号',
@@ -288,7 +288,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const infoIds = row.id || this.ids;
-      this.$modal.confirm('是否确认删除访问编号为"' + infoIds + '"的数据项？').then(function () {
+      this.$modal.confirm('是否确认删除已选择的数据项？').then(function () {
         return delLogininfor(infoIds);
       }).then(() => {
         this.getList();

@@ -1,6 +1,6 @@
 package com.zerosx.common.core.enums;
 
-import com.zerosx.common.anno.AutoDictData;
+import com.zerosx.common.core.anno.AutoDictData;
 import com.zerosx.common.base.BaseEnum;
 import lombok.Getter;
 
@@ -31,6 +31,11 @@ public enum AuthTypeEnum implements BaseEnum<String> {
     AuthTypeEnum(String code, String message) {
         this.code = code;
         this.message = message;
+    }
+
+    @Override
+    public String getCss() {
+        return CssTypeEnum.DEFAULT.getCss();
     }
 
     public static String getMessageByCode(String obj) {

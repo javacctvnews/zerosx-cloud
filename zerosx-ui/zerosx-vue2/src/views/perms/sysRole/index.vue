@@ -208,15 +208,15 @@ export default {
         ],
       },
       columns: [
-        {
-          attrs: {
-            label: "角色ID",
-            prop: "id",
-            minWidth: "90",
-            sortable: 'custom',
-            align: "center",
-          },
-        },
+        // {
+        //   attrs: {
+        //     label: "角色ID",
+        //     prop: "id",
+        //     minWidth: "90",
+        //     sortable: 'custom',
+        //     align: "center",
+        //   },
+        // },
         {
           attrs: {
             label: "角色名称",
@@ -412,7 +412,7 @@ export default {
     },
     handleDelete(row) {
       const idList = row.id || this.ids;
-      this.$modal.confirm('是否确认删除编号为[' + idList + ']的数据项？').then(function () {
+      this.$modal.confirm('是否确认删除已选择的数据项？').then(function () {
         return deleteSysRole(idList);
       }).then(() => {
         this.getList();

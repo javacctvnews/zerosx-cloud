@@ -1,5 +1,6 @@
 package com.zerosx.system.controller;
 
+import com.zerosx.api.system.vo.MutiTenancyGroupBO;
 import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.ResultVO;
@@ -20,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -70,7 +71,7 @@ public class MutiTenancyGroupController {
     @OpLog(mod = "多租户集团", btn = "导出", opType = OpTypeEnum.EXPORT)
     @PostMapping("/muti_tenancy/export")
     public void operatorExport(@RequestBody RequestVO<MutiTenancyGroupQueryDTO> requestVO, HttpServletResponse response) throws IOException {
-        mutiTenancyGroupService.excelExport(requestVO,response);
+        mutiTenancyGroupService.excelExport(requestVO, response);
     }
 
     @Operation(summary = "按id查询")
@@ -89,6 +90,12 @@ public class MutiTenancyGroupController {
     @PostMapping("/muti_tenancy/tenantName")
     public ResultVO<String> transIdName(@RequestParam(value = "operatorId", required = false) String operatorId) {
         return ResultVOUtil.success(mutiTenancyGroupService.transIdName(operatorId));
+    }
+
+    @Operation(summary = "按租户ID查询租户公司信息")
+    @PostMapping("/muti_tenancy/queryOperator")
+    public ResultVO<MutiTenancyGroupBO> queryOperator(@RequestParam(value = "operatorId", required = false) String operatorId) {
+        return ResultVOUtil.success(mutiTenancyGroupService.queryOperator(operatorId));
     }
 
 }

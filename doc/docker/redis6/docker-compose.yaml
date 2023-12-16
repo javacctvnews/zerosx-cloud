@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  redis:
+    image: redis:6.2.13
+    container_name: zerosx_redis_6
+    restart: unless-stopped
+    ports:
+      - "6479:6379"
+    environment:
+      # 时区上海
+      TZ: Asia/Shanghai
+    volumes:
+      # 配置文件
+      - ./conf:/redis/config
+      # 数据文件
+      - D:/docker/data/redis6/data/:/data/
+    command: "redis-server /redis/config/redis.conf"
+    privileged: true
+    #network_mode: "host"

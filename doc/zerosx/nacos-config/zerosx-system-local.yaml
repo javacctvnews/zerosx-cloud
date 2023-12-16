@@ -1,18 +1,19 @@
 spring:
   main:
     allow-bean-definition-overriding: true
+    allow-circular-references: true
 
   datasource:
     url: jdbc:mysql://127.0.0.1:13306/zerosx_system?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true
     username: root
     password: zerosx@123456
     driver-class-name: com.mysql.cj.jdbc.Driver
-    type: com.zaxxer.hikari.HikariDataSource
 
 
 logging:
   level:
     com.zerosx: debug
+    com.zerosx.encrypt2: error
 
 
 mybatis-plus:
@@ -26,9 +27,6 @@ zerosx:
   tenant:
     enable: true
     ignoreTables:
-      - t_area_city_source
-      - t_sys_dict_data
-      - t_sys_dict_type
       - t_sys_menu
       - t_sys_role_menu
       - t_sys_user_role

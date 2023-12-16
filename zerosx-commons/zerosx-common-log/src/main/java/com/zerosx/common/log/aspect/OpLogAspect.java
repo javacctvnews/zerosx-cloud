@@ -1,9 +1,10 @@
 package com.zerosx.common.log.aspect;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
-import com.zerosx.common.core.enums.RedisKeyNameEnum;
+import com.zerosx.common.base.constants.ZCache;
+import com.zerosx.common.core.enums.BizTagEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
-import com.zerosx.common.core.utils.IdGenerator;
+import com.zerosx.common.core.utils.LeafUtils;
 import com.zerosx.common.log.anno.OpLog;
 import com.zerosx.common.log.feign.AsyncSysOperatorLogService;
 import com.zerosx.common.log.properties.CustomLogProperties;
@@ -11,9 +12,6 @@ import com.zerosx.common.log.vo.SystemOperatorLogBO;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.IpUtils;
 import com.zerosx.common.utils.JacksonUtil;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
@@ -30,6 +28,9 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 
@@ -92,7 +93,7 @@ public class OpLogAspect {
         try {
             SystemOperatorLogBO operLog = new SystemOperatorLogBO();
             operLog.setBusinessType(opLog.opType().getCode());
-            operLog.setRequestId(IdGenerator.getIdStr());
+            operLog.setRequestId(LeafUtils.uid(BizTagEnum.OP_LOG));
             operLog.setStatus(0);
             operLog.setOperatorTime(new Date());
             operLog.setOperatorId(ZerosSecurityContextHolder.getOperatorIds());
@@ -126,7 +127,7 @@ public class OpLogAspect {
             if (customLogProperties.getSaveByFeign()) {
                 asyncLogService.saveSysLog(operLog);
             } else if (customLogProperties.getSaveByRedis()) {
-                redissonOpService.zAdd(RedisKeyNameEnum.key(RedisKeyNameEnum.SYS_OP_LOG), operLog, (double) operLog.getOperatorTime().getTime());
+                redissonOpService.zAdd(ZCache.SYS_OP_LOG.key(), operLog, (double) operLog.getOperatorTime().getTime());
             }
         } catch (Exception exp) {
             // 记录本地异常日志

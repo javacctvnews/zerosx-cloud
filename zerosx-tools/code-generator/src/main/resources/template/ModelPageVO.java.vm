@@ -3,15 +3,14 @@ package ${package}.${moduleName}.vo;
 import lombok.Getter;
 import lombok.Setter;
 #if(${hasBigDecimal})
-import java.math.BigDecimal;
 #end
 import java.io.Serializable;
-import java.util.Date;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.zerosx.common.base.anno.Trans;
-import com.zerosx.common.base.constants.CommonConstants;
+import com.zerosx.common.base.constants.TranslConstants;
 
 /**
  * ${comments}
@@ -34,7 +33,7 @@ public class ${className}PageVO implements Serializable {
     @ExcelProperty(value = {"$column.comments"})
 #end
 #if($column.columnName == "operator_id")
-    @Trans(type = CommonConstants.TRANS_OPERATOR_ID, ref = "operatorName")
+    @Trans(type = TranslConstants.OPERATOR, ref = "operatorName")
 #end
     private $column.attrType $column.attrname;
 

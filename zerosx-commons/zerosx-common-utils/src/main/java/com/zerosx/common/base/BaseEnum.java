@@ -19,4 +19,10 @@ public interface BaseEnum<T> {
      */
     String getMessage();
 
+    /**
+     * 回显CSS样式
+     * @return css
+     */
+    String getCss();
+
 }

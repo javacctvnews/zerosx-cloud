@@ -1,13 +1,12 @@
 package com.zerosx.resource.service.impl;
 
-import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.RegionSelectVO;
 import com.zerosx.common.base.vo.RequestVO;
-import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
 import com.zerosx.common.core.utils.EasyTransUtils;
 import com.zerosx.common.core.utils.IdGenerator;
@@ -16,7 +15,6 @@ import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.common.utils.JacksonUtil;
-import com.zerosx.ds.constant.DSType;
 import com.zerosx.resource.dto.AreaCitySourceDTO;
 import com.zerosx.resource.dto.AreaCitySourcePageDTO;
 import com.zerosx.resource.entity.AreaCitySource;
@@ -29,8 +27,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,14 +43,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 @Service
-@DS(DSType.MASTER)
 public class AreaCitySourceServiceImpl extends SuperServiceImpl<IAreaCitySourceMapper, AreaCitySource> implements IAreaCitySourceService {
 
     private static final String ROOT_NODE = "000000";
 
     private static Map<String, String> regionMap = new ConcurrentHashMap<>();
 
-    private static final String regionKey = RedisKeyNameEnum.key(RedisKeyNameEnum.REGION);
+    private static final String regionKey = ZCache.REGION.key();
 
     @Autowired
     private IAreaCitySourceMapper areaCitySourceMapper;
@@ -59,7 +57,6 @@ public class AreaCitySourceServiceImpl extends SuperServiceImpl<IAreaCitySourceM
     private RedissonOpService redissonOpService;
 
     @Override
-    @DS(DSType.SLAVE)
     public CustomPageVO<AreaCitySourcePageVO> pageList(RequestVO<AreaCitySourcePageDTO> requestVO, boolean searchCount) {
         AreaCitySourcePageDTO query = requestVO.getT() == null ? new AreaCitySourcePageDTO() : requestVO.getT();
         LambdaQueryWrapper<AreaCitySource> listqw = getWrapper(query);
@@ -92,6 +89,7 @@ public class AreaCitySourceServiceImpl extends SuperServiceImpl<IAreaCitySourceM
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean update(AreaCitySourceDTO areaCitySourceDTO) {
         AreaCitySource areaCitySource = getAreaCitySource(areaCitySourceDTO.getAreaCode());
         if (areaCitySource == null) {
@@ -102,12 +100,12 @@ public class AreaCitySourceServiceImpl extends SuperServiceImpl<IAreaCitySourceM
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteRecord(Long id) {
         return removeById(id);
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public List<AreaCitySourceTreeVO> lazyTreeData(String parentCode) {
         String parentTitle;
         if (ROOT_NODE.equals(parentCode)) {
@@ -136,7 +134,6 @@ public class AreaCitySourceServiceImpl extends SuperServiceImpl<IAreaCitySourceM
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public List<RegionSelectVO> getAllArea() {
         long t1 = System.currentTimeMillis();
         try {
@@ -178,7 +175,6 @@ public class AreaCitySourceServiceImpl extends SuperServiceImpl<IAreaCitySourceM
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public String getAreaName(String regionCode) {
         if (StringUtils.isBlank(regionCode)) {
             return StringUtils.EMPTY;
@@ -187,7 +183,7 @@ public class AreaCitySourceServiceImpl extends SuperServiceImpl<IAreaCitySourceM
         if (StringUtils.isNotBlank(cacheName)) {
             return cacheName;
         }
-        String redisCacheName = redissonOpService.hGet(RedisKeyNameEnum.key(RedisKeyNameEnum.REGION_HASH), regionCode);
+        String redisCacheName = redissonOpService.hGet(ZCache.REGION_HASH.key(), regionCode);
         if (StringUtils.isNotBlank(redisCacheName)) {
             return redisCacheName;
         }
@@ -198,12 +194,11 @@ public class AreaCitySourceServiceImpl extends SuperServiceImpl<IAreaCitySourceM
             return StringUtils.EMPTY;
         }
         regionMap.put(regionCode, region.getAreaName());
-        redissonOpService.hPut(RedisKeyNameEnum.key(RedisKeyNameEnum.REGION_HASH), regionCode, region.getAreaName());
+        redissonOpService.hPut(ZCache.REGION_HASH.key(), regionCode, region.getAreaName());
         return region.getAreaName();
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public void excelExport(RequestVO<AreaCitySourcePageDTO> requestVO, HttpServletResponse response) {
         excelExport(PageUtils.of(requestVO, false), getWrapper(requestVO.getT()), AreaCitySourcePageVO.class, response);
     }

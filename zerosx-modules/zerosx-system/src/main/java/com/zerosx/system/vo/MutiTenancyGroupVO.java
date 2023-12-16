@@ -1,7 +1,7 @@
 package com.zerosx.system.vo;
 
 import com.zerosx.common.base.anno.Trans;
-import com.zerosx.common.base.constants.CommonConstants;
+import com.zerosx.common.base.constants.TranslConstants;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,23 +20,23 @@ public class MutiTenancyGroupVO {
     private String tenantShortName;
 
     private String socialCreditCode;
-    @Trans(type = CommonConstants.TRANS_OSS, ref = "businessLicensePictureUrl")
+    @Trans(type = TranslConstants.OSS, ref = "businessLicensePictureUrl")
     private String businessLicensePicture;
     private String businessLicensePictureUrl;
-    @Trans(type = CommonConstants.TRANS_DICT, key = "StatusEnum", ref = "validStatusMsg")
+    @Trans(type = TranslConstants.DICT, key = "StatusEnum", ref = "validStatusMsg")
     private String validStatus;
     private String validStatusMsg;
 
     private Integer auditStatus;
     private String auditStatusMsg;
 
-    @Trans(type = CommonConstants.TRANS_REGION, ref = "provinceName")
+    @Trans(type = TranslConstants.REGION, ref = "provinceName")
     private String province;
     private String provinceName;
-    @Trans(type = CommonConstants.TRANS_REGION, ref = "cityName")
+    @Trans(type = TranslConstants.REGION, ref = "cityName")
     private String city;
     private String cityName;
-    @Trans(type = CommonConstants.TRANS_REGION, ref = "areaName")
+    @Trans(type = TranslConstants.REGION, ref = "areaName")
     private String area;
     private String areaName;
     private String street;
@@ -44,7 +44,7 @@ public class MutiTenancyGroupVO {
     private String contactMobilePhone;
     private String telephone;
 
-    @Trans(type = CommonConstants.TRANS_OSS, ref = "logPictureUrl")
+    @Trans(type = TranslConstants.OSS, ref = "logPictureUrl")
     private String logPicture;
     private String logPictureUrl;
 

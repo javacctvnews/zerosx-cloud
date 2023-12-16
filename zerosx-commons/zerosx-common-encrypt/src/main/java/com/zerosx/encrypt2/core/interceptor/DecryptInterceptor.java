@@ -86,7 +86,7 @@ public class DecryptInterceptor extends AbsEncryptInterceptor {
                             encryptFieldList.stream().filter(e -> e.field().equals(entry.getKey())).findFirst()
                                     .ifPresent(encryptField -> map.put(entry.getKey(), encrypt(encryptField, (String) value, EncryptMode.DEC)));
                         } else {
-                            debug("其他类型:{} key:{} val:{}", value.getClass().getName(), entry.getKey(), value);
+                            log.debug("其他类型:{} key:{} val:{}", value.getClass().getName(), entry.getKey(), value);
                         }
                     }
                 }

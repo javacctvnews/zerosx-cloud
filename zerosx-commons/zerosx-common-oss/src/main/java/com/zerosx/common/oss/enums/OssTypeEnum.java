@@ -1,6 +1,6 @@
 package com.zerosx.common.oss.enums;
 
-import com.zerosx.common.anno.AutoDictData;
+
 import com.zerosx.common.base.BaseEnum;
 import com.zerosx.common.oss.core.config.AliyunOssConfig;
 import com.zerosx.common.oss.core.config.IOssConfig;
@@ -20,7 +20,7 @@ import lombok.Getter;
  * @create: 2023-08-30 14:03
  **/
 @Getter
-@AutoDictData(name = "OSS服务商")
+//@AutoDictData(name = "OSS服务商")
 public enum OssTypeEnum implements BaseEnum<String> {
 
     /**
@@ -82,5 +82,10 @@ public enum OssTypeEnum implements BaseEnum<String> {
             }
         }
         return "";
+    }
+
+    @Override
+    public String getCss() {
+        return "default";
     }
 }

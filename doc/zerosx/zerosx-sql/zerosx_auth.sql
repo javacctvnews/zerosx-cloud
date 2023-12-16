@@ -3,31 +3,6 @@ CREATE DATABASE `zerosx_auth` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf
 /*切换数据库*/
 USE `zerosx_auth`;
 
-
-DROP TABLE IF EXISTS `oauth_client_token`;
-CREATE TABLE `oauth_client_token` (
-  `token_id` varchar(255) DEFAULT NULL,
-  `token` mediumblob,
-  `authentication_id` varchar(255) NOT NULL,
-  `user_name` varchar(255) DEFAULT NULL,
-  `client_id` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`authentication_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-
-DROP TABLE IF EXISTS `oauth_access_token`;
-CREATE TABLE `oauth_access_token` (
-  `token_id` varchar(255) DEFAULT NULL,
-  `token` mediumblob,
-  `authentication_id` varchar(255) NOT NULL,
-  `user_name` varchar(255) DEFAULT NULL,
-  `client_id` varchar(255) DEFAULT NULL,
-  `authentication` mediumblob,
-  `refresh_token` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`authentication_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='访问令牌';
-
-
 DROP TABLE IF EXISTS `t_oauth_token_record`;
 CREATE TABLE `t_oauth_token_record` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增ID',
@@ -54,16 +29,6 @@ CREATE TABLE `t_oauth_token_record` (
   KEY `idx_deleted` (`deleted`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='授权记录';
 
-
-
-DROP TABLE IF EXISTS `oauth_refresh_token`;
-CREATE TABLE `oauth_refresh_token` (
-  `token_id` varchar(255) DEFAULT NULL,
-  `token` mediumblob,
-  `authentication` mediumblob
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='刷新令牌';
-
-
 DROP TABLE IF EXISTS `undo_log`;
 CREATE TABLE `undo_log` (
   `id` bigint NOT NULL AUTO_INCREMENT,
@@ -78,17 +43,6 @@ CREATE TABLE `undo_log` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `ux_undo_log` (`xid`,`branch_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb3;
-
-
-DROP TABLE IF EXISTS `oauth_approvals`;
-CREATE TABLE `oauth_approvals` (
-  `userId` varchar(255) DEFAULT NULL,
-  `clientId` varchar(255) DEFAULT NULL,
-  `scope` varchar(255) DEFAULT NULL,
-  `status` varchar(10) DEFAULT NULL,
-  `expiresAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `lastModifiedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE IF EXISTS `oauth_client_details`;
@@ -117,13 +71,6 @@ CREATE TABLE `oauth_client_details` (
   UNIQUE KEY `UN_clientID` (`client_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC COMMENT='客户端管理';
 
-
-DROP TABLE IF EXISTS `oauth_code`;
-CREATE TABLE `oauth_code` (
-  `code` varchar(255) DEFAULT NULL,
-  `authentication` mediumblob
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='授权码';
-
-/*初始化数据*/
-INSERT INTO zerosx_auth.oauth_client_details (client_id,client_name,resource_ids,client_secret,client_secret_str,`scope`,authorized_grant_types,web_server_redirect_uri,authorities,access_token_validity,refresh_token_validity,additional_information,autoapprove,create_time,update_time,create_by,update_by,status,deleted) VALUES
-	 ('saas','SaaS','api-system,api-auth,api-resource','{bcrypt}$2a$10$4mfItq8sx7LELT83gF34Bu/y8spQ7/S3eOslUWRVKxuxee6wbQaxK','Zeros9999!#@','all','authorization_code,password,refresh_token,openId,mobile_password,sms,password_code,implicit,client_credentials,captcha,mobile_sms',NULL,'',36000,288000,'{}','true','2023-03-20 14:03:13','2023-08-20 18:37:10.651000',NULL,'admin123','0',0);
+/*初始化 认证client 数据*/
+INSERT INTO zerosx_auth.oauth_client_details (id, client_id, client_name, resource_ids, client_secret, client_secret_str, `scope`, authorized_grant_types, web_server_redirect_uri, authorities, access_token_validity, refresh_token_validity, additional_information, autoapprove, create_time, update_time, create_by, update_by, status, deleted)
+    VALUES(1, 'saas', 'SaaS', 'api-system,api-auth,api-resource', '{bcrypt}$2a$10$W3q6VXgUfhHDhpsH54V2Me4Dai2VWwFuePTUEKnVEbBdUE9Qz2a.W', 'Zeros9999!#@', 'all', 'authorization_code,implicit,client_credentials,password,refresh_token,captcha_pwd,sms', NULL, '', 28800, 86400, '{}', 'true', '2023-03-20 14:03:13', '2023-09-20 12:15:45.460000', NULL, 'admin123', '0', 0);

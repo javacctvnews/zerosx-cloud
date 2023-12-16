@@ -160,7 +160,7 @@ export default {
       columns: [
         {
           attrs: {
-            label: '记录ID',
+            label: '请求ID',
             prop: 'id',
             minWidth: '100',
             sortable: 'custom',
@@ -257,6 +257,7 @@ export default {
           attrs: {
             label: '请求URL',
             prop: 'operatorUrl',
+            showOverflowTooltip: true,
             minWidth: '280',
             align: "center",
           },
@@ -265,6 +266,7 @@ export default {
           attrs: {
             label: '方法名称',
             prop: 'methodName',
+            showOverflowTooltip: true,
             minWidth: '280',
             align: "center",
           },
@@ -359,7 +361,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const operIds = row.id || this.ids;
-      this.$modal.confirm('是否确认删除日志编号为"' + operIds + '"的数据项？').then(function () {
+      this.$modal.confirm('是否确认删除已选择的数据项？').then(function () {
         return delOperlog(operIds);
       }).then(() => {
         this.getList();

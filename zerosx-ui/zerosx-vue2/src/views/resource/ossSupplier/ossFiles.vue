@@ -3,16 +3,16 @@
     <!-- 搜索栏 -->
     <el-form :model="queryParams.t" label-position="left" ref="queryForm" size="small" :inline="true" v-show="showSearch"
       label-width="auto">
-      <el-form-item label="租户公司" prop="operatorId">
+      <!-- <el-form-item label="租户公司" prop="operatorId">
         <el-select clearable v-model="queryParams.t.operatorId" placeholder="请选择租户公司" style="width: 210px;">
           <el-option v-for="item in operators" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
-      </el-form-item>
-      <el-form-item label="OSS类型" prop="ossType">
+      </el-form-item> -->
+      <!-- <el-form-item label="OSS类型" prop="ossType">
         <el-input v-model="queryParams.t.ossType" placeholder="请输入OSS类型" clearable @keyup.enter.native="handleQuery"
           style="width: 210px;" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="文件名" prop="fileName">
         <el-input v-model="queryParams.t.fileName" placeholder="请输入文件名关键字" clearable @keyup.enter.native="handleQuery"
           style="width: 210px;" />
@@ -20,10 +20,10 @@
     </el-form>
     <!-- 操作栏 -->
     <el-row :gutter="10" class="mb5">
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button type="primary" plain icon="el-icon-upload" size="mini" @click="uploadFile"
           v-hasPerms="['system:ossSupplier:add']">上传</el-button>
-      </el-col>
+      </el-col> -->
       <el-col :span="1.5">
         <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
           v-hasPerms="['resource:ossfile:delete']">删除</el-button>
@@ -153,15 +153,15 @@ export default {
             sortable: 'custom',
           },
         },
-        {
-          attrs: {
-            label: '记录ID',
-            prop: 'id',
-            minWidth: '100',
-            align: 'center',
-            sortable: 'custom',
-          },
-        },
+        // {
+        //   attrs: {
+        //     label: '记录ID',
+        //     prop: 'id',
+        //     minWidth: '100',
+        //     align: 'center',
+        //     sortable: 'custom',
+        //   },
+        // },
         // {
         //   attrs: {
         //     label: '存储链接',
@@ -291,7 +291,7 @@ export default {
     handleUpload() { },
     handleDelete(row) {
       let ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除编号为"' + ids + '"的数据项？').then(function () {
+      this.$modal.confirm('是否确认删除已选择的数据项？').then(function () {
         return fullDelete(ids);
       }).then(() => {
         this.getList();

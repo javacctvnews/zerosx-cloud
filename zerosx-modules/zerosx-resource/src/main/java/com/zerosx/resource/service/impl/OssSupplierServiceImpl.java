@@ -1,7 +1,5 @@
 package com.zerosx.resource.service.impl;
 
-import com.baomidou.dynamic.datasource.annotation.DS;
-import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -19,7 +17,6 @@ import com.zerosx.common.oss.core.config.IOssConfig;
 import com.zerosx.common.oss.enums.OssTypeEnum;
 import com.zerosx.common.oss.properties.DefaultOssProperties;
 import com.zerosx.common.utils.BeanCopierUtils;
-import com.zerosx.ds.constant.DSType;
 import com.zerosx.resource.dto.OssSupplierDTO;
 import com.zerosx.resource.dto.OssSupplierPageDTO;
 import com.zerosx.resource.entity.OssSupplier;
@@ -27,12 +24,13 @@ import com.zerosx.resource.mapper.IOssSupplierMapper;
 import com.zerosx.resource.service.IOssSupplierService;
 import com.zerosx.resource.vo.OssSupplierPageVO;
 import com.zerosx.resource.vo.OssSupplierVO;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -44,20 +42,17 @@ import java.util.List;
  */
 @Slf4j
 @Service
-@DS(DSType.MASTER)
 public class OssSupplierServiceImpl extends SuperServiceImpl<IOssSupplierMapper, OssSupplier> implements IOssSupplierService {
 
     @Autowired
     private DefaultOssProperties defaultOssProperties;
 
     @Override
-    @DS(DSType.SLAVE)
     public CustomPageVO<OssSupplierPageVO> pageList(RequestVO<OssSupplierPageDTO> requestVO, boolean searchCount) {
         return PageUtils.of(baseMapper.selectPage(PageUtils.of(requestVO, searchCount), getWrapper(requestVO.getT())), OssSupplierPageVO.class);
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public List<OssSupplier> dataList(OssSupplierPageDTO query) {
         return list(getWrapper(query));
     }
@@ -74,13 +69,16 @@ public class OssSupplierServiceImpl extends SuperServiceImpl<IOssSupplierMapper,
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean add(OssSupplierDTO ossSupplierDTO) {
         OssSupplier addEntity = BeanCopierUtils.copyProperties(ossSupplierDTO, OssSupplier.class);
         addEntity.setSupplierName(OssTypeEnum.getOssType(addEntity.getSupplierType()).getMessage());
+        checkExist(addEntity, "已存在的存储桶名称：%s，禁止重复添加", ossSupplierDTO.getBucketName());
         return save(addEntity);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean update(OssSupplierDTO ossSupplierDTO) {
         OssSupplier dbUpdate = getById(ossSupplierDTO.getId());
         if (dbUpdate == null) {
@@ -88,6 +86,7 @@ public class OssSupplierServiceImpl extends SuperServiceImpl<IOssSupplierMapper,
         }
         OssSupplier updateEntity = BeanCopierUtils.copyProperties(ossSupplierDTO, OssSupplier.class);
         updateEntity.setSupplierName(OssTypeEnum.getOssType(updateEntity.getSupplierType()).getMessage());
+        checkExist(updateEntity, "已存在的存储桶名称：%s", ossSupplierDTO.getBucketName());
         boolean update = updateById(updateEntity);
         if (update && StatusEnum.NORMAL.getCode().equals(updateEntity.getStatus())) {
             //更新其他oss厂商停用
@@ -103,13 +102,22 @@ public class OssSupplierServiceImpl extends SuperServiceImpl<IOssSupplierMapper,
     }
 
     @Override
-    @DS(DSType.SLAVE)
+    protected void checkExist(OssSupplier ossSupplier, String message, Object... args) {
+        LambdaQueryWrapper<OssSupplier> qw = Wrappers.lambdaQuery(OssSupplier.class);
+        qw.ne(ossSupplier.getId() != null, OssSupplier::getId, ossSupplier.getId());
+        qw.eq(OssSupplier::getOperatorId, ossSupplier.getOperatorId());
+        qw.eq(OssSupplier::getSupplierType, ossSupplier.getSupplierType());
+        qw.eq(OssSupplier::getBucketName, ossSupplier.getBucketName());
+        super.checkExist(qw, message, args);
+    }
+
+    @Override
     public OssSupplierVO queryById(Long id) {
         return EasyTransUtils.copyTrans(getById(id), OssSupplierVO.class);
     }
 
     @Override
-    @DSTransactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteRecord(Long[] ids) {
         for (Long id : ids) {
             baseMapper.deleteById(id);
@@ -129,7 +137,6 @@ public class OssSupplierServiceImpl extends SuperServiceImpl<IOssSupplierMapper,
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public IOssClientService getClient(Long ossSupplierId) {
         OssSupplier ossSupplier;
         //查询配置
@@ -161,7 +168,6 @@ public class OssSupplierServiceImpl extends SuperServiceImpl<IOssSupplierMapper,
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public void excelExport(RequestVO<OssSupplierPageDTO> requestVO, HttpServletResponse response) {
         excelExport(PageUtils.of(requestVO, false), getWrapper(requestVO.getT()), OssSupplierPageVO.class, response);
     }

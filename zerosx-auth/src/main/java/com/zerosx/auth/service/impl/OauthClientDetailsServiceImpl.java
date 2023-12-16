@@ -16,11 +16,11 @@ import com.zerosx.auth.vo.TokenVO;
 import com.zerosx.common.base.constants.HeadersConstants;
 import com.zerosx.common.base.constants.SecurityConstants;
 import com.zerosx.common.base.constants.TokenStoreConstants;
+import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.OauthClientDetailsBO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.SelectOptionVO;
-import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
 import com.zerosx.common.core.utils.EasyTransUtils;
@@ -42,10 +42,12 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -111,6 +113,7 @@ public class OauthClientDetailsServiceImpl extends SuperServiceImpl<IOauthClient
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean saveOauthClient(OauthClientDetailsDTO oauthClientDetailsDTO) {
         OauthClientDetails clientDetails = getByClientId(oauthClientDetailsDTO.getClientId());
         if (clientDetails != null) {
@@ -122,7 +125,8 @@ public class OauthClientDetailsServiceImpl extends SuperServiceImpl<IOauthClient
         oauthClientDetails.setUpdateTime(nowDate);
         oauthClientDetails.setCreateBy(ZerosSecurityContextHolder.getUserName());
         oauthClientDetails.setScope("all");
-        oauthClientDetails.setAuthorizedGrantTypes(String.join(",", oauthClientDetailsDTO.getAuthorizedGrantTypes()));
+        oauthClientDetails.setAuthorizedGrantTypes(StringUtils.join(oauthClientDetailsDTO.getAuthorizedGrantTypes(), ","));
+        oauthClientDetails.setResourceIds(StringUtils.join(oauthClientDetailsDTO.getResourceIds(), ","));
         oauthClientDetails.setClientSecret(passwordEncoder.encode(oauthClientDetailsDTO.getClientSecret()));
         oauthClientDetails.setClientSecretStr(oauthClientDetailsDTO.getClientSecret());
         oauthClientDetails.setAccessTokenValiditySeconds(oauthClientDetailsDTO.getAccessTokenValidity());
@@ -131,6 +135,7 @@ public class OauthClientDetailsServiceImpl extends SuperServiceImpl<IOauthClient
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean editOauthClient(OauthClientDetailsDTO editDTO) {
         OauthClientDetails clientDetails = getById(editDTO.getId());
         if (clientDetails == null) {
@@ -149,7 +154,8 @@ public class OauthClientDetailsServiceImpl extends SuperServiceImpl<IOauthClient
         redissonOpService.del(clientRedisKey(clientDetails.getClientId()));
         OauthClientDetails oauthClientDetails = BeanCopierUtils.copyProperties(editDTO, OauthClientDetails.class);
         oauthClientDetails.setUpdateTime(new Date());
-        oauthClientDetails.setAuthorizedGrantTypes(String.join(",", editDTO.getAuthorizedGrantTypes()));
+        oauthClientDetails.setAuthorizedGrantTypes(StringUtils.join(editDTO.getAuthorizedGrantTypes(), ","));
+        oauthClientDetails.setResourceIds(StringUtils.join(editDTO.getResourceIds(), ","));
         oauthClientDetails.setClientSecret(passwordEncoder.encode(editDTO.getClientSecret()));
         oauthClientDetails.setClientSecretStr(editDTO.getClientSecret());
         oauthClientDetails.setUpdateBy(ZerosSecurityContextHolder.getUserName());
@@ -169,6 +175,12 @@ public class OauthClientDetailsServiceImpl extends SuperServiceImpl<IOauthClient
         oauthClientDetailsVO.setAccessTokenValidity(clientDetails.getAccessTokenValiditySeconds());
         oauthClientDetailsVO.setRefreshTokenValidity(clientDetails.getRefreshTokenValiditySeconds());
         oauthClientDetailsVO.setClientSecret(clientDetails.getClientSecretStr());
+        if (StringUtils.isNotBlank(clientDetails.getResourceIds())) {
+            oauthClientDetailsVO.setResourceIds(Arrays.stream(clientDetails.getResourceIds().split(",")).collect(Collectors.toList()));
+        }
+        if (StringUtils.isNotBlank(clientDetails.getAuthorizedGrantTypes())) {
+            oauthClientDetailsVO.setAuthorizedGrantTypes(Arrays.stream(clientDetails.getAuthorizedGrantTypes().split(",")).collect(Collectors.toList()));
+        }
         return oauthClientDetailsVO;
     }
 
@@ -196,7 +208,7 @@ public class OauthClientDetailsServiceImpl extends SuperServiceImpl<IOauthClient
     }
 
     private String clientRedisKey(String clientId) {
-        return RedisKeyNameEnum.key(RedisKeyNameEnum.OAUTH_CLIENT_DETAILS, clientId);
+        return ZCache.OAUTH_CLIENT_DETAILS.key(clientId);
     }
 
     @Override

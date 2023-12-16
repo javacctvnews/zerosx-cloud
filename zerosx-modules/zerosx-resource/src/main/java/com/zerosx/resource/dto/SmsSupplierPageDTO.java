@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
 import java.io.Serializable;
 
 /**
@@ -27,5 +26,7 @@ public class SmsSupplierPageDTO implements Serializable {
     @Schema(description = "状态，0：正常；1：停用")
     private String status;
 
+    @Schema(description = "服务商名称")
+    private String supplierName;
 
 }

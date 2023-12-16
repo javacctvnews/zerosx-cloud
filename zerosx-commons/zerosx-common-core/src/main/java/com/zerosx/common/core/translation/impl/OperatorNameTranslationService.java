@@ -1,8 +1,10 @@
 package com.zerosx.common.core.translation.impl;
 
-import com.zerosx.common.base.constants.CommonConstants;
+import com.zerosx.api.system.vo.MutiTenancyGroupBO;
+import com.zerosx.common.base.constants.TranslConstants;
+import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.core.enums.RedisKeyNameEnum;
+import com.zerosx.common.base.constants.ZCache;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -17,7 +19,7 @@ public class OperatorNameTranslationService extends AbsTranslationService<String
 
     @Override
     public String translationType() {
-        return CommonConstants.TRANS_OPERATOR_ID;
+        return TranslConstants.OPERATOR;
     }
 
     @Override
@@ -27,11 +29,16 @@ public class OperatorNameTranslationService extends AbsTranslationService<String
 
     @Override
     protected String getRedissonCache(String key) {
-        return getRedissonOpService().hGet(RedisKeyNameEnum.key(RedisKeyNameEnum.OPERATOR, key), "operatorId");
+        return getRedissonOpService().hGet(ZCache.OPERATOR.key(key), TranslConstants.OPERATOR_NAME);
     }
 
     @Override
     protected ResultVO<?> getFeignService(String key) throws Exception {
-        return getAsyncFeignService().getTenantName(key).get();
+        ResultVO<MutiTenancyGroupBO> mutiTenancyGroupBOResultVO = getAsyncFeignService().queryOperator(key).get();
+        if (mutiTenancyGroupBOResultVO.getData() == null) {
+            return ResultVOUtil.success("");
+        }
+        return ResultVOUtil.success(mutiTenancyGroupBOResultVO.getData().getTenantGroupName());
+        //return getAsyncFeignService().getTenantName(key).get();
     }
 }

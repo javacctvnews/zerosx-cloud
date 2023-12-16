@@ -4,7 +4,7 @@ import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.zerosx.common.base.anno.Trans;
-import com.zerosx.common.base.constants.CommonConstants;
+import com.zerosx.common.base.constants.TranslConstants;
 import com.zerosx.common.core.anno.Sensitive;
 import com.zerosx.common.core.enums.SensitiveStrategy;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,8 +16,9 @@ import java.util.Date;
 
 /**
  * 系统用户
- * @Description
+ *
  * @author javacctvnews
+ * @Description
  * @date 2023-07-20 13:48:04
  */
 @Getter
@@ -34,6 +35,7 @@ public class SysUserPageVO implements Serializable {
 
     @Schema(description = "部门ID")
     @ExcelIgnore
+    @Trans(type = TranslConstants.DEPT, ref = "deptName")
     private Long deptId;
 
     @Schema(description = "所属部门")
@@ -64,7 +66,7 @@ public class SysUserPageVO implements Serializable {
 
     @Schema(description = "用户性别（0男 1女 2未知）")
     @ExcelProperty(value = {"用户性别（0男 1女 2未知）"})
-    @Trans(type = CommonConstants.TRANS_DICT, key = "SexEnum", ref = "sex")
+    @Trans(type = TranslConstants.DICT, key = "SexEnum", ref = "sex")
     private String sex;
 
     @Schema(description = "头像地址")
@@ -83,7 +85,7 @@ public class SysUserPageVO implements Serializable {
     @ExcelProperty(value = {"最后登录IP"})
     private String loginIp;
 
-    @Schema(description = "最后登录时间",requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(description = "最后登录时间", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @ExcelProperty(value = {"最后登录时间"})
     private Date loginDate;
 
@@ -109,7 +111,7 @@ public class SysUserPageVO implements Serializable {
 
     @Schema(description = "租户标识")
     @ExcelIgnore
-    @Trans(type = CommonConstants.TRANS_OPERATOR_ID, ref = "operatorName")
+    @Trans(type = TranslConstants.OPERATOR, ref = "operatorName")
     private String operatorId;
 
     @Schema(description = "租户公司")

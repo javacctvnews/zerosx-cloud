@@ -1,5 +1,6 @@
 package com.zerosx.gateway.handler;
 
+import com.zerosx.gateway.handler.CustomErrorWebExceptionHandler;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.WebProperties;
@@ -21,50 +22,39 @@ import java.util.List;
 @EnableConfigurationProperties({ServerProperties.class, WebProperties.class})
 public class CustomErrorWebFluxAutoConfig {
 
-    private final ServerProperties serverProperties;
+        private final ServerProperties serverProperties;
 
-    private final ApplicationContext applicationContext;
+        private final ApplicationContext applicationContext;
 
-    private final WebProperties webProperties;
+        private final WebProperties webProperties;
 
-    private final List<ViewResolver> viewResolvers;
+        private final List<ViewResolver> viewResolvers;
 
-    private final ServerCodecConfigurer serverCodecConfigurer;
+        private final ServerCodecConfigurer serverCodecConfigurer;
 
-    public CustomErrorWebFluxAutoConfig(ServerProperties serverProperties,
-                                        WebProperties webProperties,
-                                        ObjectProvider<List<ViewResolver>> viewResolversProvider,
-                                        ServerCodecConfigurer serverCodecConfigurer,
-                                        ApplicationContext applicationContext) {
-        this.serverProperties = serverProperties;
-        this.applicationContext = applicationContext;
-        this.webProperties = webProperties;
-        this.viewResolvers = viewResolversProvider.getIfAvailable(Collections::emptyList);
-        this.serverCodecConfigurer = serverCodecConfigurer;
-    }
+        public CustomErrorWebFluxAutoConfig(ServerProperties serverProperties,
+                                         WebProperties webProperties,
+                                         ObjectProvider<List<ViewResolver>> viewResolversProvider,
+                                         ServerCodecConfigurer serverCodecConfigurer,
+                                         ApplicationContext applicationContext) {
+            this.serverProperties = serverProperties;
+            this.applicationContext = applicationContext;
+            this.webProperties = webProperties;
+            this.viewResolvers = viewResolversProvider.getIfAvailable(Collections::emptyList);
+            this.serverCodecConfigurer = serverCodecConfigurer;
+        }
 
-    @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE)
-    public ErrorWebExceptionHandler errorWebExceptionHandler(ErrorAttributes errorAttributes) {
-        CustomErrorWebExceptionHandler exceptionHandler = new CustomErrorWebExceptionHandler(
-                errorAttributes,
-                this.webProperties.getResources(),
-                this.serverProperties.getError(),
-                this.applicationContext);
-        exceptionHandler.setViewResolvers(this.viewResolvers);
-        exceptionHandler.setMessageWriters(this.serverCodecConfigurer.getWriters());
-        exceptionHandler.setMessageReaders(this.serverCodecConfigurer.getReaders());
-        return exceptionHandler;
-    }
-
-   /* @Bean
-    public ServerCodecConfigurer serverCodecConfigurer() {
-        return new DefaultServerCodecConfigurer();
-    }
-
-    @Bean
-    public ErrorAttributes errorAttributes() {
-        return new DefaultErrorAttributes();
-    }*/
-
+        @Bean
+        @Order(Ordered.HIGHEST_PRECEDENCE)
+        public ErrorWebExceptionHandler errorWebExceptionHandler(ErrorAttributes errorAttributes) {
+            CustomErrorWebExceptionHandler exceptionHandler = new CustomErrorWebExceptionHandler(
+                    errorAttributes,
+                    this.webProperties.getResources(),
+                    this.serverProperties.getError(),
+                    this.applicationContext);
+            exceptionHandler.setViewResolvers(this.viewResolvers);
+            exceptionHandler.setMessageWriters(this.serverCodecConfigurer.getWriters());
+            exceptionHandler.setMessageReaders(this.serverCodecConfigurer.getReaders());
+            return exceptionHandler;
+        }
 }

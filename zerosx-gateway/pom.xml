@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.zerosx.cloud</groupId>
         <artifactId>zerosx-cloud</artifactId>
-        <version>0.0.4</version>
+                <version>${revision}</version>
     </parent>
 
     <artifactId>zerosx-gateway</artifactId>
@@ -32,7 +32,7 @@
         </dependency>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
-            <artifactId>zerosx-common-sas</artifactId>
+            <artifactId>zerosx-common-security</artifactId>
         </dependency>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
@@ -80,6 +80,26 @@
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security.oauth</groupId>
+            <artifactId>spring-security-oauth2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-jwt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-oauth2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-resource-server</artifactId>
         </dependency>
         <dependency>
             <groupId>com.github.xiaoymin</groupId>

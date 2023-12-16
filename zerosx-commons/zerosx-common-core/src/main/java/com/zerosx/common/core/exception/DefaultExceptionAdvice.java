@@ -5,6 +5,7 @@ import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.ResultVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -75,6 +76,15 @@ public class DefaultExceptionAdvice {
     }
 
     /**
+     * 主键或UNIQUE索引，数据重复异常
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(DuplicateKeyException.class)
+    public ResultVO<Void> handleDuplicateKeyException(DuplicateKeyException e) {
+        return defHandler("数据库中已存在该记录，请联系管理员确认", e);
+    }
+
+    /**
      * BusinessException异常
      * 返回状态码:500
      */
@@ -107,7 +117,7 @@ public class DefaultExceptionAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ResultVO<?> handleException(Exception e) {
-        return defHandler("异常描述:"+e.getMessage(), e);
+        return defHandler("异常描述:" + e.getMessage(), e);
     }
 
     protected <T> ResultVO<T> defHandler(String errDesc, Exception e) {

@@ -9,13 +9,18 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="服务商名称" prop="supplierName">
+      <!-- <el-form-item label="服务商名称" prop="supplierName">
         <el-input v-model="queryParams.t.supplierName" placeholder="请输入服务商名称" clearable style="width: 220px;" />
+      </el-form-item> -->
+      <el-form-item label="服务商" prop="supplierName">
+        <el-select v-model="queryParams.t.supplierName" placeholder="服务商" clearable style="width: 220px;">
+          <el-option v-for="dict in dict.type.SupplierTypeEnum" :key="dict.value" :label="dict.label"
+            :value="dict.value" />
+        </el-select>
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.t.status" placeholder="状态" clearable style="width: 220px;">
-          <el-option v-for="dict in dict.type.StatusEnum" :key="dict.value" :label="dict.label"
-            :value="dict.value" />
+          <el-option v-for="dict in dict.type.StatusEnum" :key="dict.value" :label="dict.label" :value="dict.value" />
         </el-select>
       </el-form-item>
     </el-form>
@@ -237,14 +242,14 @@ export default {
         ],
       },
       columns: [
-        {
-          attrs: {
-            label: "记录ID",
-            prop: "id",
-            minWidth: "100",
-            align: "center"
-          },
-        },
+        // {
+        //   attrs: {
+        //     label: "记录ID",
+        //     prop: "id",
+        //     minWidth: "100",
+        //     align: "center"
+        //   },
+        // },
         {
           attrs: {
             label: "租户公司",
@@ -295,14 +300,14 @@ export default {
             align: "center"
           },
         },
-        {
-          attrs: {
-            label: "AccessKeySecret",
-            prop: "accessKeySecret",
-            minWidth: "280",
-            align: "center"
-          },
-        },
+        // {
+        //   attrs: {
+        //     label: "AccessKeySecret",
+        //     prop: "accessKeySecret",
+        //     minWidth: "280",
+        //     align: "center"
+        //   },
+        // },
         {
           attrs: {
             label: "regionId",
@@ -327,7 +332,7 @@ export default {
             align: "center"
           },
         },
-        
+
         {
           attrs: {
             label: "创建者",
@@ -457,13 +462,11 @@ export default {
     },
     handleExport() {
       let name = 'SMS配置_' + this.parseTime(new Date(), '{y}{m}{d}{h}{i}{s}') + '.xlsx';
-      this.download(serviceConfig.system + '/sms_supplier/export', {
-        ...this.queryParams.t
-      }, name)
+      this.download(serviceConfig.system + '/sms_supplier/export', this.queryParams, name)
     },
     handleDelete(row) {
       const idList = row.id || this.ids;
-      this.$modal.confirm('是否确认删除编号为[' + idList + ']的数据项？').then(function () {
+      this.$modal.confirm('是否确认删除已选择的数据项？').then(function () {
         return deleteSmsSupplier(idList);
       }).then(() => {
         this.getList();

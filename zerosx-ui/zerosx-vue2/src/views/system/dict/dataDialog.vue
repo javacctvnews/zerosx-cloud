@@ -25,22 +25,23 @@
       @selection-change="handleSelectionChange" border>
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="字典编码" align="center" prop="dictType" min-width="140" />
-      <el-table-column label="字典标签" align="center" prop="dictLabel" min-width="100">
+      <el-table-column label="字典键值" align="center" prop="dictValue" min-width="100" />
+      <el-table-column label="字典标签" align="center" prop="dictLabel" min-width="160">
         <template slot-scope="scope">
           <span v-if="scope.row.listClass == '' || scope.row.listClass == 'default'">{{ scope.row.dictLabel }}</span>
           <el-tag v-else :type="scope.row.listClass == 'primary' ? '' : scope.row.listClass">{{ scope.row.dictLabel
           }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="字典键值" align="center" prop="dictValue" min-width="100" />
+
       <!-- <el-table-column label="字典排序" align="center" prop="dictSort" /> -->
-      <el-table-column label="状态" align="center" prop="status" min-width="90">
+      <el-table-column label="状态" align="center" prop="status" min-width="80">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.StatusEnum" :value="scope.row.status" min-width="100" />
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remarks" min-width="160" />
-      <el-table-column label="创建时间" align="center" prop="createTime" min-width="120">
+      <el-table-column label="最新更新时间" align="center" prop="updateTime" min-width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
@@ -48,20 +49,20 @@
     </el-table>
 
     <!-- 添加或修改参数配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body :close-on-click-modal="false">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="title" :visible.sync="open" width="650px" append-to-body :close-on-click-modal="false" center>
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="字典类型">
           <el-input v-model="form.dictType" :disabled="true" />
-        </el-form-item>
-        <el-form-item label="数据标签" prop="dictLabel">
-          <el-input v-model="form.dictLabel" placeholder="请输入数据标签" />
         </el-form-item>
         <el-form-item label="数据键值" prop="dictValue">
           <el-input v-model="form.dictValue" placeholder="请输入数据键值" />
         </el-form-item>
-        <el-form-item label="样式属性" prop="cssClass">
-          <el-input v-model="form.cssClass" placeholder="请输入样式属性" />
+        <el-form-item label="数据标签" prop="dictLabel">
+          <el-input v-model="form.dictLabel" placeholder="请输入数据标签" />
         </el-form-item>
+        <!-- <el-form-item label="样式属性" prop="cssClass">
+          <el-input v-model="form.cssClass" placeholder="请输入样式属性" />
+        </el-form-item> -->
         <el-form-item label="显示排序" prop="dictSort">
           <el-input-number v-model="form.dictSort" controls-position="right" :min="0" />
         </el-form-item>
@@ -180,13 +181,13 @@ export default {
         ]
       },
       columns: [
-        {
-          attrs: {
-            label: '记录ID',
-            prop: 'id',
-            minWidth: '70'
-          },
-        },
+        // {
+        //   attrs: {
+        //     label: '记录ID',
+        //     prop: 'id',
+        //     minWidth: '70'
+        //   },
+        // },
         {
           attrs: {
             label: '字典类型编码',
@@ -195,18 +196,18 @@ export default {
           },
         },
         {
-          slot: 'dictLabel',
-          attrs: {
-            label: '数据标签',
-            prop: 'dictLabel',
-            minWidth: '120'
-          },
-        },
-        {
           attrs: {
             label: '数据键值',
             prop: 'dictValue',
             minWidth: '100'
+          },
+        },
+        {
+          slot: 'dictLabel',
+          attrs: {
+            label: '数据标签',
+            prop: 'dictLabel',
+            minWidth: '160'
           },
         },
         {
@@ -380,7 +381,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const dictCodes = row.id || this.ids;
-      this.$modal.confirm('是否确认删除字典编码为"' + dictCodes + '"的数据项？').then(function () {
+      this.$modal.confirm('是否确认删除已选择的数据项？').then(function () {
         return delData(dictCodes);
       }).then(() => {
         this.getList();
@@ -391,9 +392,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       let name = '字典数据_' + this.parseTime(new Date(), '{y}{m}{d}{h}{i}{s}') + '.xlsx';
-      this.download(serviceConfig.resource + '/sysDictData/export', {
-        ...this.queryParams.t
-      }, name)
+      this.download(serviceConfig.resource + '/sysDictData/export', this.queryParams, name)
     }
   }
 };

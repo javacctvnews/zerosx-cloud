@@ -9,9 +9,9 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <!-- <el-form-item label="用户名" prop="username">
+      <el-form-item label="用户名" prop="username">
         <el-input v-model="queryParams.t.username" placeholder="请输入用户名称" clearable style="width: 220px;" />
-      </el-form-item>-->
+      </el-form-item>
     </el-form>
 
     <!-- 操作栏 -->
@@ -115,7 +115,7 @@ export default {
           attrs: {
             label: "授权类型",
             prop: "grantType",
-            minWidth: "140",
+            minWidth: "100",
             align: "center"
           },
         },
@@ -123,15 +123,7 @@ export default {
           attrs: {
             label: "TOKEN值",
             prop: "tokenValue",
-            minWidth: "240",
-            align: "center"
-          },
-        },
-        {
-          attrs: {
-            label: "登录时间",
-            prop: "loginExpiration",
-            minWidth: "140",
+            minWidth: "400",
             align: "center"
           },
         },
@@ -218,7 +210,7 @@ export default {
         return;
       }
       let name = '在线用户_' + this.parseTime(new Date(), '{y}{m}{d}{h}{i}{s}') + '.xlsx';
-      this.download(serviceConfig.auth + '/token2/export', this.queryParams, name)
+      this.download(serviceConfig.auth + '/token/export', this.queryParams, name)
     },
     handleDeleteAll() {
       let param = {

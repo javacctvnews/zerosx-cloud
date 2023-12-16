@@ -1,8 +1,8 @@
 package com.zerosx.common.core.translation.impl;
 
-import com.zerosx.common.base.constants.CommonConstants;
+import com.zerosx.common.base.constants.TranslConstants;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.core.enums.RedisKeyNameEnum;
+import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.oss.model.OssObjectVO;
 import com.zerosx.common.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ public class OssTranslationService extends AbsTranslationService<String> {
 
     @Override
     public String translationType() {
-        return CommonConstants.TRANS_OSS;
+        return TranslConstants.OSS;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class OssTranslationService extends AbsTranslationService<String> {
 
     @Override
     protected String getRedissonCache(String objectName) {
-        String ossFileKey = RedisKeyNameEnum.key(RedisKeyNameEnum.OSS_FILE_URL, objectName);
+        String ossFileKey = ZCache.OSS_FILE_URL.key(objectName);
         OssObjectVO ossObjectVO;
         try {
             String ossObjectStr = getRedissonOpService().get(ossFileKey);

@@ -10,18 +10,19 @@
           <basic-container>
             <el-collapse v-model="activeNames" @change="handleChange">
               <el-collapse-item title="欢迎来到Zerox-Cloud多租户开发平台" name="1">
-                <div class="imgs">
-                  <img style="display: inline-block;" src="https://img.shields.io/badge/Zerosx_Cloud-0.0.3-critical"
+                <div class="imgs borderImg">
+                  <img style="display: inline-block;" src="https://img.shields.io/badge/Zerosx_Cloud-0.0.2-critical"
                     alt="">
                   <img style="display: inline-block;"
                     src="https://img.shields.io/badge/copyright-javacctvnews@163.com-blue" alt="">
                 </div>
-                <div class="imgs">
+                <div class="imgs borderImg">
                   <img src="https://img.shields.io/badge/JDK-1.8+-blue?logo=openjdk" alt="">
-                  <img src="https://img.shields.io/badge/Spring_Boot-2.7.16-blue?logo=spring-boot" alt="">
-                  <img src="https://img.shields.io/badge/Spring_Cloud-2021.0.5-blue?logo=spring-boot" alt="">
+                  <img src="https://img.shields.io/badge/Spring_Boot-2.7.18-blue?logo=spring-boot" alt="">
+                  <img src="https://img.shields.io/badge/Spring_Cloud-2021.0.8-blue?logo=spring-boot" alt="">
                   <img src="https://img.shields.io/badge/Spring_Cloud_Alibaba-2021.0.5.0-blue?logo=alibabadotcom" alt="">
                   <img src="https://img.shields.io/badge/Nacos-2.2.0-critical?logo=alibabadotcom" alt="">
+                  <img src="https://img.shields.io/badge/Seata-1.6.1-critical?logo=alibabadotcom" alt="">
                 </div>
                 <div class="imgs">
                   <img src="https://img.shields.io/badge/Vue-2.x-green" alt="">
@@ -33,13 +34,13 @@
               <el-collapse-item title="平台简介" name="2">
                 <div>
                   <div>此平台是由作者个人兴趣下搭建及开发，开源，使用，仅供学习参考；</div>
-                  <div>1、基于JDK8、SpringBoot2.7.16、SpringCloud2021.0.5和SpringCloudAlibaba2021.0.5.0且采用前后端分离的微服务多租户体系架构；
+                  <div>1、基于JDK8、SpringBoot2.7.18、SpringCloud2021.0.8和SpringCloudAlibaba2021.0.5.0且采用前后端分离的微服务多租户体系架构；
                   </div>
                   <div>2、采用自定义starter组件化的思想，结构解耦，易于扩展；</div>
                   <div>3、实现了SpringCloudGateway集成OAuth2.0统一认证授权及URL级功能权限校验（适用于网络隔离场景，即网关是统一入口），且可自定义扩展OAuth2.0授权模式；</div>
                   <div>4、集成Knife4j的OpenAPI3的接口文档，方便前后端对接；</div>
                   <div>5、代码生成器一键生成基础CRUD功能，节约开发时间，更多注重业务开发；</div>
-                  <div>6、提供一套基于Vue2.x的前端项目[zerosx-vue2]，此项目是参考【若依】前端开源改造适配，感谢若依（我是Vue2.x初学者，还不具备从零搭建一个完整的Vue项目，所以目前只能借鉴改造，勿喷^_^）。</div>
+                  <div>6、提供一套基于Vue2.x的前端项目[zerosx-vue2]，此项目是参考【若依】前端开源改造适配，感谢若依.</div>
                 </div>
               </el-collapse-item>
 
@@ -64,9 +65,9 @@
                 <div>14、系统监控：集成SpringBootAdmin应用监控；</div>
                 <div>15、代码生成器：高度符合阿里巴巴开发手册规范的前后端代码一键生成，减少CRUD基础开发，更专注业务开发；</div>
               </el-collapse-item>
-              <el-collapse-item title="软件定制开发合作或其他咨询" name="4">
+              <el-collapse-item title="软件定制开发合作" name="4">
                 <ul>
-                  <li>请邮件联系：javacctvnews@163.com，谢谢！</li>
+                  <li>敬请期待</li>
                 </ul>
               </el-collapse-item>
             </el-collapse>
@@ -108,20 +109,6 @@
                   </el-timeline>
                 </div> -->
                 <el-collapse title="版本更新日志" v-model="activeLogs">
-                  <el-collapse-item title="V0.0.3" name="3">
-                    <ul>
-                      <li>1.JDK版本更新到JDK17</li>
-                      <li>2.SpringBoot版本更新到3.x</li>
-                      <li>3.SpringCloud&Alibaba版本更新到2022.x及更新对应的组件(Nacos等)</li>
-                      <li>4.引入Spring Authorization Server认证授权</li>
-                      <li>5.SpringCloudGateway集成Spring Authorization Server</li>
-                      <li>6.[适配]用户名密码+验证码授权模式</li>
-                      <li>7.[登录、登出、令牌管理、登录日志、客户端管理]等功能重新适配Spring Authorization Server</li>
-                      <li>8.更新md文档、数据库及YAML配置脚本</li>
-                      <li>9.更换Logo和平台名称</li>
-                      <li>10.Docker Compose编排脚本增加cpu限制参数</li>
-                    </ul>
-                  </el-collapse-item>
                   <el-collapse-item title="V0.0.2" name="2">
                     <ul>
                       <li>1.分离zerosx-resource资源微服务</li>
@@ -159,7 +146,7 @@ export default {
     return {
       activeNames: ['1', '2', '3', '4'],
       logActiveNames: ['32'],
-      activeLogs: ['3'],
+      activeLogs: ['2'],
       lyrics: [
         '天青色等烟雨，而我在等你，炊烟袅袅升起，隔江千万里',
         '翻着我们的照片，想念若隐若现，去年的冬天，我们笑得很甜',
@@ -210,15 +197,18 @@ ul li {
 
   .imgs {
     margin-top: 8px;
-    display: flex;
-    // justify-content: center;
+    //display: flex;
+    justify-content: center;
 
     img {
-      margin-right: 8px;
+      margin-right: 5px;
       // margin: 0 auto;
     }
+    
   }
-
+  .borderImg{
+      border-bottom: 1px dashed #e6ebf5;
+    }
   .carouselCss {
     background: linear-gradient(to right, red, orange, yellow, green, cyan, blue, purple);
     background-clip: text;

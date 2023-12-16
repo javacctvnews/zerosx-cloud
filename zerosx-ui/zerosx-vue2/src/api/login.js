@@ -70,7 +70,7 @@ export function refreshToken() {
 // 退出方法
 export function logout() {
   return request({
-    url: serviceConfig.auth + '/token2/logout',
+    url: serviceConfig.auth + '/oauth/token/logout',
     method: 'post',
     data: {}
   })
@@ -82,7 +82,7 @@ export function requestPostLogin(userInfo) {
   const client_base64 = window.btoa(clientContent)
   userInfo.user_auth_type = serviceConfig.authUserType;
   return request({
-    url: '/oauth2/token' + obj2formUrlEncoded(userInfo),
+    url: '/oauth/token' + obj2formUrlEncoded(userInfo),
     headers: {
       Authorization: "Basic " + client_base64
     },

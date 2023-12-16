@@ -1,0 +1,17 @@
+[mysqld]
+
+#当服务器只被mysql使用时，建议设置内存的70%左右
+innodb_buffer_pool_size = 2G
+# innodb缓冲池块大小
+innodb_buffer_pool_chunk_size=256M
+# innodb缓冲池实例数
+innodb_buffer_pool_instances=8
+
+#将最大连接数限制为1000
+max_connections = 1000
+#索引缓冲区的大小
+key_buffer_size = 256M
+#线程池缓存线程数量的大小
+thread_cache_size = 60
+#排序缓存区
+sort_buffer_size = 16M

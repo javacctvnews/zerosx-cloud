@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.zerosx.cloud</groupId>
         <artifactId>zerosx-commons</artifactId>
-        <version>0.0.4</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>zerosx-common-base</artifactId>
@@ -16,15 +16,9 @@
 
     <dependencies>
         <!--引入Knife4j的官方start包,该指南选择Spring Boot版本<3.0,开发者需要注意-->
-        <!--<dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
-        </dependency>-->
-        <!--引入Knife4j的官方start包,该指南选择Spring Boot版本>3.0,开发者需要注意-->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
-            <version>4.3.0</version>
+            <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>

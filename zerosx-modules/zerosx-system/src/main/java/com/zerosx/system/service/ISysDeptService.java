@@ -11,7 +11,7 @@ import com.zerosx.system.vo.SysDeptPageVO;
 import com.zerosx.system.vo.SysDeptVO;
 import com.zerosx.system.vo.SysTreeSelectVO;
 
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Set;
 
@@ -78,5 +78,12 @@ public interface ISysDeptService extends ISuperService<SysDept> {
      * @param response  response
      */
     void excelExport(RequestVO<SysDeptPageDTO> requestVO, HttpServletResponse response);
+
+    /**
+     * 按id查询名称
+     * @param id
+     * @return
+     */
+    String queryName(Long id);
 }
 

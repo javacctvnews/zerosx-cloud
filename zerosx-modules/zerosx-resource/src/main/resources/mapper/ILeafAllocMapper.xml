@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zerosx.resource.mapper.ILeafAllocMapper">
+
+    <update id="updateMaxIdAndGetLeafAlloc">
+        UPDATE leaf_alloc
+        SET max_id = max_id + step
+        WHERE biz_tag = #{tag}
+    </update>
+
+    <update id="updateMaxIdByCustomStepAndGetLeafAlloc">
+        UPDATE leaf_alloc
+        SET max_id = max_id + #{step}
+        WHERE biz_tag = #{bizTag}
+    </update>
+
+</mapper>

@@ -30,9 +30,9 @@ spring:
   datasource:
     hikari:
       # 最大连接池数量
-      maxPoolSize: 20
+      #maxPoolSize: 20
       # 最小空闲线程数量
-      minIdle: 10
+      #minIdle: 10
       # 配置获取连接等待超时的时间
       connectionTimeout: 30000
       # 校验超时时间
@@ -49,13 +49,14 @@ spring:
       pool-name: ${spring.application.name}
 
   redis:
+    #可以处理多项目开发时key重复的问题
     keyPrefix: zerosx-cloud
     database: 0
     host: 127.0.0.1
     port: 6479
     password: zerosx@123456
     #ssl:
-    timeout: 3000
+    timeout: 10000
     connectTimeout: 10000
     clientName: ${spring.application.name}
     redisson:
@@ -71,14 +72,14 @@ spring:
           idleConnectionTimeout: 10000
           connectTimeout: 10000
           # 命令等待超时，单位：毫秒
-          timeout: 3000
+          timeout: 10000
           #retryAttempts: 3
           #retryInterval: 1500
           #密码
           password: zerosx@123456
           #subscriptionsPerConnection: 5
           clientName: ${spring.application.name}
-          address: "redis://192.168.3.6:6479"
+          address: "redis://192.168.3.100:6479"
           #subscriptionConnectionMinimumIdleSize: 1
           # 发布和订阅连接池大小
           subscriptionConnectionPoolSize: 50
@@ -122,13 +123,13 @@ spring:
     execution:
       pool:
         # 最大线程数
-        max-size: 100
+        max-size: 1000
         # 核心线程数
         core-size: 5
         # 存活时间
         keep-alive: 60000
         # 队列大小
-        queue-capacity: 1000
+        queue-capacity: 3000
         # 是否允许核心线程超时
         allow-core-thread-timeout: true
       # 线程名称前缀
@@ -149,11 +150,11 @@ spring:
         ttl: 5S
 
 logging:
-  config: classpath:logback-spring.xml
+  #config: classpath:logback-spring.xml
+  config: D:\chenyanhui\OpenSource\zerosx-cloud\zerosx-commons\zerosx-common-log\src\main\resources\logback-spring.xml
 
   level:
     com.alibaba.nacos.client.naming: warn
-    com.zerosx: debug
     #com.alibaba.nacos.client: warn
   file:
     path: /home/zerosx-cloud/logs/${spring.application.name}
@@ -178,15 +179,15 @@ feign:
     enabled: false
   httpclient:
     enabled: true
-    max-connections: 600
-    max-connections-per-route: 600
+    max-connections: 1000
+    max-connections-per-route: 200
     #客户端和服务器建立连接的timeout ms
     connection-timeout: 10000
     #以下两字段是自定义
     #读取超时时间 ms
     read-timeout: 30000
     #连接池获取连接的超时时间 ms
-    connection-request-timeout: 200
+    connection-request-timeout: 500
   client:
     config:
       default: #default全局的配置
@@ -222,7 +223,7 @@ mybatis-plus:
 xxl:
   job:
     admin:
-      addresses: http://192.168.3.6:8808/xxl-job-admin/
+      addresses: http://192.168.3.100:8808/xxl-job-admin/
     ### 执行器通讯TOKEN [选填]：非空时启用；
     accessToken: 8888888888888888
     executor:
@@ -240,17 +241,30 @@ xxl:
       logretentiondays: 30
 
 zerosx:
+  #导入导出配置
+  export:
+    enabled: true
+    querySize: 50000
+    sheetNum: 1000000
   #日志链路追踪
-  trace:
+  log:
     enable: true
+    saveByRedis: true
+    saveByFeign: false
+    excludeFields:
+      - password
+      - oldPassword
+      - newPassword
   #短信服务器
   sms:
+    imitate: true
+    expireTime: 300
     yamlConfig: true
     smsConfigClass: com.zerosx.sms.core.config.AlibabaConfig
     defaultSms:
       supplierType: alibaba
-      accessKeyId: ${yours accessKey}
-      accessKeySecret: ${yours accessKeySecret}
+      accessKeyId: LTAI5tLbF7vT83t8jU9pX6xm
+      accessKeySecret: KDsnhLztTelgK14WO008lqL0Obh6dX
       regionId: dysmsapi.aliyuncs.com
       signature: zerosx
       #juhe
@@ -267,10 +281,10 @@ zerosx:
         templateContent: "123"
         signature: ""
   #mybatis敏感字段加解密
-  mybatis-crypto:
+  encrypt:
     enabled: true
-    algorithm: sm4
-    key: 1234567898765432
+    password: 1234567898765432
+    debug: true
   #mybatis-plus自动填充
   mybatis-plus:
     auto-fill:
@@ -288,61 +302,58 @@ zerosx:
     tokenStorePrefix: "zerosx-cloud:"
     signingKey: zerosx-cloud
     ignoreAuthUrls:
-      - /oauth/token
-      - /api-auth/oauth/token
-      - /api-auth/auth/getImgCode
-      - /api-auth/auth/code
-      - /api-auth/auth/getSmsCode
-      # 登出接口
-      - /api-auth/token/logout
-      - /oauth/token123
-      - /doc.html
-      - /v3/api-docs
-      - /v3/api-docs/swagger-config
-      - /v3/api-docs/**
-      - /swagger-ui/index.html
-      - /swagger-resources
-      - /favicon.ico
-      - /swagger-resources/configuration/ui
-      - /v2/api-docs-ext
-      - /v2/api-docs
-      - /swagger-ui.html
-      - /swagger-resources/configuration/security
-      - /*/v3/api-docs
+      - /oauth/**
+      - /api-auth/oauth/**
+      # 图形验证码
+      - /api-resource/captcha
+      # 短信验证码
+      - /api-resource/sms/getSmsCode
+      # 分布式ID生成（测试）
+      - /api-system/segment_test/{bizTag}
+      - /api-system/segment_test2/{bizTag}
 
     perms:
       urlPermissionEnable: true
       passClientIds:
         - ems
+      # 不需要权限检查的接口
       passPermsUrls:
         - /oauth/**
-        - /api-system/ems/user_login
-        - /api-system/areas
-        - /api-system/sys/menu/getRouters/**
-        - /api-system/sys/menu/roleMenuTree
-        - /api-system/sys/role/roleList
-        - /api-system/muti_tenancy/select_options
-        - /api-auth/auth/getImgCode
-        - /api-saas/saas/sys_user/current
-        - /api-system/sys_user/getInfo
+        # 省市区数据
+        - /api-resource/areas
+        # 路由数据
         - /api-system/getRouters
+        - /api-system/sys_menu/roleMenuTree
+        # 下拉框数据
+        - /api-system/muti_tenancy/select_options
         - /api-system/sys_post/select_list
         - /api-system/sys_role/select_list
         - /api-system/sys_dept/tree_select
+        # 图形验证码
+        - /api-resource/captcha
+        # 用户个人信息
+        - /api-system/saas/sys_user/current
+        - /api-system/sys_user/getInfo
+        # 按ID查询数据(编辑时查询)
         - /api-system/**/queryById/**
         - /api-system/**/getById/**
-        - /api-system/sysDictData_selectList/{dictType}
-        - /api-system/sys_menu/roleMenuTree
+        # 数据字典
+        - /api-resource/sysDictData_selectList/{dictType}
+        # oss文件上传
         - /api-system/upload_file
-
+        # 短信验证码
+        - /api-resource/sms/getSmsCode
+        # 分布式ID生成(测试)
+        - /api-system/segment_test/{bizTag}
+        - /api-system/segment_test2/{bizTag}
   oss:
     filePrefix: zerosx-cloud
     ossType: alibaba
     ossConfigClz: com.zerosx.common.oss.core.config.AliyunOssConfig
     ossConfig:
       supplierType: alibaba
-      accessKeyId: ${yours accessKey}
-      accessKeySecret: ${yours accessKeySecret}
+      accessKeyId: LTAI5tLbF7vT83t8jU9pX6xm
+      accessKeySecret: KDsnhLztTelgK14WO008lqL0Obh6dX
       bucketName: zeros-cloud-oss
       regionId: oss-cn-shenzhen
       endpoint: oss-cn-shenzhen.aliyuncs.com
@@ -362,6 +373,7 @@ springdoc:
       packages-to-scan:
         - com.zerosx
   default-flat-param-object: false
+  enable-spring-security: false
 
 
 # seata配置

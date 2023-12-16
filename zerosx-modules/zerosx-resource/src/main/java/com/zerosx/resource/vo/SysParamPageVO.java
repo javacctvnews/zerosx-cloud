@@ -3,7 +3,7 @@ package com.zerosx.resource.vo;
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.zerosx.common.base.anno.Trans;
-import com.zerosx.common.base.constants.CommonConstants;
+import com.zerosx.common.base.constants.TranslConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -70,7 +70,7 @@ public class SysParamPageVO implements Serializable {
 
     @Schema(description = "租户标识")
     @ExcelIgnore
-    @Trans(type = CommonConstants.TRANS_OPERATOR_ID, ref = "operatorName")
+    @Trans(type = TranslConstants.OPERATOR, ref = "operatorName")
     private String operatorId;
 
     @Schema(description = "租户公司")

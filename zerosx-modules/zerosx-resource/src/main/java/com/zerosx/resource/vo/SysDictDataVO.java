@@ -30,7 +30,7 @@ public class SysDictDataVO implements Serializable {
 
     @Schema(description = "字典键值")
     @ExcelProperty(value = {"字典键值"})
-    private Object dictValue;
+    private String dictValue;
 
     @Schema(description = "字典排序")
     @ExcelProperty(value = {"字典排序"})

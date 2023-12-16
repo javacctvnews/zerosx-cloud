@@ -1,12 +1,9 @@
 package com.zerosx.resource.vo;
 
-import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.zerosx.common.base.anno.Trans;
-import com.zerosx.common.base.constants.CommonConstants;
-import com.zerosx.common.core.anno.Sensitive;
-import com.zerosx.common.core.enums.SensitiveStrategy;
+import com.zerosx.common.base.constants.TranslConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -47,10 +44,10 @@ public class OssSupplierPageVO implements Serializable {
     @ExcelProperty(value = {"AccessKey"})
     private String accessKeyId;
 
-    @Schema(description = "AccessSecret")
+    /*@Schema(description = "AccessSecret")
     @ExcelIgnore
     @Sensitive(strategy = SensitiveStrategy.PASSWORD)
-    private String accessKeySecret;
+    private String accessKeySecret;*/
 
     @Schema(description = "存储桶名称")
     @ExcelProperty(value = {"存储桶名称"})
@@ -89,7 +86,7 @@ public class OssSupplierPageVO implements Serializable {
     private String remarks;
 
     @Schema(description = "租户标识")
-    @Trans(type = CommonConstants.TRANS_OPERATOR_ID, ref = "operatorName")
+    @Trans(type = TranslConstants.OPERATOR, ref = "operatorName")
     private String operatorId;
 
     @Schema(description = "租户公司")

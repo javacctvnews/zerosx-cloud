@@ -1,16 +1,14 @@
 package com.zerosx.system.service.impl;
 
-import com.baomidou.dynamic.datasource.annotation.DS;
-import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
-import com.zerosx.ds.constant.DSType;
 import com.zerosx.system.entity.SysRoleDept;
 import com.zerosx.system.mapper.ISysRoleDeptMapper;
 import com.zerosx.system.service.ISysRoleDeptService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,8 +18,7 @@ import java.util.List;
 public class SysRoleDeptServiceImpl extends SuperServiceImpl<ISysRoleDeptMapper, SysRoleDept> implements ISysRoleDeptService {
 
     @Override
-    @DS(DSType.MASTER)
-    @DSTransactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateSysDeptRoles(Long deptId, List<Long> roleIds, boolean delete) {
         if (delete) {
             LambdaQueryWrapper<SysRoleDept> rm = Wrappers.lambdaQuery(SysRoleDept.class);
@@ -46,6 +43,7 @@ public class SysRoleDeptServiceImpl extends SuperServiceImpl<ISysRoleDeptMapper,
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean removeByDeptIds(Long[] deptIds) {
         LambdaQueryWrapper<SysRoleDept> rm = Wrappers.lambdaQuery(SysRoleDept.class);
         rm.in(SysRoleDept::getDeptId, Arrays.asList(deptIds));

@@ -69,11 +69,11 @@ public abstract class AbsEncryptInterceptor implements Interceptor {
             .maximumSize(1000)//最大条数1000
             .buildAsync();//定义cache
 
-    protected void debug(String s, Object... objects) {
+    /*protected void debug(String s, Object... objects) {
         if (encryptProperties.getDebug()) {
             log.debug(s, objects);
         }
-    }
+    }*/
 
     /**
      * 是否激活
@@ -121,12 +121,12 @@ public abstract class AbsEncryptInterceptor implements Interceptor {
         if (EncryptMode.ENC.equals(encryptMode)) {
             String encrypted = encryptor.encrypt(value);
             cache.put(value, CompletableFuture.completedFuture(encrypted));
-            debug("加密前:{} 加密后:{}", value, encrypted);
+            //log.debug("加密前:{} 加密后:{}", value, encrypted);
             return encrypted;
         } else if (EncryptMode.DEC.equals(encryptMode)) {
             String decrypted = encryptor.decrypt(value);
             cache.put(value, CompletableFuture.completedFuture(decrypted));
-            debug("解密前:{} 解密后:{}", value, decrypted);
+            //log.debug("解密前:{} 解密后:{}", value, decrypted);
             return decrypted;
         }
         return value;
@@ -270,7 +270,7 @@ public abstract class AbsEncryptInterceptor implements Interceptor {
             Object mapEntityValue = mapEntity.getValue();
             //是否List<String>、String[]
             if (!(mapEntityValue instanceof Collection || mapEntityValue.getClass().isArray() || mapEntity instanceof Map)) {
-                debug("非集合类型:{}", mapEntityValue.getClass().getName());
+                log.debug("非集合类型:{}", mapEntityValue.getClass().getName());
                 return;
             }
             if (Objects.isNull(mapValue)) {
@@ -408,7 +408,7 @@ public abstract class AbsEncryptInterceptor implements Interceptor {
     public void encryptParam(Object cloneMap, EncryptMode encryptMode, Set<EncryptField> encryptFields) {
         List<Object> alreadyList = new ArrayList<>();
         if (cloneMap instanceof Map) {
-            debug("Map类型实例-----------------");
+            log.debug("Map类型实例-----------------");
             Map<String, Object> map = ((Map<String, Object>) cloneMap);
             for (Map.Entry<String, Object> mapEntity : map.entrySet()) {
                 Object mapEntityValue = mapEntity.getValue();
@@ -428,7 +428,7 @@ public abstract class AbsEncryptInterceptor implements Interceptor {
                 }
             }
         } else if (cloneMap instanceof Collection) {
-            debug("Collection类型实例-----------------");
+            log.debug("Collection类型实例-----------------");
             Collection<?> list = (Collection<?>) cloneMap;
             for (Object item : list) {
                 encryptParam(item, encryptMode, encryptFields);
@@ -439,7 +439,7 @@ public abstract class AbsEncryptInterceptor implements Interceptor {
             if (!EncryptFactory.containsEncrypt(modelClazz)) {
                 return;
             }
-            debug("AbstractWrapper类型实例:{}", modelClazz.getName());
+            log.debug("AbstractWrapper类型实例:{}", modelClazz.getName());
             String sqlSegment = wrapper.getExpression().getSqlSegment();
             Map<String, Object> valuePairs = wrapper.getParamNameValuePairs();
 
@@ -466,7 +466,7 @@ public abstract class AbsEncryptInterceptor implements Interceptor {
                 }
             }
         } else {
-            debug("其他类型:{}", cloneMap.getClass());
+            log.debug("其他类型:{}", cloneMap.getClass());
             if (!EncryptFactory.containsEncrypt(cloneMap.getClass())) {
                 return;
             }
@@ -475,7 +475,7 @@ public abstract class AbsEncryptInterceptor implements Interceptor {
     }
 
     private Map<String, String> resolve(String line) {
-        debug("where条件：{}", line);
+        log.debug("where条件：{}", line);
         Object cacheObject = getCacheValue(line);
         if (Objects.nonNull(cacheObject)) {
             Map<String, String> cacheValue = (Map<String, String>) cacheObject;

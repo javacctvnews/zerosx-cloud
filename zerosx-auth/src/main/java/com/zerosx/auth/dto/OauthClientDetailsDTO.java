@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 客户端管理
@@ -29,7 +30,7 @@ public class OauthClientDetailsDTO implements Serializable {
     private String clientName;
 
     @Schema(description ="资源限定串(逗号分割)")
-    private String resourceIds;
+    private List<String> resourceIds;
 
     @Schema(description ="应用密钥(bcyt) 加密")
     private String clientSecret;
@@ -41,7 +42,7 @@ public class OauthClientDetailsDTO implements Serializable {
     private String scope;
 
     @Schema(description ="5种oauth授权方式(authorization_code,password,refresh_token,client_credentials)")
-    private String authorizedGrantTypes;
+    private List<String> authorizedGrantTypes;
 
     @Schema(description ="回调地址 ")
     private String webServerRedirectUri;

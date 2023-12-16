@@ -4,6 +4,7 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -15,10 +16,12 @@ import com.zerosx.common.core.easyexcel.XHorizontalCellStyleStrategy;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.service.ISuperService;
 import com.zerosx.common.core.utils.EasyTransUtils;
-import jakarta.servlet.http.HttpServletResponse;
+import com.zerosx.common.redis.templete.RedissonOpService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -36,6 +39,8 @@ public class SuperServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M,
     //protected static final int querySize = 50000;
     //一个sheet最大的条数 100w
     //protected static final int sheetNum = 1000000;
+    @Autowired
+    protected RedissonOpService redissonOpService;
 
     protected void checkEasyExcelProperties() {
         if (!easyExcelProperties.getEnabled()) {
@@ -47,10 +52,6 @@ public class SuperServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M,
         if (easyExcelProperties.getSheetNum() % easyExcelProperties.getQuerySize() != 0) {
             throw new BusinessException("sheetNum的值必须是querySize值的倍数");
         }
-    }
-
-    protected List<?> handleData(List<T> list, Class<?> exportClz) {
-        return EasyTransUtils.copyTrans(list, exportClz);
     }
 
     /**
@@ -106,12 +107,32 @@ public class SuperServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M,
                     queryCurrentCount += size;
                     log.debug("第{}页查询，每页{}条 实际{}条，耗时{}ms", pageNum, querySize, size, System.currentTimeMillis() - t11);
                     if (size > 0) {
-                        excelWriter.write(handleData(records, exportClz), writeSheet);
+                        excelWriter.write(EasyTransUtils.copyTrans(records, exportClz), writeSheet);
                     }
                 }
             }
         }
         log.debug("【{}】执行导出{}条，总耗时:{}ms", ZerosSecurityContextHolder.getUserName(), totalCount, System.currentTimeMillis() - t1);
+    }
+
+    /**
+     * 检查记录是否存在
+     *
+     * @param queryWrapper LambdaQueryWrapper
+     * @param message      提示信息
+     */
+    protected void checkExist(LambdaQueryWrapper<T> queryWrapper, String message, Object... args) {
+        Long count = baseMapper.selectCount(queryWrapper);
+        if (count > 0) {
+            if (StringUtils.isNotEmpty(message)) {
+                throw new BusinessException(String.format(message, args));
+            }
+            throw new BusinessException("已存在唯一标识的记录，请检查");
+        }
+    }
+
+    protected void checkExist(T t, String message, Object... args){
+
     }
 
 }

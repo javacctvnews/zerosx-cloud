@@ -16,8 +16,8 @@ public interface SecurityConstants {
      * 无需认证的一些端点URL
      */
     String[] ENDPOINTS = {
-            "/oauth/token",
-            "/oauth2/token",
+            "/oauth/**",
+            "/api-auth/oauth/**",
             "/actuator/**",
             "/doc.html",
             "/webjars/**",
@@ -34,11 +34,11 @@ public interface SecurityConstants {
     String CLIENT_CREDENTIALS = "client_credentials";
 
     /**
+     * 授权用户类型字段
+     */
+    String USER_AUTH_TYPE = "user_auth_type";
+    /**
      * security上下文-用户信息
      */
     String SECURITY_CONTEXT = "LoginUserTenantsBO";
-    /**
-     * OAuth2Authorization
-     */
-    String OAuth2Authorization = "OAuth2Authorization";
 }

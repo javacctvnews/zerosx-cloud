@@ -1,7 +1,7 @@
 package com.zerosx.resource.vo;
 
 import com.zerosx.common.base.anno.Trans;
-import com.zerosx.common.base.constants.CommonConstants;
+import com.zerosx.common.base.constants.TranslConstants;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +13,10 @@ public class OssFileUploadPageVO {
 
     private Long id;
 
+    @Trans(type = TranslConstants.DICT, key = "OssTypeEnum", ref = "ossTypeName")
     private String ossType;
+
+    private String ossTypeName;
 
     private String originalFileName;
 
@@ -36,7 +39,7 @@ public class OssFileUploadPageVO {
 
     private Date updateTime;
 
-    @Trans(type = CommonConstants.TRANS_OPERATOR_ID, ref = "operatorName")
+    @Trans(type = TranslConstants.OPERATOR, ref = "operatorName")
     private String operatorId;
     //租户ID名称
     private String operatorName;

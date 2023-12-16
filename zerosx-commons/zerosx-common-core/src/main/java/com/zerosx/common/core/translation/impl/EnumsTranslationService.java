@@ -1,6 +1,6 @@
 package com.zerosx.common.core.translation.impl;
 
-import com.zerosx.common.base.constants.CommonConstants;
+import com.zerosx.common.base.constants.TranslConstants;
 import com.zerosx.common.base.vo.ResultVO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,7 +25,7 @@ public class EnumsTranslationService extends AbsTranslationService<String> {
 
     @Override
     public String translationType() {
-        return CommonConstants.TRANS_ENUMS;
+        return TranslConstants.ENUMS;
     }
 
     @Override

@@ -262,15 +262,15 @@ export default {
         ],
       },
       columns: [
-        {
-          attrs: {
-            label: '记录ID',
-            prop: 'id',
-            minWidth: '90',
-            sortable: 'custom',
-            align: "center",
-          },
-        },
+        // {
+        //   attrs: {
+        //     label: '记录ID',
+        //     prop: 'id',
+        //     minWidth: '90',
+        //     sortable: 'custom',
+        //     align: "center",
+        //   },
+        // },
         {
           attrs: {
             label: '租户标识',
@@ -469,7 +469,7 @@ export default {
     },
     handleDelete(row) {
       const idList = row.id || this.tenantIds;
-      this.$modal.confirm('是否确认删除用户编号为"' + idList + '"的数据项？').then(function () {
+      this.$modal.confirm('是否确认删除已选择的数据项？').then(function () {
         return deleteTenant(idList);
       }).then(() => {
         this.getList();

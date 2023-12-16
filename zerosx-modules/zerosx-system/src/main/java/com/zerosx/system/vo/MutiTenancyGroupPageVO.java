@@ -3,7 +3,7 @@ package com.zerosx.system.vo;
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.zerosx.common.base.anno.Trans;
-import com.zerosx.common.base.constants.CommonConstants;
+import com.zerosx.common.base.constants.TranslConstants;
 import com.zerosx.common.core.anno.Sensitive;
 import com.zerosx.common.core.enums.SensitiveStrategy;
 import lombok.Getter;
@@ -38,13 +38,13 @@ public class MutiTenancyGroupPageVO {
     private String socialCreditCode;
 
     @ExcelIgnore
-    @Trans(type = CommonConstants.TRANS_OSS, ref = "businessLicensePictureUrl")
+    @Trans(type = TranslConstants.OSS, ref = "businessLicensePictureUrl")
     private String businessLicensePicture;
     @ExcelProperty(value = {"营业执照"})
     private String businessLicensePictureUrl;
 
     @ExcelProperty(value = {"状态"})
-    @Trans(type = CommonConstants.TRANS_DICT, key = "StatusEnum", ref = "validStatusMsg")
+    @Trans(type = TranslConstants.DICT, key = "StatusEnum", ref = "validStatusMsg")
     private String validStatus;
     @ExcelIgnore
     private String validStatusMsg;
@@ -53,17 +53,17 @@ public class MutiTenancyGroupPageVO {
     @ExcelIgnore
     private String auditStatusMsg;
     @ExcelIgnore
-    @Trans(type = CommonConstants.TRANS_REGION, ref = "provinceName")
+    @Trans(type = TranslConstants.REGION, ref = "provinceName")
     private String province;
     @ExcelProperty(value = {"所在省"})
     private String provinceName;
     @ExcelIgnore
-    @Trans(type = CommonConstants.TRANS_REGION, ref = "cityName")
+    @Trans(type = TranslConstants.REGION, ref = "cityName")
     private String city;
     @ExcelProperty(value = {"所在市"})
     private String cityName;
     @ExcelIgnore
-    @Trans(type = CommonConstants.TRANS_REGION, ref = "areaName")
+    @Trans(type = TranslConstants.REGION, ref = "areaName")
     private String area;
     @ExcelProperty(value = {"所在区"})
     private String areaName;
@@ -78,7 +78,7 @@ public class MutiTenancyGroupPageVO {
     @Sensitive(strategy = SensitiveStrategy.PHONE)
     private String telephone;
     @ExcelIgnore
-    @Trans(type = CommonConstants.TRANS_OSS, ref = "logPictureUrl")
+    @Trans(type = TranslConstants.OSS, ref = "logPictureUrl")
     private String logPicture;
     @ExcelProperty(value = {"Logo"})
     private String logPictureUrl;

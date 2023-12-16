@@ -24,7 +24,7 @@ public class SysDictData extends SuperEntity<SysDictData> {
     private String dictLabel;
 
     @Schema(description = "字典数据键值")
-    private Object dictValue;
+    private String dictValue;
 
     @Schema(description = "字典类型编码")
     private String dictType;

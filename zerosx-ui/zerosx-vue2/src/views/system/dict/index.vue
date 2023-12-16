@@ -63,10 +63,10 @@
       @pagination="getList" />
 
     <!-- 添加或修改参数配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body :close-on-click-modal="false">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="字典类型" prop="dictType">
-          <el-input v-model="form.dictType" placeholder="请输入字典类型" :disabled="editDisabled" />
+    <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body :close-on-click-modal="false" center>
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+        <el-form-item label="字典类型编码" prop="dictType">
+          <el-input v-model="form.dictType" placeholder="请输入字典类型编码" :disabled="editDisabled" />
         </el-form-item>
         <el-form-item label="字典名称" prop="dictName">
           <el-input v-model="form.dictName" placeholder="请输入字典名称" />
@@ -78,7 +78,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="form.remarks" type="textarea" placeholder="请输入内容"></el-input>
+          <el-input v-model="form.remarks" type="textarea" placeholder="请输入字典说明内容"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -153,19 +153,25 @@ export default {
           { required: true, message: "字典名称不能为空", trigger: "blur" }
         ],
         dictType: [
-          { required: true, message: "字典类型不能为空", trigger: "blur" }
+          { required: true, message: "字典类型编码不能为空", trigger: "blur" }
+        ],
+        dictStatus: [
+          { required: true, message: "字典状态不能为空", trigger: "blur" }
+        ],
+        remarks: [
+          { required: true, message: "字典备注说明不能为空", trigger: "blur" }
         ]
       },
       columns: [
-        {
-          attrs: {
-            label: '记录ID',
-            prop: 'id',
-            minWidth: '100',
-            sortable: 'custom',
-            align: "center",
-          },
-        },
+        // {
+        //   attrs: {
+        //     label: '记录ID',
+        //     prop: 'id',
+        //     minWidth: '100',
+        //     sortable: 'custom',
+        //     align: "center",
+        //   },
+        // },
         {
           attrs: {
             label: '字典类型名称',

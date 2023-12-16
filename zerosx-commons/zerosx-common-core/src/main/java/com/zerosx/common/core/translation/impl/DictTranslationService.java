@@ -1,9 +1,9 @@
 package com.zerosx.common.core.translation.impl;
 
-import com.zerosx.common.base.constants.CommonConstants;
+import com.zerosx.common.base.constants.TranslConstants;
 import com.zerosx.common.base.vo.I18nSelectOptionVO;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.core.enums.RedisKeyNameEnum;
+import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.utils.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -24,7 +24,7 @@ public class DictTranslationService extends AbsTranslationService<String> {
 
     @Override
     public String translationType() {
-        return CommonConstants.TRANS_DICT;
+        return TranslConstants.DICT;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class DictTranslationService extends AbsTranslationService<String> {
 
     @Override
     protected String getRedissonCache(String key) {
-        return getRedissonOpService().get(RedisKeyNameEnum.key(RedisKeyNameEnum.DICT_DATA, key));
+        return getRedissonOpService().get(ZCache.DICT_DATA.key(key));
     }
 
     @Override

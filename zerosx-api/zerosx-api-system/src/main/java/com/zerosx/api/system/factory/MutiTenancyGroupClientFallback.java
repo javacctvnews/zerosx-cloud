@@ -1,6 +1,7 @@
 package com.zerosx.api.system.factory;
 
 import com.zerosx.api.system.IMutiTenancyGroupClient;
+import com.zerosx.api.system.vo.MutiTenancyGroupBO;
 import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.ResultVO;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,12 @@ public class MutiTenancyGroupClientFallback implements FallbackFactory<IMutiTena
             @Override
             public ResultVO<String> transIdName(String operatorId) {
                 log.error("查询运营商名称异常", cause);
+                return ResultVOUtil.feignFail(cause.getMessage());
+            }
+
+            @Override
+            public ResultVO<MutiTenancyGroupBO> queryOperator(String operatorId) {
+                log.error("查询运营商异常", cause);
                 return ResultVOUtil.feignFail(cause.getMessage());
             }
         };

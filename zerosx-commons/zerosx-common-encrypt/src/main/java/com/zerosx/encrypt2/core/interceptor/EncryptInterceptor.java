@@ -52,7 +52,7 @@ public class EncryptInterceptor extends AbsEncryptInterceptor {
         Object[] args = invocation.getArgs();
         MappedStatement mappedStatements = (MappedStatement) args[0];
         String namespace = getNamespace(mappedStatements);
-        debug("执行MappedStatementId【{}】", namespace);
+        log.debug("执行MappedStatementId【{}】", namespace);
         Object paramObject = args[1];
         if (Objects.isNull(paramObject)) {
             return invocation.proceed();

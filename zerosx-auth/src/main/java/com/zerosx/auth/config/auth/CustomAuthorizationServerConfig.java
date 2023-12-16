@@ -2,13 +2,13 @@ package com.zerosx.auth.config.auth;
 
 import com.zerosx.auth.granter.CaptchaTokenGranter;
 import com.zerosx.auth.granter.SmsTokenGranter;
-import com.zerosx.auth.service.IVerificationCodeService;
 import com.zerosx.auth.service.auth.CustomAuthorizationCodeServices;
 import com.zerosx.auth.service.auth.CustomDefaultTokenServices;
 import com.zerosx.auth.service.auth.CustomJdbcClientDetailsService;
 import com.zerosx.auth.service.userdetails.CustomUserDetailsByNameServiceWrapper;
 import com.zerosx.auth.service.userdetails.CustomUserDetailsServiceFactory;
 import com.zerosx.auth.service.userdetails.SystemUserDetailsService;
+import com.zerosx.common.redis.templete.RedissonOpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -52,10 +52,10 @@ public class CustomAuthorizationServerConfig extends AuthorizationServerConfigur
     private WebResponseExceptionTranslator webResponseExceptionTranslator;
     @Autowired
     private TokenEnhancer tokenEnhancer;
-    @Autowired
-    private IVerificationCodeService verificationCodeService;
     @Resource
     private CustomUserDetailsServiceFactory customUserDetailsServiceFactory;
+    @Autowired
+    private RedissonOpService redissonOpService;
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
@@ -64,11 +64,11 @@ public class CustomAuthorizationServerConfig extends AuthorizationServerConfigur
         //增加自定义的授权模式
         //验证码（用户名+密码+验证码）授权模式
         CaptchaTokenGranter captchaTokenGranter = new CaptchaTokenGranter(tokenService(), clientDetailsService, endpoints.getOAuth2RequestFactory(),
-                authenticationManager, verificationCodeService);
+                authenticationManager, redissonOpService);
         tokenGranters.add(captchaTokenGranter);
         //sms 授权模式
         SmsTokenGranter smsTokenGranter = new SmsTokenGranter(tokenService(), clientDetailsService, endpoints.getOAuth2RequestFactory(),
-                authenticationManager, verificationCodeService);
+                authenticationManager, redissonOpService);
         tokenGranters.add(smsTokenGranter);
 
         CompositeTokenGranter compositeTokenGranter = new CompositeTokenGranter(tokenGranters);

@@ -39,7 +39,6 @@ public class OauthClientDetailsController {
     @Autowired
     private IOauthClientDetailsService oauthClientDetailsService;
 
-
     @Operation(summary = "分页查询")
     @OpLog(mod = "应用管理", btn = "分页查询", opType = OpTypeEnum.QUERY)
     @PostMapping("/oauth_client_details/list_page")

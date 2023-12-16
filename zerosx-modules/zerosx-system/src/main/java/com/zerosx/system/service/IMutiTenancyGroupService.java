@@ -1,5 +1,6 @@
 package com.zerosx.system.service;
 
+import com.zerosx.api.system.vo.MutiTenancyGroupBO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.SelectOptionVO;
 import com.zerosx.common.core.service.ISuperService;
@@ -11,7 +12,7 @@ import com.zerosx.system.entity.MutiTenancyGroup;
 import com.zerosx.system.vo.MutiTenancyGroupPageVO;
 import com.zerosx.system.vo.MutiTenancyGroupVO;
 
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -70,4 +71,6 @@ public interface IMutiTenancyGroupService extends ISuperService<MutiTenancyGroup
      * @param response  response
      */
     void excelExport(RequestVO<MutiTenancyGroupQueryDTO> requestVO, HttpServletResponse response);
+
+    MutiTenancyGroupBO queryOperator(String operatorId);
 }

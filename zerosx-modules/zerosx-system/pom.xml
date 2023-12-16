@@ -7,7 +7,7 @@
     <parent>
         <artifactId>zerosx-modules</artifactId>
         <groupId>com.zerosx.cloud</groupId>
-        <version>0.0.4</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>zerosx-system</artifactId>
@@ -15,10 +15,6 @@
     <description>系统服务</description>
 
     <dependencies>
-        <dependency>
-            <groupId>com.zerosx.cloud</groupId>
-            <artifactId>zerosx-common-dynamic-datasource</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-xxljob</artifactId>

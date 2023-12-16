@@ -2,17 +2,16 @@ package com.zerosx.system.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Validator;
-import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.common.base.constants.CommonConstants;
 import com.zerosx.common.base.constants.SysMenuConstants;
+import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.base.dto.RolePermissionDTO;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.SysMenuBO;
 import com.zerosx.common.base.vo.SysPermissionBO;
-import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.core.enums.system.UserTypeEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
@@ -22,7 +21,6 @@ import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.common.utils.JacksonUtil;
-import com.zerosx.ds.constant.DSType;
 import com.zerosx.system.dto.SysMenuDTO;
 import com.zerosx.system.dto.SysMenuPageDTO;
 import com.zerosx.system.dto.SysRoleMenuQueryDTO;
@@ -41,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -56,7 +55,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-@DS(DSType.MASTER)
 public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu> implements ISysMenuService {
 
     @Autowired
@@ -74,7 +72,6 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
 
 
     @Override
-    @DS(DSType.SLAVE)
     public CustomPageVO<SysMenuPageVO> pageList(RequestVO<SysMenuPageDTO> requestVO, boolean searchCount) {
         LambdaQueryWrapper<SysMenu> listqw = Wrappers.lambdaQuery(SysMenu.class);
         listqw.orderByDesc(SysMenu::getCreateTime);
@@ -86,12 +83,14 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean add(SysMenuDTO sysMenuDTO) {
         SysMenu addEntity = BeanCopierUtils.copyProperties(sysMenuDTO, SysMenu.class);
         return save(addEntity);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean update(SysMenuDTO sysMenuDTO) {
         SysMenu dbUpdate = getById(sysMenuDTO.getMenuId());
         if (dbUpdate == null) {
@@ -106,33 +105,38 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
         List<SysRoleMenu> roleMenuList = sysRoleMenuService.list(srmqw);
         if (!CollectionUtils.isEmpty(roleMenuList)) {
             for (SysRoleMenu sysRoleMenu : roleMenuList) {
-                redissonOpService.del(RedisKeyNameEnum.key(RedisKeyNameEnum.ROLE_PERMISSIONS, sysRoleMenu.getRoleId()));
+                redissonOpService.del(ZCache.ROLE_PERMISSIONS.key(sysRoleMenu.getRoleId()));
             }
         }
         boolean updateById = updateById(updateEntity);
         //延时3秒再次删除
         if (!CollectionUtils.isEmpty(roleMenuList)) {
-            String[] keyArray = roleMenuList.stream().map(role -> RedisKeyNameEnum.key(RedisKeyNameEnum.ROLE_PERMISSIONS, role.getRoleId())).distinct().toArray(String[]::new);
+            String[] keyArray = roleMenuList.stream().map(role -> ZCache.ROLE_PERMISSIONS.key(role.getRoleId())).distinct().toArray(String[]::new);
             systemAsyncTask.asyncRedisDelOptions(keyArray);
         }
+        //int i = 1/0;
         return updateById;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteRecord(Long menuId) {
         boolean exists = baseMapper.exists(Wrappers.lambdaQuery(SysMenu.class).eq(SysMenu::getParentId, menuId));
+        //存在子菜单不能删除
         if (exists) {
             throw new BusinessException("存在子菜单,不允许删除");
         }
-        boolean menuRoleExists = sysRoleMenuMapper.exists(Wrappers.lambdaQuery(SysRoleMenu.class).eq(SysRoleMenu::getMenuId, menuId));
+        /*boolean menuRoleExists = sysRoleMenuMapper.exists(Wrappers.lambdaQuery(SysRoleMenu.class).eq(SysRoleMenu::getMenuId, menuId));
         if (menuRoleExists) {
             throw new BusinessException("菜单已分配,不允许删除");
-        }
+        }*/
+        //不存在子菜单 可以删除 删除所有关联关系
+        sysRoleMenuService.removeByMenuId(menuId);
+        //删除菜单
         return removeById(menuId);
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public List<SysMenu> selectMenuTreeByUserId(Long userId) {
         SysUser sysUser = sysUserService.getById(userId);
         List<SysMenu> menus;
@@ -155,7 +159,6 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public List<RouterVO> buildMenus(List<SysMenu> menus) {
         List<RouterVO> routers = new LinkedList<RouterVO>();
         for (SysMenu menu : menus) {
@@ -365,7 +368,6 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
 
 
     @Override
-    @DS(DSType.SLAVE)
     public List<SysMenu> selectMenuList(SysMenuPageDTO menu) {
         List<SysMenu> menuList;
         String userType = ZerosSecurityContextHolder.getUserType();
@@ -395,13 +397,11 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public SysMenu getMenuById(Long menuId) {
         return getById(menuId);
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public SysRoleMenuTreeVO roleMenuTree(SysRoleMenuQueryDTO sysRoleMenuQueryDTO) {
         SysMenuPageDTO sysMenuPageDTO = new SysMenuPageDTO();
         sysMenuPageDTO.setStatus("0");//不展示停用的菜单
@@ -443,7 +443,6 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public SysPermissionBO queryPermsByRoleIds(RolePermissionDTO rolePermissionDTO) {
         List<Long> roles = rolePermissionDTO.getRoles();
         if (CollectionUtils.isEmpty(roles)) {
@@ -454,7 +453,7 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
             List<SysMenuBO> sysMenuBOS = baseMapper.findByRoleCodes(Collections.singletonList(roleId));
             if (!CollectionUtils.isEmpty(roles)) {
                 endAll.addAll(sysMenuBOS);
-                redissonOpService.set(RedisKeyNameEnum.key(RedisKeyNameEnum.ROLE_PERMISSIONS, roleId), JacksonUtil.toJSONString(sysMenuBOS));
+                redissonOpService.set(ZCache.ROLE_PERMISSIONS.key(roleId), JacksonUtil.toJSONString(sysMenuBOS));
             }
         }
         SysPermissionBO bo = new SysPermissionBO();
@@ -463,7 +462,6 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public List<SysMenuBO> findByRoleCodes(List<Long> roleIds) {
         if (CollectionUtils.isEmpty(roleIds)) {
             return new ArrayList<>();
@@ -472,7 +470,6 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public Set<String> queryPermList(Set<Long> roles) {
         if (CollectionUtils.isEmpty(roles)) {
             return null;

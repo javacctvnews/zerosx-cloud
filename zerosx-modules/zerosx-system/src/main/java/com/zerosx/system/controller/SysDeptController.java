@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -93,6 +93,12 @@ public class SysDeptController {
     @PostMapping("/sys_dept/tree_select")
     public ResultVO<List<SysTreeSelectVO>> treeSelect(@RequestBody BaseTenantDTO baseTenantDTO) {
         return ResultVOUtil.success(sysDeptService.treeSelect(baseTenantDTO));
+    }
+
+    @Operation(summary = "id查询名称")
+    @GetMapping("/sys_dept/queryName/{id}")
+    public ResultVO<String> queryName(@PathVariable("id") Long id) {
+        return ResultVOUtil.success(sysDeptService.queryName(id));
     }
 
 }

@@ -9,7 +9,7 @@ import com.zerosx.resource.dto.SysDictTypeUpdateDTO;
 import com.zerosx.resource.entity.SysDictType;
 import com.zerosx.resource.vo.SysDictTypeVO;
 
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**

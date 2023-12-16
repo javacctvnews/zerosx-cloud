@@ -1,12 +1,11 @@
 package com.zerosx.resource.service.impl;
 
-import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.RequestVO;
-import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
 import com.zerosx.common.core.utils.EasyTransUtils;
@@ -19,7 +18,6 @@ import com.zerosx.common.oss.model.OssObjectVO;
 import com.zerosx.common.oss.properties.DefaultOssProperties;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.JacksonUtil;
-import com.zerosx.ds.constant.DSType;
 import com.zerosx.resource.dto.OssFileUploadDTO;
 import com.zerosx.resource.entity.OssFileUpload;
 import com.zerosx.resource.mapper.IOssFileUploadMapper;
@@ -31,16 +29,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Service
 @Slf4j
-@DS(DSType.MASTER)
 public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMapper, OssFileUpload> implements IOssFileUploadService {
 
     private static final Long ONE_DAY_SEC = 3600L * 1000 * 24;
@@ -53,6 +51,7 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
     private IOssSupplierService ossSupplierService;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean saveOssFile(IOssConfig ossConfig, Long fileSize, String originalFilename, OssObjectVO upload) {
         OssFileUpload ossFileUpload = new OssFileUpload();
         ossFileUpload.setOperatorId(ZerosSecurityContextHolder.getOperatorIds());
@@ -70,13 +69,13 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public OssFileUpload getByObjectName(String objectName) {
         return baseMapper.selectByObjectName(objectName);
     }
 
     @SneakyThrows
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public OssObjectVO upload(MultipartFile multipartFile) {
         String objectName = FileUploadUtils.extractFilename(multipartFile, defaultOssProperties.getFilePrefix());
         //获取IOssClientService实例
@@ -90,7 +89,7 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
         }
         //放入缓存
         long expireTime = (ossObjectVO.getExpiration().getTime() - new Date().getTime()) / 1000;
-        redissonOpService.set(RedisKeyNameEnum.key(RedisKeyNameEnum.OSS_FILE_URL, objectName), JacksonUtil.toJSONString(ossObjectVO), expireTime);
+        redissonOpService.set(ZCache.OSS_FILE_URL.key(objectName), JacksonUtil.toJSONString(ossObjectVO), expireTime);
         return ossObjectVO;
     }
 
@@ -103,7 +102,6 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public List<OssObjectVO> batchUploadFile(MultipartFile[] multipartFile) {
         List<OssObjectVO> objectVOS = new ArrayList<>();
         for (MultipartFile file : multipartFile) {
@@ -117,7 +115,6 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public String getObjectViewUrl(String objectName) {
         if (StringUtils.isBlank(objectName)) {
             return StringUtils.EMPTY;
@@ -136,7 +133,6 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public boolean deleteFile(String objectName) {
         OssFileUpload ossFileUpload = getByObjectName(objectName);
         if (ossFileUpload == null) {
@@ -149,14 +145,13 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
             ossfileRm.eq(OssFileUpload::getObjectName, objectName);
             boolean remove = remove(ossfileRm);
             if (remove) {
-                redissonOpService.del(RedisKeyNameEnum.key(RedisKeyNameEnum.OSS_FILE_URL, objectName));
+                redissonOpService.del(ZCache.OSS_FILE_URL.key(objectName));
             }
         }
         return deleted;
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public CustomPageVO<OssFileUploadPageVO> listPages(RequestVO<OssFileUploadDTO> requestVO) {
         OssFileUploadDTO t = requestVO.getT() == null ? new OssFileUploadDTO() : requestVO.getT();
         LambdaQueryWrapper<OssFileUpload> qw = Wrappers.lambdaQuery(OssFileUpload.class);
@@ -174,7 +169,6 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
     }
 
     @Override
-    @DS(DSType.MASTER)
     public boolean fullDelete(Long[] ids) {
         for (Long id : ids) {
             OssFileUpload ossFileUpload = getById(id);
@@ -182,7 +176,7 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
                 IOssClientService ossClientService = getOssClientService(ossFileUpload.getOssSupplierId());
                 String objectName = ossFileUpload.getObjectName();
                 ossClientService.delete(objectName);
-                redissonOpService.del(RedisKeyNameEnum.key(RedisKeyNameEnum.OSS_FILE_URL, objectName));
+                redissonOpService.del(ZCache.OSS_FILE_URL.key(objectName));
                 removeById(id);
             }
         }
@@ -190,7 +184,6 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public OssFileUploadPageVO queryById(Long id) {
         OssFileUpload fileUpload = getById(id);
         handleOssFileUpload(fileUpload);
@@ -202,7 +195,7 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
             return;
         }
         String objectName = fileUpload.getObjectName();
-        String ossFileKey = RedisKeyNameEnum.key(RedisKeyNameEnum.OSS_FILE_URL, objectName);
+        String ossFileKey = ZCache.OSS_FILE_URL.key(objectName);
         //先从Redis获取
         String cacheViewUrl = null;
         try {

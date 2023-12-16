@@ -5,7 +5,7 @@
     <parent>
         <artifactId>zerosx-tools</artifactId>
         <groupId>com.zerosx.cloud</groupId>
-        <version>0.0.4</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>code-generator</artifactId>

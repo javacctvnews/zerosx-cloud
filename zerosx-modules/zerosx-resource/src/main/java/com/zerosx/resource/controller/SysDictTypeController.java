@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -69,7 +69,7 @@ public class SysDictTypeController {
     }
 
     @Operation(summary = "按id查询")
-    @GetMapping(value = "/sysDictType/queryById/{dictId}")
+    @GetMapping(value = "/getDictTypeById/{dictId}")
     public ResultVO<SysDictTypeVO> getDictTypeById(@PathVariable("dictId") Long dictId) {
         return ResultVOUtil.success(sysDictTypeService.getDictTypeById(dictId));
     }

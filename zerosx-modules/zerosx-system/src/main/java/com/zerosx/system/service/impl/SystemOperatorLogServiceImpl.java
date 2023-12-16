@@ -3,16 +3,14 @@ package com.zerosx.system.service.impl;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
-import com.baomidou.dynamic.datasource.annotation.DS;
-import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.core.easyexcel.AutoColumnWidthWriteHandler;
 import com.zerosx.common.core.easyexcel.EasyExcelUtil;
 import com.zerosx.common.core.easyexcel.XHorizontalCellStyleStrategy;
-import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
 import com.zerosx.common.core.utils.EasyTransUtils;
@@ -22,25 +20,23 @@ import com.zerosx.common.log.vo.SystemOperatorLogBO;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.common.utils.IpUtils;
-import com.zerosx.ds.constant.DSType;
 import com.zerosx.system.dto.SystemOperatorLogDTO;
 import com.zerosx.system.dto.SystemOperatorLogPageDTO;
 import com.zerosx.system.entity.SystemOperatorLog;
 import com.zerosx.system.mapper.ISystemOperatorLogMapper;
 import com.zerosx.system.service.ISystemOperatorLogService;
 import com.zerosx.system.vo.SystemOperatorLogPageVO;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 操作日志
@@ -59,7 +55,6 @@ public class SystemOperatorLogServiceImpl extends SuperServiceImpl<ISystemOperat
     private ISystemOperatorLogMapper systemOperatorLogMapper;
 
     @Override
-    @DS(DSType.SLAVE)
     public CustomPageVO<SystemOperatorLogPageVO> pageList(RequestVO<SystemOperatorLogPageDTO> requestVO, boolean searchCount) {
         LambdaQueryWrapper<SystemOperatorLog> wrapper = getWrapper(requestVO.getT());
         wrapper.select(SystemOperatorLog.class, log -> !log.getColumn().equals("operator_param") && !log.getColumn().equals("json_result") && !log.getColumn().equals("error_msg"));
@@ -67,15 +62,16 @@ public class SystemOperatorLogServiceImpl extends SuperServiceImpl<ISystemOperat
     }
 
     @Override
-    @DS(DSType.MASTER)
-    public boolean add(SystemOperatorLogDTO systemOperatorLogDTO) {
-        SystemOperatorLog addEntity = BeanCopierUtils.copyProperties(systemOperatorLogDTO, SystemOperatorLog.class);
+    @Transactional(rollbackFor = Exception.class)
+    public boolean add(SystemOperatorLogBO systemOperatorLogBO) {
+        SystemOperatorLog addEntity = BeanCopierUtils.copyProperties(systemOperatorLogBO, SystemOperatorLog.class);
+        addEntity.setId(systemOperatorLogBO.getRequestId());
         addEntity.setIpLocation(IpUtils.getIpLocation(addEntity.getOperatorIp()));
         return save(addEntity);
     }
 
     @Override
-    @DS(DSType.MASTER)
+    @Transactional(rollbackFor = Exception.class)
     public boolean update(SystemOperatorLogDTO systemOperatorLogDTO) {
         SystemOperatorLog dbUpdate = getById(systemOperatorLogDTO.getId());
         if (dbUpdate == null) {
@@ -86,17 +82,13 @@ public class SystemOperatorLogServiceImpl extends SuperServiceImpl<ISystemOperat
     }
 
     @Override
-    @DSTransactional(rollbackFor = Exception.class)
-    @DS(DSType.MASTER)
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteRecord(Long[] id) {
-        for (Long recordId : id) {
-            removeById(recordId);
-        }
-        return true;
+        return removeByIds(Arrays.asList(id));
     }
 
     @Override
-    @DS(DSType.MASTER)
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteSystemOperatorLog(int deleteDays) {
         LocalDateTime localDateTime = LocalDateTime.now().minusDays(deleteDays);
         Date deleteDate = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
@@ -106,7 +98,7 @@ public class SystemOperatorLogServiceImpl extends SuperServiceImpl<ISystemOperat
     }
 
     @Override
-    @DS(DSType.MASTER)
+    @Transactional(rollbackFor = Exception.class)
     public boolean cleanAll() {
         LambdaQueryWrapper<SystemOperatorLog> deqm = Wrappers.lambdaQuery(SystemOperatorLog.class);
         deqm.le(SystemOperatorLog::getCreateTime, LocalDateTime.now());
@@ -114,13 +106,11 @@ public class SystemOperatorLogServiceImpl extends SuperServiceImpl<ISystemOperat
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public List<SystemOperatorLog> queryPageVOList(SystemOperatorLogPageDTO query) {
         return list(getWrapper(query));
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public SystemOperatorLogPageVO queryById(Long id) {
         return EasyTransUtils.copyTrans(getById(id), SystemOperatorLogPageVO.class);
     }
@@ -141,12 +131,11 @@ public class SystemOperatorLogServiceImpl extends SuperServiceImpl<ISystemOperat
 
 
     @Override
-    @DSTransactional(rollbackFor = Exception.class)
-    @DS(DSType.MASTER)
+    @Transactional(rollbackFor = Exception.class)
     public void saveSystemOperatorLog() {
         double timePoint = (double) new Date().getTime();
         //读取大小
-        int totalNum = redissonOpService.zLen(RedisKeyNameEnum.key(RedisKeyNameEnum.SYS_OP_LOG));
+        int totalNum = redissonOpService.zLen(ZCache.SYS_OP_LOG.key());
         if (totalNum == 0) {
             return;
         }
@@ -157,28 +146,35 @@ public class SystemOperatorLogServiceImpl extends SuperServiceImpl<ISystemOperat
         int offset = 0;
         for (int i = 0; i < loopNum; i++) {
             //获取
-            log.debug("读取{}-{}", offset, sheetNum);
-            Collection<SystemOperatorLogBO> collection = redissonOpService.zGetByScore(RedisKeyNameEnum.key(RedisKeyNameEnum.SYS_OP_LOG),
+            Collection<SystemOperatorLogBO> collection = redissonOpService.zGetByScore(ZCache.SYS_OP_LOG.key(),
                     timePoint, offset, sheetNum);
             if (CollectionUtils.isEmpty(collection)) {
                 break;
             }
-            Collection<SystemOperatorLog> systemOperatorLogs = BeanCopierUtils.copyProperties(collection, SystemOperatorLog.class);
-            for (SystemOperatorLog bo : systemOperatorLogs) {
-                bo.setIpLocation(IpUtils.getIpLocation(bo.getOperatorIp()));
+            log.debug("第{}批次读取范围[{},{}] 条数:{}", i + 1, offset, sheetNum, collection.size());
+            Collection<SystemOperatorLog> systemOperatorLogs = new ArrayList<>();
+            for (SystemOperatorLogBO bo : collection) {
+                SystemOperatorLog systemOperatorLog = BeanCopierUtils.copyProperties(bo, SystemOperatorLog.class);
+                systemOperatorLog.setIpLocation(IpUtils.getIpLocation(bo.getOperatorIp()));
+                systemOperatorLog.setId(bo.getRequestId());
+                systemOperatorLogs.add(systemOperatorLog);
             }
             //保存
-            boolean saveBatch = saveBatch(systemOperatorLogs);
+            try {
+                boolean saveBatch = saveBatch(systemOperatorLogs);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                throw new RuntimeException(e);
+            }
             log.debug("第{}次批量保存条数:{}", i + 1, collection.size());
             offset += sheetNum;
         }
         //循环完删除
-        int deleteNum = redissonOpService.zRemByScore(RedisKeyNameEnum.key(RedisKeyNameEnum.SYS_OP_LOG), timePoint, null);
+        int deleteNum = redissonOpService.zRemByScore(ZCache.SYS_OP_LOG.key(), timePoint, null);
         log.debug("批量保存日志{}条，耗时{}ms", deleteNum, System.currentTimeMillis() - t1);
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public void excelExport(RequestVO<SystemOperatorLogPageDTO> requestVO, HttpServletResponse response) {
         checkEasyExcelProperties();
         long t1 = System.currentTimeMillis();

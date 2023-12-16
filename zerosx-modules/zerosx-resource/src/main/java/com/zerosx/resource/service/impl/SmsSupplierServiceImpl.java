@@ -1,17 +1,15 @@
 package com.zerosx.resource.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.dynamic.datasource.annotation.DS;
-import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.api.resource.dto.SmsSendDTO;
+import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.core.enums.RedisKeyNameEnum;
 import com.zerosx.common.core.enums.StatusEnum;
 import com.zerosx.common.core.enums.sms.SmsBusinessCodeEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
@@ -20,10 +18,8 @@ import com.zerosx.common.core.utils.EasyTransUtils;
 import com.zerosx.common.core.utils.IdGenerator;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
-import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.common.utils.JacksonUtil;
-import com.zerosx.ds.constant.DSType;
 import com.zerosx.resource.dto.SmsCodeDTO;
 import com.zerosx.resource.dto.SmsSupplierDTO;
 import com.zerosx.resource.dto.SmsSupplierPageDTO;
@@ -42,13 +38,14 @@ import com.zerosx.sms.model.SmsRequest;
 import com.zerosx.sms.model.SmsResponse;
 import com.zerosx.sms.properties.CustomSmsProperties;
 import com.zerosx.sms.properties.SmsBusinessProperties;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,24 +61,19 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-@DS(DSType.MASTER)
 public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper, SmsSupplier> implements ISmsSupplierService {
 
     @Autowired
     private CustomSmsProperties customSmsProperties;
     @Autowired
     private ISmsSupplierBusinessService smsSupplierBusinessService;
-    @Autowired
-    private RedissonOpService redissonOpService;
 
     @Override
-    @DS(DSType.SLAVE)
     public CustomPageVO<SmsSupplierPageVO> pageList(RequestVO<SmsSupplierPageDTO> requestVO, boolean searchCount) {
         return PageUtils.of(baseMapper.selectPage(PageUtils.of(requestVO, searchCount), getWrapper(requestVO.getT())), SmsSupplierPageVO.class);
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public List<SmsSupplier> dataList(SmsSupplierPageDTO query) {
         return list(getWrapper(query));
     }
@@ -91,11 +83,14 @@ public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper,
         if (query == null) {
             return qw;
         }
-        //todo
+        qw.eq(StringUtils.isNotBlank(query.getOperatorId()), SmsSupplier::getOperatorId, query.getOperatorId());
+        qw.eq(StringUtils.isNotBlank(query.getStatus()), SmsSupplier::getStatus, query.getStatus());
+        qw.like(StringUtils.isNotBlank(query.getSupplierName()), SmsSupplier::getSupplierName, query.getSupplierName());
         return qw;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean add(SmsSupplierDTO smsSupplierDTO) {
         checkSmsSupplier(smsSupplierDTO);
         SmsSupplier addEntity = BeanCopierUtils.copyProperties(smsSupplierDTO, SmsSupplier.class);
@@ -104,6 +99,7 @@ public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper,
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean update(SmsSupplierDTO smsSupplierDTO) {
         SmsSupplier dbUpdate = getById(smsSupplierDTO.getId());
         if (dbUpdate == null) {
@@ -155,13 +151,12 @@ public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper,
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public SmsSupplierVO queryById(Long id) {
         return EasyTransUtils.copyTrans(getById(id), SmsSupplierVO.class);
     }
 
     @Override
-    @DSTransactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteRecord(Long[] ids) {
         for (Long id : ids) {
             //删除短信业务
@@ -182,7 +177,6 @@ public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper,
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public ResultVO<?> sendSms(SmsSendDTO smsSendDTO) {
         ISupplierConfig smsConfig;
         SmsRequest smsRequest;
@@ -267,13 +261,11 @@ public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper,
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public void excelExport(RequestVO<SmsSupplierPageDTO> requestVO, HttpServletResponse response) {
         excelExport(PageUtils.of(requestVO, false), getWrapper(requestVO.getT()), SmsSupplierPageVO.class, response);
     }
 
     @Override
-    @DS(DSType.SLAVE)
     public SmsCodeVO getSmsCode(SmsCodeDTO smsCodeDTO) {
         String requestId = smsCodeDTO.getUuid();
         String validCode = smsCodeDTO.getCode2();
@@ -284,7 +276,7 @@ public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper,
         if (StringUtils.isBlank(validCode)) {
             throw new BusinessException("请填写验证码");
         }
-        String code = redissonOpService.get(RedisKeyNameEnum.key(RedisKeyNameEnum.IMAGE_CODE, requestId));
+        String code = redissonOpService.get(ZCache.CAPTCHA.key(requestId));
         if (StringUtils.isBlank(code)) {
             throw new BusinessException("验证码不存在或已过期");
         }
@@ -292,7 +284,7 @@ public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper,
             throw new BusinessException("验证码不正确");
         }
         //删除验证码
-        redissonOpService.del(RedisKeyNameEnum.key(RedisKeyNameEnum.IMAGE_CODE, requestId));
+        redissonOpService.del(ZCache.CAPTCHA.key(requestId));
 
         Map<String, String> map = new HashMap<>();
         String randomStr = IdGenerator.getRandomStr(6);
@@ -310,7 +302,7 @@ public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper,
             resultVO = sendSms(smsSendDTO);
         }
         if (resultVO.success()) {
-            redissonOpService.set(RedisKeyNameEnum.key(RedisKeyNameEnum.SMS_CODE, smsCodeDTO.getMobilePhone()), randomStr, customSmsProperties.getExpireTime());
+            redissonOpService.set(ZCache.SMS_CODE.key(smsCodeDTO.getMobilePhone()), randomStr, customSmsProperties.getExpireTime());
             SmsCodeVO vo = new SmsCodeVO();
             vo.setSmsAuthCode(randomStr);
             vo.setImitate(customSmsProperties.getImitate());

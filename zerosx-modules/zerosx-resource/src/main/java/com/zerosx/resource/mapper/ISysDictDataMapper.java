@@ -9,6 +9,8 @@ import org.apache.ibatis.annotations.Mapper;
  * 字典数据表 Mapper 接口
  * </p>
  *
+ * @author junmy
+ * @since 2020-11-18
  */
 @Mapper
 public interface ISysDictDataMapper extends SuperMapper<SysDictData> {
