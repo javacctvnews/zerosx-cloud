@@ -263,7 +263,7 @@ zerosx:
     defaultSms:
       supplierType: alibaba
       accessKeyId: LTAI5tLbF7vT83t8jU9pX6xm
-      accessKeySecret: KDsnhLztTelgK14WO008lqL0Obh6dX
+      accessKeySecret: KKKKKKKKKKKKKKKKKKKKKKK
       regionId: dysmsapi.aliyuncs.com
       signature: zerosx
       #juhe
@@ -342,7 +342,7 @@ zerosx:
     ossConfig:
       supplierType: alibaba
       accessKeyId: LTAI5tLbF7vT83t8jU9pX6xm
-      accessKeySecret: KDsnhLztTelgK14WO008lqL0Obh6dX
+      accessKeySecret: KKKKKKKKKKKKKKKKKKKKKKK
       bucketName: zeros-cloud-oss
       regionId: oss-cn-shenzhen
       endpoint: oss-cn-shenzhen.aliyuncs.com
