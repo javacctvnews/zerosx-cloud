@@ -17,24 +17,15 @@
     <dependencies>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
-            <artifactId>zerosx-common-base</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.zerosx.cloud</groupId>
-            <artifactId>zerosx-common-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-redis</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-oauth2</artifactId>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-base</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-context</artifactId>
-            <scope>provided</scope>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-authorization-server</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -42,10 +33,13 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
     </dependencies>
 </project>

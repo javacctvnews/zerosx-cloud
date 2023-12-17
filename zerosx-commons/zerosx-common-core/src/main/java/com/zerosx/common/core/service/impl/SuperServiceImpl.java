@@ -17,11 +17,11 @@ import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
 import com.zerosx.common.core.service.ISuperService;
 import com.zerosx.common.core.utils.EasyTransUtils;
 import com.zerosx.common.redis.templete.RedissonOpService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -34,13 +34,13 @@ import java.util.List;
 public class SuperServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M, T> implements ISuperService<T> {
 
     @Autowired
+    protected RedissonOpService redissonOpService;
+    @Autowired
     protected EasyExcelProperties easyExcelProperties;
     //每次查询的条数 5w
     //protected static final int querySize = 50000;
     //一个sheet最大的条数 100w
     //protected static final int sheetNum = 1000000;
-    @Autowired
-    protected RedissonOpService redissonOpService;
 
     protected void checkEasyExcelProperties() {
         if (!easyExcelProperties.getEnabled()) {
@@ -52,6 +52,10 @@ public class SuperServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M,
         if (easyExcelProperties.getSheetNum() % easyExcelProperties.getQuerySize() != 0) {
             throw new BusinessException("sheetNum的值必须是querySize值的倍数");
         }
+    }
+
+    protected List<?> handleData(List<T> list, Class<?> exportClz) {
+        return EasyTransUtils.copyTrans(list, exportClz);
     }
 
     /**
@@ -107,7 +111,7 @@ public class SuperServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M,
                     queryCurrentCount += size;
                     log.debug("第{}页查询，每页{}条 实际{}条，耗时{}ms", pageNum, querySize, size, System.currentTimeMillis() - t11);
                     if (size > 0) {
-                        excelWriter.write(EasyTransUtils.copyTrans(records, exportClz), writeSheet);
+                        excelWriter.write(handleData(records, exportClz), writeSheet);
                     }
                 }
             }

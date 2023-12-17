@@ -3,7 +3,7 @@
 version: "3"
 services:
   xxl-job-admin:
-    restart: unless-stopped
+    restart: 'no' #unless-stopped
     # docker 镜像
     image: xuxueli/xxl-job-admin:2.4.0
     # 容器名称

@@ -26,8 +26,6 @@ public class LoginUserTenantsBO implements Serializable {
     private String username;
     //用户类型
     private String userType;
-    //帐号状态（0正常 1停用）
-    private String status;
     //租户标识
     private String operatorId;
     //租户ID集合-预留

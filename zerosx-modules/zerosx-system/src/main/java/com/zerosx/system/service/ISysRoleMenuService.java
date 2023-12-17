@@ -9,5 +9,4 @@ public interface ISysRoleMenuService extends ISuperService<SysRoleMenu> {
 
     boolean saveSysRoleMenus(List<SysRoleMenu> sysRoleMenus);
 
-    boolean removeByMenuId(Long menuId);
 }

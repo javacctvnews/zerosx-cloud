@@ -24,6 +24,7 @@ import com.zerosx.resource.mapper.IOssFileUploadMapper;
 import com.zerosx.resource.service.IOssFileUploadService;
 import com.zerosx.resource.service.IOssSupplierService;
 import com.zerosx.resource.vo.OssFileUploadPageVO;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +33,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -169,6 +169,7 @@ public class OssFileUploadServiceImpl extends SuperServiceImpl<IOssFileUploadMap
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean fullDelete(Long[] ids) {
         for (Long id : ids) {
             OssFileUpload ossFileUpload = getById(id);

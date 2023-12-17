@@ -49,8 +49,7 @@ spring:
       pool-name: ${spring.application.name}
 
   redis:
-    #可以处理多项目开发时key重复的问题
-    keyPrefix: zerosx-cloud
+    keyPrefix: zerosx-cloud-jdk17
     database: 0
     host: 127.0.0.1
     port: 6479
@@ -264,7 +263,7 @@ zerosx:
     defaultSms:
       supplierType: alibaba
       accessKeyId: LTAI5tLbF7vT83t8jU9pX6xm
-      accessKeySecret: XXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      accessKeySecret: KDsnhLztTelgK14WO008lqL0Obh6dX
       regionId: dysmsapi.aliyuncs.com
       signature: zerosx
       #juhe
@@ -298,54 +297,44 @@ zerosx:
   security:
     tokenStoreType: redis
     renewToken: true
-    renewTokenPercent: 0.2
+    renewTokenPercent: 0.20
     tokenStorePrefix: "zerosx-cloud:"
     signingKey: zerosx-cloud
     ignoreAuthUrls:
-      - /oauth/**
-      - /api-auth/oauth/**
+      # sas授权
+      - /api-auth/oauth2/**
+      - /oauth2/**
       # 图形验证码
       - /api-resource/captcha
       # 短信验证码
       - /api-resource/sms/getSmsCode
-      # 分布式ID生成（测试）
-      - /api-system/segment_test/{bizTag}
-      - /api-system/segment_test2/{bizTag}
-
+      # 登出
+      - /api-auth/token2/logout
     perms:
       urlPermissionEnable: true
       passClientIds:
         - ems
-      # 不需要权限检查的接口
       passPermsUrls:
-        - /oauth/**
-        # 省市区数据
+        - /oauth2/**
+        - /api-auth/oauth2/**
         - /api-resource/areas
-        # 路由数据
-        - /api-system/getRouters
-        - /api-system/sys_menu/roleMenuTree
-        # 下拉框数据
         - /api-system/muti_tenancy/select_options
-        - /api-system/sys_post/select_list
-        - /api-system/sys_role/select_list
-        - /api-system/sys_dept/tree_select
         # 图形验证码
         - /api-resource/captcha
-        # 用户个人信息
-        - /api-system/saas/sys_user/current
-        - /api-system/sys_user/getInfo
-        # 按ID查询数据(编辑时查询)
-        - /api-system/**/queryById/**
-        - /api-system/**/getById/**
-        # 数据字典
-        - /api-resource/sysDictData_selectList/{dictType}
-        # oss文件上传
-        - /api-system/upload_file
         # 短信验证码
         - /api-resource/sms/getSmsCode
-        # 分布式ID生成(测试)
-        - /api-system/segment_test/{bizTag}
-        - /api-system/segment_test2/{bizTag}
+        - /api-system/sys_user/getInfo
+        - /api-system/getRouters
+        - /**/select_list
+        - /api-system/sys_dept/tree_select
+        - /api-system/**/getById/**
+        - /api-resource/sysDictData_selectList/{dictType}
+        - /api-system/sys_menu/roleMenuTree
+        - /api-resource/upload_file
+        - /api-resource/delete_file/{objectName}/delete
+        - /**/select
+        - /**/queryById/**
+
   oss:
     filePrefix: zerosx-cloud
     ossType: alibaba
@@ -353,7 +342,7 @@ zerosx:
     ossConfig:
       supplierType: alibaba
       accessKeyId: LTAI5tLbF7vT83t8jU9pX6xm
-      accessKeySecret: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      accessKeySecret: KDsnhLztTelgK14WO008lqL0Obh6dX
       bucketName: zeros-cloud-oss
       regionId: oss-cn-shenzhen
       endpoint: oss-cn-shenzhen.aliyuncs.com
@@ -372,6 +361,7 @@ springdoc:
       paths-to-match: '/**'
       packages-to-scan:
         - com.zerosx
+        - org
   default-flat-param-object: false
   enable-spring-security: false
 

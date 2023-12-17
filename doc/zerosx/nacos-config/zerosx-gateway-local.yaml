@@ -2,6 +2,7 @@
 logging:
   level:
     com.zerosx: debug
+    #com.zerosx.gateway.auth: info
 
 spring:
   main:
@@ -17,6 +18,21 @@ spring:
           lowerCaseServiceId: true
           enabled: true
       routes:
+        - id: zerosx-system
+          uri: lb://zerosx-system
+          predicates:
+            - Path=/api-system/**
+          filters:
+            - StripPrefix=1
+            - PreserveHostHeader
+
+        - id: zerosx-resource
+          uri: lb://zerosx-resource
+          predicates:
+            - Path=/api-resource/**
+          filters:
+            - StripPrefix=1
+            - PreserveHostHeader
         - id: zerosx-auth
           uri: lb://zerosx-auth
           predicates:
@@ -25,34 +41,27 @@ spring:
             - StripPrefix=1
             - PreserveHostHeader
         #认证授权
-        - id: oauth-token
+        - id: oauth2-token
           uri: lb://zerosx-auth
           predicates:
-            - Path=/oauth/**
+            - Path=/oauth2/**
           filters:
             - PreserveHostHeader
 
-        - id: zerosx-system
-          uri: lb://zerosx-system
+        - id: zerosx-order
+          uri: lb://zerosx-order
           predicates:
-            - Path=/api-system/**
+            - Path=/api-order/**
           filters:
             - StripPrefix=1
             - PreserveHostHeader
-        - id: zerosx-resource
-          uri: lb://zerosx-resource
+        - id: zerosx-stock
+          uri: lb://zerosx-stock
           predicates:
-            - Path=/api-resource/**
+            - Path=/api-stock/**
           filters:
             - StripPrefix=1
             - PreserveHostHeader
-        # - id: zerosx-order
-        #   uri: lb://zerosx-order
-        #   predicates:
-        #     - Path=/api-order/**
-        #   filters:
-        #     - StripPrefix=1
-        #     - PreserveHostHeader
 
 # #knife4j-openapi3
 knife4j:

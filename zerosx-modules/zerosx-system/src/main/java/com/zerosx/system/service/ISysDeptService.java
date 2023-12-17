@@ -11,7 +11,7 @@ import com.zerosx.system.vo.SysDeptPageVO;
 import com.zerosx.system.vo.SysDeptVO;
 import com.zerosx.system.vo.SysTreeSelectVO;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Set;
 

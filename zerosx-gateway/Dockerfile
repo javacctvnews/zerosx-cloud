@@ -1,5 +1,5 @@
 # 基础镜像
-FROM  openjdk:8-jre
+FROM  alibabadragonwell/dragonwell:17-anolis
 # author
 MAINTAINER javacctvnews
 
@@ -14,10 +14,13 @@ COPY ./target/zerosx-gateway.jar /home/zerosx-cloud/zerosx-gateway.jar
 # 启动网关服务
 ENTRYPOINT ["java", \
             "-jar", \
+            "--add-opens=java.base/java.lang=ALL-UNNAMED",\
+            "--add-opens=java.base/sun.net=ALL-UNNAMED",\
+            "--add-exports=java.base/sun.net.util=ALL-UNNAMED",\
             "-Xms300m", "-Xmx300m", \
             "-Djava.security.egd=file:/dev/./urandom", \
             "-XX:-OmitStackTraceInFastThrow", \
             "zerosx-gateway.jar"]
 
 #build镜像
-#docker build -t zerosx-cloud/zerosx-gateway:0.0.1 .
+#docker build -t zerosx-cloud/zerosx-gateway:0.0.3 .

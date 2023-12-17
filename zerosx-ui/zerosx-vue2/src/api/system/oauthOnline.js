@@ -4,7 +4,7 @@ import serviceConfig from '@/api/serviceConfig'
 // 分页查询
 export function pageList(query) {
   return request({
-    url: serviceConfig.auth + '/token/page_list',
+    url: serviceConfig.auth + '/token2/page_list',
     method: 'post',
     data: query
   })
@@ -22,7 +22,7 @@ export function getClients() {
 // 清空所有
 export function handleDeleteAll(data) {
   return request({
-    url: serviceConfig.auth + '/token/clean_token_data',
+    url: serviceConfig.auth + '/token2/clean_token_data',
     method: 'post',
     data: data
   })
@@ -31,7 +31,7 @@ export function handleDeleteAll(data) {
 // 强退
 export function forceLogout(data) {
   return request({
-    url: serviceConfig.auth + '/oauth/token/logout',
+    url: serviceConfig.auth + '/token2/logout',
     method: 'post',
     data: data
   })

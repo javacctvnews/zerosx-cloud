@@ -26,6 +26,7 @@ import com.zerosx.system.vo.SysUserPageVO;
 import com.zerosx.system.vo.SysUserVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +37,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +66,13 @@ public class SysUserController implements ISysUserClient {
     @PostMapping("/sys_user/page_list")
     public ResultVO<CustomPageVO<SysUserPageVO>> pageList(@RequestBody RequestVO<SysUserPageDTO> requestVO) {
         return ResultVOUtil.success(sysUserService.pageList(requestVO, true));
+    }
+
+    @Operation(summary = "分页列表2-测试")
+    @OpLog(mod = "系统用户", btn = "分页查询2", opType = OpTypeEnum.QUERY)
+    @PostMapping("/sys_user/page_list2")
+    public ResultVO<CustomPageVO<SysUser>> pageList2(@RequestBody RequestVO<SysUserPageDTO> requestVO) {
+        return ResultVOUtil.success(sysUserService.pageList2(requestVO, true));
     }
 
     @Operation(summary = "新增")
@@ -166,9 +173,9 @@ public class SysUserController implements ISysUserClient {
             sysUser.setEmail("12324" + String.format("%08d", i) + "@qq.com");
             sysUser.setPhoneNumber("188" + String.format("%08d", i));
             sysUser.setUserType(UserTypeEnum.TENANT_OPERATOR.getCode());
-            //sysUser.setDeptId(1L);
+            sysUser.setDeptId(1L);
             sysUser.setSex("2");
-            sysUser.setOperatorId("000000");
+            sysUser.setOperatorId("433980");
             sysUser.setRemark("测试账号" + i);
             //sysUserService.save(sysUser);
             //log.debug("创建测试用户 耗时{}ms", System.currentTimeMillis() - t1);

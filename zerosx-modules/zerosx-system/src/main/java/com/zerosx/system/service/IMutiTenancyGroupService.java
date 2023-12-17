@@ -12,7 +12,7 @@ import com.zerosx.system.entity.MutiTenancyGroup;
 import com.zerosx.system.vo.MutiTenancyGroupPageVO;
 import com.zerosx.system.vo.MutiTenancyGroupVO;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**

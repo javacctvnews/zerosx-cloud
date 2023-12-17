@@ -3,6 +3,7 @@ package com.zerosx.system.service.impl;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.common.base.constants.ZCache;
@@ -20,12 +21,14 @@ import com.zerosx.common.log.vo.SystemOperatorLogBO;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.common.utils.IpUtils;
+import com.zerosx.ds.constant.DSType;
 import com.zerosx.system.dto.SystemOperatorLogDTO;
 import com.zerosx.system.dto.SystemOperatorLogPageDTO;
 import com.zerosx.system.entity.SystemOperatorLog;
 import com.zerosx.system.mapper.ISystemOperatorLogMapper;
 import com.zerosx.system.service.ISystemOperatorLogService;
 import com.zerosx.system.vo.SystemOperatorLogPageVO;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,10 +36,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 操作日志
@@ -55,6 +60,7 @@ public class SystemOperatorLogServiceImpl extends SuperServiceImpl<ISystemOperat
     private ISystemOperatorLogMapper systemOperatorLogMapper;
 
     @Override
+    @DS(DSType.SLAVE)
     public CustomPageVO<SystemOperatorLogPageVO> pageList(RequestVO<SystemOperatorLogPageDTO> requestVO, boolean searchCount) {
         LambdaQueryWrapper<SystemOperatorLog> wrapper = getWrapper(requestVO.getT());
         wrapper.select(SystemOperatorLog.class, log -> !log.getColumn().equals("operator_param") && !log.getColumn().equals("json_result") && !log.getColumn().equals("error_msg"));
@@ -63,9 +69,9 @@ public class SystemOperatorLogServiceImpl extends SuperServiceImpl<ISystemOperat
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean add(SystemOperatorLogBO systemOperatorLogBO) {
-        SystemOperatorLog addEntity = BeanCopierUtils.copyProperties(systemOperatorLogBO, SystemOperatorLog.class);
-        addEntity.setId(systemOperatorLogBO.getRequestId());
+    public boolean add(SystemOperatorLogDTO systemOperatorLogDTO) {
+        SystemOperatorLog addEntity = BeanCopierUtils.copyProperties(systemOperatorLogDTO, SystemOperatorLog.class);
+        addEntity.setId(systemOperatorLogDTO.getRequestId());
         addEntity.setIpLocation(IpUtils.getIpLocation(addEntity.getOperatorIp()));
         return save(addEntity);
     }
@@ -84,7 +90,10 @@ public class SystemOperatorLogServiceImpl extends SuperServiceImpl<ISystemOperat
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteRecord(Long[] id) {
-        return removeByIds(Arrays.asList(id));
+        for (Long recordId : id) {
+            removeById(recordId);
+        }
+        return true;
     }
 
     @Override
@@ -106,11 +115,13 @@ public class SystemOperatorLogServiceImpl extends SuperServiceImpl<ISystemOperat
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<SystemOperatorLog> queryPageVOList(SystemOperatorLogPageDTO query) {
         return list(getWrapper(query));
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public SystemOperatorLogPageVO queryById(Long id) {
         return EasyTransUtils.copyTrans(getById(id), SystemOperatorLogPageVO.class);
     }
@@ -175,6 +186,7 @@ public class SystemOperatorLogServiceImpl extends SuperServiceImpl<ISystemOperat
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public void excelExport(RequestVO<SystemOperatorLogPageDTO> requestVO, HttpServletResponse response) {
         checkEasyExcelProperties();
         long t1 = System.currentTimeMillis();

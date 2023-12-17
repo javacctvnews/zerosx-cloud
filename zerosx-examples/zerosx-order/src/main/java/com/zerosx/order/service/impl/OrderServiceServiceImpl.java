@@ -6,6 +6,7 @@ import com.zerosx.api.examples.dto.AccountDTO;
 import com.zerosx.api.examples.dto.OrderDTO;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.ResultVO;
+import com.zerosx.common.core.utils.LeafUtils;
 import com.zerosx.order.entity.Order;
 import com.zerosx.order.mapper.IOrderMapper;
 import com.zerosx.order.service.IOrderService;
@@ -16,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -35,7 +35,7 @@ public class OrderServiceServiceImpl extends ServiceImpl<IOrderMapper, Order> im
         ResultVO<?> resultVO = accountControllerApi.decreaseAccount(accountDTO);
         resultVO.checkException();
         //生成订单号
-        orderDTO.setOrderNo(UUID.randomUUID().toString().replace("-", ""));
+        orderDTO.setOrderNo(LeafUtils.idString());
         //生成订单
         Order order = new Order();
         BeanUtils.copyProperties(orderDTO, order);

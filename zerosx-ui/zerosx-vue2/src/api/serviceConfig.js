@@ -5,10 +5,11 @@ const serviceConfig = {
   system: '/api-system',
   auth: '/api-auth',
   resource: '/api-resource',
+  leaf: '/api-resource',
   //客户端授权
   clientId: 'saas',
   clientSecret: 'Zeros9999!#@',
-  grantType: 'captcha_pwd',
+  grantType: 'captcha',
   captcha: "captcha_pwd",
   mobileSms: 'sms',
   authUserType: 'SysUser'

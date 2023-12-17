@@ -3,13 +3,12 @@ package com.zerosx.system.service;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.core.service.ISuperService;
 import com.zerosx.common.core.vo.CustomPageVO;
-import com.zerosx.common.log.vo.SystemOperatorLogBO;
 import com.zerosx.system.dto.SystemOperatorLogDTO;
 import com.zerosx.system.dto.SystemOperatorLogPageDTO;
 import com.zerosx.system.entity.SystemOperatorLog;
 import com.zerosx.system.vo.SystemOperatorLogPageVO;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -32,10 +31,10 @@ public interface ISystemOperatorLogService extends ISuperService<SystemOperatorL
     /**
      * 新增
      *
-     * @param systemOperatorLogBO
+     * @param systemOperatorLogDTO
      * @return
      */
-    boolean add(SystemOperatorLogBO systemOperatorLogBO);
+    boolean add(SystemOperatorLogDTO systemOperatorLogDTO);
 
     /**
      * 编辑

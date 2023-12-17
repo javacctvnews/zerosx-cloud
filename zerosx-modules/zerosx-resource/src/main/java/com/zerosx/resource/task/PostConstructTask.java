@@ -3,11 +3,11 @@ package com.zerosx.resource.task;
 import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.resource.core.IDGen;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 
 /**
  * PostConstructTask

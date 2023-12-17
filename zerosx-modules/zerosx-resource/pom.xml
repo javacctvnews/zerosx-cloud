@@ -19,6 +19,10 @@
     </properties>
 
     <dependencies>
+        <!--<dependency>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-dynamic-datasource</artifactId>
+        </dependency>-->
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-xxljob</artifactId>

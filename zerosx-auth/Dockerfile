@@ -1,5 +1,5 @@
 # 基础镜像
-FROM  openjdk:8-jre
+FROM  alibabadragonwell/dragonwell:17-anolis
 # author
 MAINTAINER javacctvnews
 
@@ -14,6 +14,9 @@ COPY ./target/zerosx-auth.jar /home/zerosx-cloud/zerosx-auth.jar
 # 启动网关服务
 ENTRYPOINT ["java",\
             "-jar",\
+            "--add-opens=java.base/java.lang=ALL-UNNAMED",\
+            "--add-opens=java.base/sun.net=ALL-UNNAMED",\
+            "--add-exports=java.base/sun.net.util=ALL-UNNAMED",\
             "-Xms300m", "-Xmx300m",\
             "-Djava.security.egd=file:/dev/./urandom",\
             "-XX:-OmitStackTraceInFastThrow",\

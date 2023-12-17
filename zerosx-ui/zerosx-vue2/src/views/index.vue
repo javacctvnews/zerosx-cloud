@@ -11,18 +11,18 @@
             <el-collapse v-model="activeNames" @change="handleChange">
               <el-collapse-item title="欢迎来到Zerox-Cloud多租户开发平台" name="1">
                 <div class="imgs borderImg">
-                  <img style="display: inline-block;" src="https://img.shields.io/badge/Zerosx_Cloud-0.0.2-critical"
+                  <img style="display: inline-block;" src="https://img.shields.io/badge/Zerosx_Cloud-2.0.0-critical"
                     alt="">
                   <img style="display: inline-block;"
                     src="https://img.shields.io/badge/copyright-javacctvnews@163.com-blue" alt="">
                 </div>
                 <div class="imgs borderImg">
-                  <img src="https://img.shields.io/badge/JDK-1.8+-blue?logo=openjdk" alt="">
-                  <img src="https://img.shields.io/badge/Spring_Boot-2.7.18-blue?logo=spring-boot" alt="">
-                  <img src="https://img.shields.io/badge/Spring_Cloud-2021.0.8-blue?logo=spring-boot" alt="">
-                  <img src="https://img.shields.io/badge/Spring_Cloud_Alibaba-2021.0.5.0-blue?logo=alibabadotcom" alt="">
-                  <img src="https://img.shields.io/badge/Nacos-2.2.0-critical?logo=alibabadotcom" alt="">
-                  <img src="https://img.shields.io/badge/Seata-1.6.1-critical?logo=alibabadotcom" alt="">
+                  <img src="https://img.shields.io/badge/JDK-17-blue?logo=openjdk" alt="">
+                  <img src="https://img.shields.io/badge/Spring_Boot-3.1.5-blue?logo=spring-boot" alt="">
+                  <img src="https://img.shields.io/badge/Spring_Cloud-2022.0.4-blue?logo=spring-boot" alt="">
+                  <img src="https://img.shields.io/badge/Spring_Cloud_Alibaba-2022.0.0.0-blue?logo=alibabadotcom" alt="">
+                  <img src="https://img.shields.io/badge/Nacos-2.2.1-critical?logo=alibabadotcom" alt="">
+                  <img src="https://img.shields.io/badge/Seata-1.7.0-critical?logo=alibabadotcom" alt="">
                 </div>
                 <div class="imgs">
                   <img src="https://img.shields.io/badge/Vue-2.x-green" alt="">
@@ -34,21 +34,21 @@
               <el-collapse-item title="平台简介" name="2">
                 <div>
                   <div>此平台是由作者个人兴趣下搭建及开发，开源，使用，仅供学习参考；</div>
-                  <div>1、基于JDK8、SpringBoot2.7.18、SpringCloud2021.0.8和SpringCloudAlibaba2021.0.5.0且采用前后端分离的微服务多租户体系架构；
+                  <div>1、基于JDK8、SpringBoot3.1.5、SpringCloud2022.0.4和SpringCloudAlibaba2022.0.0.0且采用前后端分离的微服务多租户体系架构；
                   </div>
                   <div>2、采用自定义starter组件化的思想，结构解耦，易于扩展；</div>
-                  <div>3、实现了SpringCloudGateway集成OAuth2.0统一认证授权及URL级功能权限校验（适用于网络隔离场景，即网关是统一入口），且可自定义扩展OAuth2.0授权模式；</div>
+                  <div>3、实现了SpringCloudGateway集成Spring Authorization Server统一认证授权及URL级功能权限校验（适用于网络隔离场景，即网关是统一入口），且可自定义扩展授权模式；</div>
                   <div>4、集成Knife4j的OpenAPI3的接口文档，方便前后端对接；</div>
                   <div>5、代码生成器一键生成基础CRUD功能，节约开发时间，更多注重业务开发；</div>
-                  <div>6、提供一套基于Vue2.x的前端项目[zerosx-vue2]，此项目是参考【若依】前端开源改造适配，感谢若依.</div>
+                  <div>6、提供一套基于Vue2.x的前端项目[zerosx-vue2]，此项目是参考【若依】前端开源改造适配，感谢若依（我是Vue2.x初学者，还不具备从零搭建一个完整的Vue项目，所以目前只能借鉴改造，勿喷^_^）。</div>
                 </div>
               </el-collapse-item>
 
               <el-collapse-item title="主要功能简介" name="3">
                 <div>1、网关统一权限控制：URL级的功能按钮的权限控制，支持配置不同客户端及白名单URL；</div>
                 <div>2、网关统一鉴权：OAuth2令牌Token的有效性校验，支持配置忽略认证的URL；</div>
-                <div>3、OAuth2.0认证授权：
-                  <div style="margin-left: 18px;">1）支持OAuth2.0默认的4种鉴权方式；</div>
+                <div>3、Spring Authorization Server认证授权：
+                  <!-- <div style="margin-left: 18px;">1）支持OAuth2.0默认的4种鉴权方式；</div> -->
                   <div style="margin-left: 18px;">2）可扩展自定义授权模式，已实现用户名+验证码+密码、手机号码验证码两种授权模式；</div>
                   <div style="margin-left: 18px;">3）支持多账户类型授权，应用场景是同一授权模式下需要对不同的账户进行授权（不同数据库表）；</div>
                 </div>
@@ -62,12 +62,14 @@
                 <div>11、分布式任务调用：集成XXL-JOB分布式任务调度；</div>
                 <div>12、分布式事务：集成Seata分布式事务；</div>
                 <div>13、分布式锁：集成Redisson分布式锁，有测试案例；</div>
-                <div>14、系统监控：集成SpringBootAdmin应用监控；</div>
-                <div>15、代码生成器：高度符合阿里巴巴开发手册规范的前后端代码一键生成，减少CRUD基础开发，更专注业务开发；</div>
+                <div>14、分布式ID：基于美团Leaf分布式ID生成方案适配此项目，实现了基于MySQL数据库表方案；</div>
+                <div>15、多数据源：集成dynamic-datasource多数据源（项目中应用场景是MySQL一主一从模式，其他场景需自行测试验证）；</div>
+                <div>16、代码生成器：高度符合阿里巴巴开发手册规范的前后端代码一键生成，减少CRUD基础开发，更专注业务开发；</div>
+                <div>17、系统监控：集成SpringBootAdmin应用监控；</div>
               </el-collapse-item>
-              <el-collapse-item title="软件定制开发合作" name="4">
+              <el-collapse-item title="软件定制开发合作或其他咨询" name="4">
                 <ul>
-                  <li>敬请期待</li>
+                  <li>请邮件联系：javacctvnews@163.com，谢谢！</li>
                 </ul>
               </el-collapse-item>
             </el-collapse>
@@ -109,20 +111,32 @@
                   </el-timeline>
                 </div> -->
                 <el-collapse title="版本更新日志" v-model="activeLogs">
-                  <el-collapse-item title="V1.0.0" name="3">
+                  <el-collapse-item title="V2.0.0" name="4">
                     <ul>
                       <li style="color: red;">
-                        Zerosx Cloud多租户开发平台的初个基于JDK8的RC版本，后续基于JDK8的版本号规则是1.x.x，对应代码分支是1.x.x。此次更新的特性如下：
+                        Zerosx Cloud多租户开发平台的初个基于JDK17的RC版本，后续基于JDK17或以上的版本号规则是2.x.x，对应代码分支是2.x.x。此次更新的特性如下：
                       </li>
                       <li>1.添加版本管理插件</li>
-                      <li>2.Springboot版本更新为2.7.18</li>
-                      <li>3.将验证码、短信发送功能移入zerosx-resource服务</li>
-                      <li>4.修复管理平台[系统管理-客户端管理-认证客户端]的历史遗留BUG（多选框无法正常选中和回显的问题）</li>
-                      <li>5.集成美团Leaf分布式ID生成方案</li>
-                      <li>6.补全逻辑：用户和运营商非正常状态下无法操作任何数据</li>
-                      <li>7.重新整理MD说明文档和组件部署文档</li>
-                      <li>8.其他功能优化：1）字段翻译功能；2）Redis的key定义规范化和简单化；3）前端删除提示语优化等等</li>
-                
+                      <li>2.将验证码、短信发送功能移入zerosx-resource服务</li>
+                      <li>3.集成美团Leaf分布式ID生成方案</li>
+                      <li>4.集成dynamic-datasource多数据源（项目中应用场景是MySQL一主一从模式，其他场景需自行测试验证）；</li>
+                      <li>5.补全逻辑：用户和运营商非正常状态下无法操作任何数据</li>
+                      <li>6.重新整理MD说明文档和组件部署文档</li>
+                      <li>7.其他功能优化：1）字段翻译功能；2）Redis的key定义规范化和简单化；3）前端删除提示语优化等等</li>
+                    </ul>
+                  </el-collapse-item>
+                  <el-collapse-item title="V0.0.3" name="3">
+                    <ul>
+                      <li>1.JDK版本更新到JDK17</li>
+                      <li>2.SpringBoot版本更新到3.x</li>
+                      <li>3.SpringCloud&Alibaba版本更新到2022.x及更新对应的组件(Nacos等)</li>
+                      <li>4.引入Spring Authorization Server认证授权</li>
+                      <li>5.SpringCloudGateway集成Spring Authorization Server</li>
+                      <li>6.[适配]用户名密码+验证码授权模式</li>
+                      <li>7.[登录、登出、令牌管理、登录日志、客户端管理]等功能重新适配Spring Authorization Server</li>
+                      <li>8.更新md文档、数据库及YAML配置脚本</li>
+                      <li>9.更换Logo和平台名称</li>
+                      <li>10.Docker Compose编排脚本增加cpu限制参数</li>
                     </ul>
                   </el-collapse-item>
                   <el-collapse-item title="V0.0.2" name="2">
@@ -162,7 +176,7 @@ export default {
     return {
       activeNames: ['1', '2', '3', '4'],
       logActiveNames: ['32'],
-      activeLogs: ['3'],
+      activeLogs: ['4'],
       lyrics: [
         '天青色等烟雨，而我在等你，炊烟袅袅升起，隔江千万里',
         '翻着我们的照片，想念若隐若现，去年的冬天，我们笑得很甜',
@@ -220,7 +234,7 @@ ul li {
       margin-right: 5px;
       // margin: 0 auto;
     }
-    
+
   }
   .borderImg{
       border-bottom: 1px dashed #e6ebf5;

@@ -1,21 +1,17 @@
 package com.zerosx.resource.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
  * <p>
  * 字典类型表
  * </p>
- *
- * @author junmy
- * @since 2020-11-18
  */
 @Data
 @EqualsAndHashCode(callSuper = false)

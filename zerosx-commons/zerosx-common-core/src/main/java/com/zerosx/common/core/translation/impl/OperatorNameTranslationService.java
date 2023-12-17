@@ -2,9 +2,9 @@ package com.zerosx.common.core.translation.impl;
 
 import com.zerosx.api.system.vo.MutiTenancyGroupBO;
 import com.zerosx.common.base.constants.TranslConstants;
+import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.base.constants.ZCache;
 import lombok.extern.slf4j.Slf4j;
 
 /**

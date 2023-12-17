@@ -16,12 +16,12 @@ import com.zerosx.resource.mapper.ILeafAllocMapper;
 import com.zerosx.resource.service.ILeafAllocService;
 import com.zerosx.resource.vo.LeafAllocPageVO;
 import com.zerosx.resource.vo.LeafAllocVO;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,7 +51,6 @@ public class LeafAllocServiceImpl extends SuperServiceImpl<ILeafAllocMapper, Lea
         if (query == null) {
             return qw;
         }
-        //todo
         qw.eq(StringUtils.isNotBlank(query.getBizTag()), LeafAlloc::getBizTag, query.getBizTag());
         return qw;
     }
@@ -71,8 +70,7 @@ public class LeafAllocServiceImpl extends SuperServiceImpl<ILeafAllocMapper, Lea
             throw new BusinessException("编辑记录不存在");
         }
         LeafAlloc updateEntity = BeanCopierUtils.copyProperties(leafAllocDTO, LeafAlloc.class);
-        boolean b = updateById(updateEntity);
-        return b;
+        return updateById(updateEntity);
     }
 
     @Override

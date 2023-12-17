@@ -8,8 +8,8 @@ import com.zerosx.resource.dto.LeafAllocPageDTO;
 import com.zerosx.resource.entity.LeafAlloc;
 import com.zerosx.resource.vo.LeafAllocPageVO;
 import com.zerosx.resource.vo.LeafAllocVO;
+import jakarta.servlet.http.HttpServletResponse;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**

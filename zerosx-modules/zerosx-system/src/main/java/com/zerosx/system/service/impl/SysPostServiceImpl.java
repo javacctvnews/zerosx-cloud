@@ -1,5 +1,6 @@
 package com.zerosx.system.service.impl;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.common.base.exception.BusinessException;
@@ -9,11 +10,12 @@ import com.zerosx.common.base.vo.SelectOptionVO;
 import com.zerosx.common.core.enums.StatusEnum;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
 import com.zerosx.common.core.utils.EasyTransUtils;
-import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.common.core.utils.IdGenerator;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
+import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.common.utils.JacksonUtil;
+import com.zerosx.ds.constant.DSType;
 import com.zerosx.system.dto.SysPostDTO;
 import com.zerosx.system.dto.SysPostPageDTO;
 import com.zerosx.system.entity.SysPost;
@@ -21,12 +23,12 @@ import com.zerosx.system.mapper.ISysPostMapper;
 import com.zerosx.system.service.ISysPostService;
 import com.zerosx.system.vo.SysPostPageVO;
 import com.zerosx.system.vo.SysPostVO;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -43,11 +45,13 @@ import java.util.List;
 public class SysPostServiceImpl extends SuperServiceImpl<ISysPostMapper, SysPost> implements ISysPostService {
 
     @Override
+    @DS(DSType.SLAVE)
     public CustomPageVO<SysPostPageVO> pageList(RequestVO<SysPostPageDTO> requestVO, boolean searchCount) {
         return PageUtils.of(baseMapper.selectPage(PageUtils.of(requestVO, searchCount), getWrapper(requestVO.getT())), SysPostPageVO.class);
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<SysPost> dataList(SysPostPageDTO query) {
         return list(getWrapper(query));
     }
@@ -100,6 +104,7 @@ public class SysPostServiceImpl extends SuperServiceImpl<ISysPostMapper, SysPost
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public SysPostVO queryById(Long id) {
         return EasyTransUtils.copyTrans(getById(id), SysPostVO.class);
     }
@@ -111,16 +116,19 @@ public class SysPostServiceImpl extends SuperServiceImpl<ISysPostMapper, SysPost
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<SysPost> queryUserPosts(Long userId) {
         return baseMapper.queryUserPosts(userId);
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public void excelExport(RequestVO<SysPostPageDTO> requestVO, HttpServletResponse response) {
         excelExport(PageUtils.of(requestVO, false), getWrapper(requestVO.getT()), SysPostPageVO.class, response);
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<SelectOptionVO> selectOptions(BaseTenantDTO baseTenantDTO) {
         LambdaQueryWrapper<SysPost> qw = Wrappers.lambdaQuery(SysPost.class);
         qw.select(SysPost::getId, SysPost::getPostName);

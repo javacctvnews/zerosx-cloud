@@ -1,5 +1,6 @@
 package com.zerosx.system.service.impl;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.common.base.constants.ZCache;
@@ -15,6 +16,7 @@ import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.BeanCopierUtils;
+import com.zerosx.ds.constant.DSType;
 import com.zerosx.system.dto.SysRoleDTO;
 import com.zerosx.system.dto.SysRoleMenuQueryDTO;
 import com.zerosx.system.dto.SysRolePageDTO;
@@ -29,6 +31,7 @@ import com.zerosx.system.task.SystemAsyncTask;
 import com.zerosx.system.vo.SysRoleMenuTreeVO;
 import com.zerosx.system.vo.SysRolePageVO;
 import com.zerosx.system.vo.SysRoleVO;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,9 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -66,11 +67,13 @@ public class SysRoleServiceImpl extends SuperServiceImpl<ISysRoleMapper, SysRole
     private ISysDeptService sysDeptService;
 
     @Override
+    @DS(DSType.SLAVE)
     public CustomPageVO<SysRolePageVO> pageList(RequestVO<SysRolePageDTO> requestVO, boolean searchCount) {
         return PageUtils.of(baseMapper.selectPage(PageUtils.of(requestVO, searchCount), getWrapper(requestVO.getT())), SysRolePageVO.class);
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<SysRole> dataList(SysRolePageDTO query) {
         return list(getWrapper(query));
     }
@@ -152,6 +155,7 @@ public class SysRoleServiceImpl extends SuperServiceImpl<ISysRoleMapper, SysRole
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public SysRoleVO queryById(Long id) {
         SysRoleVO sysRoleVO = EasyTransUtils.copyTrans(getById(id), SysRoleVO.class);
         SysRoleMenuQueryDTO dto = new SysRoleMenuQueryDTO();
@@ -164,16 +168,21 @@ public class SysRoleServiceImpl extends SuperServiceImpl<ISysRoleMapper, SysRole
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteRecord(Long[] ids) {
-        return removeByIds(Arrays.asList(ids));
+        for (Long id : ids) {
+            removeById(id);
+        }
+        return true;
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public Set<Long> selectUserRoleIds(Long userId, Long deptId) {
         List<SysRoleVO> sysRoleVOS = selectUserRoles(userId, deptId);
         return sysRoleVOS.stream().map(SysRoleVO::getId).collect(Collectors.toSet());
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<SysRoleVO> selectUserRoles(Long userId, Long deptId) {
         List<SysRoleVO> resList = new ArrayList<>();
         //用户角色
@@ -200,11 +209,13 @@ public class SysRoleServiceImpl extends SuperServiceImpl<ISysRoleMapper, SysRole
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public void excelExport(RequestVO<SysRolePageDTO> requestVO, HttpServletResponse response) {
         excelExport(PageUtils.of(requestVO, false), getWrapper(requestVO.getT()), SysRolePageVO.class, response);
     }
 
     @Override
+    @DS(DSType.SLAVE)
     public List<SelectOptionVO> selectOptions(BaseTenantDTO baseTenantDTO) {
         LambdaQueryWrapper<SysRole> qw = Wrappers.lambdaQuery(SysRole.class);
         qw.select(SysRole::getId, SysRole::getRoleName);

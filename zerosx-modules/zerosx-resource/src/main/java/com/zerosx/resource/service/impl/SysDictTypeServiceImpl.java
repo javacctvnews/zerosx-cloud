@@ -17,12 +17,12 @@ import com.zerosx.resource.mapper.ISysDictTypeMapper;
 import com.zerosx.resource.service.ISysDictDataService;
 import com.zerosx.resource.service.ISysDictTypeService;
 import com.zerosx.resource.vo.SysDictTypeVO;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**

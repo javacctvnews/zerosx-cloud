@@ -18,6 +18,7 @@ import com.zerosx.common.core.utils.EasyTransUtils;
 import com.zerosx.common.core.utils.IdGenerator;
 import com.zerosx.common.core.utils.PageUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
+import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.common.utils.JacksonUtil;
 import com.zerosx.resource.dto.SmsCodeDTO;
@@ -38,6 +39,7 @@ import com.zerosx.sms.model.SmsRequest;
 import com.zerosx.sms.model.SmsResponse;
 import com.zerosx.sms.properties.CustomSmsProperties;
 import com.zerosx.sms.properties.SmsBusinessProperties;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +47,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +68,8 @@ public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper,
     private CustomSmsProperties customSmsProperties;
     @Autowired
     private ISmsSupplierBusinessService smsSupplierBusinessService;
+    @Autowired
+    private RedissonOpService redissonOpService;
 
     @Override
     public CustomPageVO<SmsSupplierPageVO> pageList(RequestVO<SmsSupplierPageDTO> requestVO, boolean searchCount) {

@@ -22,7 +22,7 @@ public interface IAccessTokenClient {
      * @param multiValueMap
      * @return
      */
-    @PostMapping(value = "/oauth/token", headers = {"Content-type:multipart/form-data"})
+    @PostMapping(value = "/oauth2/token", headers = {"Content-type:multipart/form-data"})
     ResultVO postAccessToken(@RequestBody MultiValueMap<String, String> multiValueMap);
 
     /**

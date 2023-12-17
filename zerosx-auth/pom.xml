@@ -12,23 +12,12 @@
 
     <artifactId>zerosx-auth</artifactId>
     <name>zerosx-auth</name>
+    <description>授权认证</description>
 
     <dependencies>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
-            <artifactId>zerosx-common-sms</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.zerosx.cloud</groupId>
-            <artifactId>zerosx-common-seata</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.zerosx.cloud</groupId>
-            <artifactId>zerosx-api-system</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.zerosx.cloud</groupId>
-            <artifactId>zerosx-api-resource</artifactId>
+            <artifactId>zerosx-common-security</artifactId>
         </dependency>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
@@ -44,59 +33,11 @@
         </dependency>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
-            <artifactId>zerosx-common-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.zerosx.cloud</groupId>
-            <artifactId>zerosx-common-loadbalancer</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.zerosx.cloud</groupId>
-            <artifactId>zerosx-common-sentinel</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-redis</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <!--nacos-->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>spring-boot-starter-tomcat</artifactId>
-                    <groupId>org.springframework.boot</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!-- web 容器使用 undertow 性能更强 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-undertow</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security.oauth</groupId>
-            <artifactId>spring-security-oauth2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-jwt</artifactId>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -107,8 +48,13 @@
             <artifactId>caffeine</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.whvcse</groupId>
-            <artifactId>easy-captcha</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>cn.hutool</groupId>
@@ -123,7 +69,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.zerosx.auth.AuthApplication</mainClass>
+                    <mainClass>com.zerosx.sas.AuthApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>

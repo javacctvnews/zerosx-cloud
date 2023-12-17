@@ -38,6 +38,9 @@ zerosx:
   tenant:
     enable: true
     ignoreTables:
+      - oauth2_authorization
+      - oauth2_authorization_consent
+      - oauth2_registered_client
       - oauth_client_details
       - undo_log
     ignoreSqls:

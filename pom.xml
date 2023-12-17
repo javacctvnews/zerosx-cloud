@@ -19,28 +19,26 @@
         <module>zerosx-modules</module>
         <module>zerosx-examples</module>
         <module>zerosx-api</module>
+        <!--<module>zerosx-sas</module>-->
         <module>zerosx-tools</module>
     </modules>
 
     <properties>
-        <revision>1.0.0</revision>
-        <java.version>1.8</java.version>
+        <revision>2.0.0</revision>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
 
-        <spring-boot.version>2.7.18</spring-boot.version>
-        <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>
-        <spring-cloud.version>2021.0.8</spring-cloud.version>
-        <spring-boot-admin-starter-server.version>2.7.14</spring-boot-admin-starter-server.version>
+        <spring-boot.version>3.1.5</spring-boot.version>
+        <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
+        <spring-cloud.version>2022.0.4</spring-cloud.version>
+        <spring-boot-admin-starter-server.version>3.1.5</spring-boot-admin-starter-server.version>
 
         <mybatis-plus-boot-starter.version>3.5.3.1</mybatis-plus-boot-starter.version>
         <mysql-connector-java.version>8.0.33</mysql-connector-java.version>
-        <druid-spring-boot-starter.version>1.2.6</druid-spring-boot-starter.version>
-        <mybatis-spring-boot-starter.version>2.2.2</mybatis-spring-boot-starter.version>
-        <pagehelper.version>5.3.3</pagehelper.version>
         <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
         <mybatis.version>3.5.10</mybatis.version>
         <bcprov-jdk15to18.version>1.75</bcprov-jdk15to18.version>
@@ -48,15 +46,10 @@
         <commons-io.version>2.12.0</commons-io.version>
         <commons-collections4.verison>4.4</commons-collections4.verison>
 
-        <nacos.client.version>1.4.6</nacos.client.version>
-
-        <spring-security-jwt.version>1.1.1.RELEASE</spring-security-jwt.version>
-        <spring-security-oauth2.version>2.5.2.RELEASE</spring-security-oauth2.version>
-
         <fastjson.version>1.2.83</fastjson.version>
         <transmittable-thread-local.version>2.14.2</transmittable-thread-local.version>
         <hutool.version>5.8.21</hutool.version>
-        <redisson.version>3.18.0</redisson.version>
+        <redisson.version>3.24.3</redisson.version>
         <easyexcel.version>3.3.2</easyexcel.version>
         <reflectasm.version>1.11.9</reflectasm.version>
         <easyCaptcha.version>1.6.2</easyCaptcha.version>
@@ -71,9 +64,10 @@
         <reflections.version>0.10.2</reflections.version>
         <cglib.version>3.3.0</cglib.version>
 
-        <spring-cloud-starter-oauth2.version>2.2.5.RELEASE</spring-cloud-starter-oauth2.version>
-
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <!-- 插件版本 -->
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
+        <flatten-maven-plugin.version>1.3.0</flatten-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -123,7 +117,11 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.14</version>
+            </dependency>
             <!--feign api-->
             <dependency>
                 <groupId>com.zerosx.cloud</groupId>
@@ -145,22 +143,11 @@
                 <artifactId>zerosx-api-examples</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
             <!-- SpringBoot Admin -->
             <dependency>
                 <groupId>de.codecentric</groupId>
                 <artifactId>spring-boot-admin-starter-server</artifactId>
                 <version>${spring-boot-admin-starter-server.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security.oauth</groupId>
-                <artifactId>spring-security-oauth2</artifactId>
-                <version>${spring-security-oauth2.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-jwt</artifactId>
-                <version>${spring-security-jwt.version}</version>
             </dependency>
             <!-- mybatis-plus start -->
             <dependency>
@@ -174,16 +161,16 @@
                 <version>${mybatis-plus-boot-starter.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
+                <version>4.2.0</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk15to18</artifactId>
                 <version>${bcprov-jdk15to18.version}</version>
             </dependency>
-            <!--<dependency>
-                <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper</artifactId>
-                <version>${pagehelper.version}</version>
-            </dependency>-->
-            <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
             <dependency>
                 <groupId>com.mysql</groupId>
                 <artifactId>mysql-connector-j</artifactId>
@@ -242,11 +229,6 @@
                 <version>${redisson.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-oauth2</artifactId>
-                <version>${spring-cloud-starter-oauth2.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.reflections</groupId>
                 <artifactId>reflections</artifactId>
                 <version>${reflections.version}</version>
@@ -283,7 +265,6 @@
     </developers>
 
     <profiles>
-
         <profile>
             <id>local</id>
             <properties>
@@ -292,23 +273,6 @@
                 <profiles.active>local</profiles.active>
                 <nacos.server>127.0.0.1:8848</nacos.server>
                 <nacos.namespace>32c6d87e-c726-44c5-a87b-a89b0f91c63d</nacos.namespace>
-                <nacos.config.group>local</nacos.config.group>
-                <nacos.discovery.group>local</nacos.discovery.group>
-                <nacos.username>nacos</nacos.username>
-                <nacos.password>nacos</nacos.password>
-            </properties>
-            <!--<activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>-->
-        </profile>
-        <profile>
-            <id>dev_1.x</id>
-            <properties>
-                <!-- 环境标识，需要与配置文件的名称相对应 -->
-                <project>local</project>
-                <profiles.active>local</profiles.active>
-                <nacos.server>127.0.0.1:8848</nacos.server>
-                <nacos.namespace>41915057-75a5-4ed3-92f9-048054782085</nacos.namespace>
                 <nacos.config.group>local</nacos.config.group>
                 <nacos.discovery.group>local</nacos.discovery.group>
                 <nacos.username>nacos</nacos.username>
@@ -323,7 +287,7 @@
             <properties>
                 <project>prod</project>
                 <profiles.active>prod</profiles.active>
-                <nacos.server>172.19.54.164:8848</nacos.server>
+                <nacos.server>120.79.168.154:8848</nacos.server>
                 <nacos.namespace>477f012f-f553-4754-bf64-ee0db8907b8e</nacos.namespace>
                 <nacos.config.group>prod</nacos.config.group>
                 <nacos.discovery.group>prod</nacos.discovery.group>
@@ -334,51 +298,28 @@
     </profiles>
 
     <build>
-        <resources>
-            <resource>
-                <!-- 指定文件路径 -->
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <!-- **表示任意级目录，*表示任意文件 -->
-                    <include>**/*</include>
-                </includes>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
-                <executions>
-                    <execution>
-                        <id>oss</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                        <arg>--add-exports=java.base/java.lang=ALL-UNNAMED</arg>
+                        <arg>--add-exports=java.base/sun.net=ALL-UNNAMED</arg>
+                    </compilerArgs>
+                </configuration>
             </plugin>
-            <!-- Javadoc -->
-            <!--<plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.5.0</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>-->
+
             <!-- 统一版本号管理 -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.3.0</version>
+                <version>${flatten-maven-plugin.version}</version>
                 <configuration>
                     <updatePomFile>true</updatePomFile>
                     <flattenMode>resolveCiFriendliesOnly</flattenMode>
@@ -400,7 +341,21 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
+
+        <resources>
+            <resource>
+                <!-- 指定文件路径 -->
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <!-- **表示任意级目录，*表示任意文件 -->
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
+
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -408,21 +363,6 @@
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <version>${spring-boot.version}</version>
                 </plugin>
-                <plugin>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>${maven.compiler.source}</source>
-                        <target>${maven.compiler.target}</target>
-                        <encoding>${project.build.sourceEncoding}</encoding>
-                        <compilerArgument>-Xlint:unchecked</compilerArgument>
-                        <compilerArgs>
-                            <!--<extdirs>libs</extdirs>-->
-                            <!--<bootclasspath>${java.home}/lib/rt.jar${path.separator}${java.home}/lib/jce.jar
-                            </bootclasspath>-->
-                        </compilerArgs>
-                    </configuration>
-                </plugin>
-
                 <!--<plugin>
                     <groupId>com.spotify</groupId>
                     <artifactId>docker-maven-plugin</artifactId>
@@ -430,7 +370,6 @@
                 </plugin>-->
             </plugins>
         </pluginManagement>
-
     </build>
 
 
@@ -443,5 +382,19 @@
             </snapshots>
         </repository>
     </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>public</id>
+            <name>huawei nexus</name>
+            <url>https://mirrors.huaweicloud.com/repository/maven/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>

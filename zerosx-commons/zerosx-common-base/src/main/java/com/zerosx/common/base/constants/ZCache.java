@@ -2,6 +2,7 @@ package com.zerosx.common.base.constants;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Objects;
@@ -16,6 +17,7 @@ import java.util.Objects;
 
 public final class ZCache implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 2320358632082520428L;
 
     //图形验证码默认过期时间，单位：秒
@@ -46,6 +48,14 @@ public final class ZCache implements Serializable {
     //操作日志
     public static final ZCache SYS_OP_LOG = new ZCache(ServiceIdConstants.SYSTEM, "sys_op_log");
 
+    /* sas认证 start */
+    //access_token
+    public static final ZCache SAS_ACCESS_TOKEN = new ZCache(ServiceIdConstants.AUTH, "authorization:access_token");
+    //refresh_token
+    public static final ZCache SAS_REFRESH_TOKEN = new ZCache(ServiceIdConstants.AUTH, "authorization:refresh_token");
+    //token分页
+    public static final ZCache SAS_TOKEN_PAGE = new ZCache(ServiceIdConstants.AUTH, "authorization:page_list");
+    /* sas认证 end */
 
     private final String serviceId;
 
@@ -60,11 +70,11 @@ public final class ZCache implements Serializable {
         if (Objects.isNull(key) || StringUtils.isBlank(String.valueOf(key))) {
             throw new RuntimeException("key不能为空");
         }
-        return MessageFormat.format("{0}:{1}:{2}:{3}", CommonConstants.ZEROSX, this.serviceId, this.bizTag, key);
+        return MessageFormat.format("{0}:{1}:{2}", this.serviceId, this.bizTag, key);
     }
 
     public String key() {
-        return MessageFormat.format("{0}:{1}:{2}", CommonConstants.ZEROSX, this.serviceId, this.bizTag);
+        return MessageFormat.format("{0}:{1}", this.serviceId, this.bizTag);
     }
 
 }

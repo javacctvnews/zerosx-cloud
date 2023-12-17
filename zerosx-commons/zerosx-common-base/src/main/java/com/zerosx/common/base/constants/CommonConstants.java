@@ -4,10 +4,6 @@ package com.zerosx.common.base.constants;
  * 全局公共常量
  */
 public interface CommonConstants {
-    /**
-     * 系统标识
-     */
-    String ZEROSX = "zerosx-cloud";
 
     /**
      * token请求头名称

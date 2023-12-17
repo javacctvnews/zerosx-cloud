@@ -1,6 +1,7 @@
 package com.zerosx.sms.enums;
 
 
+import com.zerosx.common.anno.AutoDictData;
 import com.zerosx.common.base.BaseEnum;
 import com.zerosx.sms.core.client.IMultiSmsClient;
 import com.zerosx.sms.core.config.AlibabaConfig;
@@ -21,7 +22,7 @@ import lombok.Getter;
  * @create: 2023-08-30 14:03
  **/
 @Getter
-//@AutoDictData(name = "短信服务商")
+@AutoDictData(name = "短信服务商")
 public enum SupplierTypeEnum implements BaseEnum<String> {
 
     /**

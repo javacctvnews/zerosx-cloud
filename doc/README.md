@@ -28,21 +28,26 @@
 1. 版本：8.0.34，端口：13306，密码：zerosx@123456
 
 2. 执行安装：
+   
    ```shell
    # 进入目录
    cd zerosx-cloud/doc/docker/mysql8
    # 安装(指定文件)
    docker-compose -f docker-compose.yaml up -d
    ```
+### 2.1 MySQL8主从
+
+​	详细操作手册请看：zerosx-cloud/doc/docker/mysql8-ms/Readme.md
+
 ### 3. Nacos
-1. 版本：2.2.0 ，端口：8848
+1. 版本：2.2.1 ，端口：8848
 
 2. 执行nacos数据库脚本：
    ```shell
-   执行SQL脚本，文件所在目录：zerosx-cloud/doc/docker/nacos220/mysql-schema.sql
+   执行SQL脚本，文件所在目录：zerosx-cloud/doc/docker/nacos221/mysql-schema.sql
    ```
    
-3. 修改文件：zerosx-cloud/doc/nacos/docker-compose.yaml，修改项如下：
+3. 修改文件：zerosx-cloud/doc/nacos221/docker-compose.yaml，修改项如下：
    ```shell
    #把ip修改成安装主机的IP
    - MYSQL_SERVICE_HOST=192.168.xx.xx
@@ -51,7 +56,7 @@
 4. 执行安装
    ```shell
    # 进入目录
-   cd zerosx-cloud/doc/docker/nacos220
+   cd zerosx-cloud/doc/docker/nacos221
    # 安装(指定文件)
    docker-compose -f docker-compose.yaml up -d
    ```
@@ -87,12 +92,12 @@
    * ![Image text](./images/nacos_config.png)
 ### 4. Seata
 
-1. 版本：1.6.1
+1. 版本：1.7.0
 
 2. 创建Seata数据库表
 
    ```shell
-   执行SQL脚本，文件所在目录：zerosx-cloud/doc/docker/seata161/mysql-schema.sql
+   执行SQL脚本，文件所在目录：zerosx-cloud/doc/docker/seata170/mysql-schema.sql
    ```
 
 3. 修改【zerosx-cloud/doc/seata/docker-compose.yaml】，修改内容：
@@ -104,11 +109,11 @@
 
    
 
-4. 修改【zerosx-cloud/doc/docker/seata161/seata-server】下的文件
+4. 修改【zerosx-cloud/doc/docker/seata170/seata-server】下的文件
 
-   * 文件是从官方镜像【seataio/seata-server:1.6.1】中拷贝出来的文件（官方安装文档中有此说明）
+   * 文件是从官方镜像【seataio/seata-server:1.7.0】中拷贝出来的文件（官方安装文档中有此说明）
 
-   * 修改【zerosx-cloud/doc/docker/seata161/seata-server/resources/application.yml】 ，修改内容如下：
+   * 修改【zerosx-cloud/doc/docker/seata170/seata-server/resources/application.yml】 ，修改内容如下：
 
      ```shell
      # 注册中心和配置中心（按需修改）
@@ -135,7 +140,7 @@
 
    ```shell
    # 进入目录
-   cd zerosx-cloud/doc/docker/seata161
+   cd zerosx-cloud/doc/docker/seata170
    # 安装(指定文件)
    docker-compose -f docker-compose.yaml up -d
    ```
@@ -146,7 +151,7 @@
 
    > 访问地址：http://192.168.3.6:7091/#/login  
    >
-   > 用户名：seata  密码：seata，在文件【zerosx-cloud/doc/seata/seata-server/resources/application.yml】中配置
+   > 用户名：seata  密码：seata，在文件【zerosx-cloud/doc/seata170/seata-server/resources/application.yml】中配置
    
    ![Image text](./images/seata.png)
 

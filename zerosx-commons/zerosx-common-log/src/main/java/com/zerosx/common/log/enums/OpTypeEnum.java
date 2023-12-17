@@ -1,6 +1,6 @@
 package com.zerosx.common.log.enums;
 
-import com.zerosx.common.core.anno.AutoDictData;
+import com.zerosx.common.anno.AutoDictData;
 import com.zerosx.common.base.BaseEnum;
 import lombok.Getter;
 

@@ -9,7 +9,7 @@ import com.zerosx.order.dto.UserPageDTO;
 import com.zerosx.order.dto.UserDTO;
 import com.zerosx.order.vo.UserVO;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**

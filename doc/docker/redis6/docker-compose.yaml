@@ -4,7 +4,7 @@ services:
   redis:
     image: redis:6.2.13
     container_name: zerosx_redis_6
-    restart: unless-stopped
+    restart: 'no' #unless-stopped
     ports:
       - "6479:6379"
     environment:

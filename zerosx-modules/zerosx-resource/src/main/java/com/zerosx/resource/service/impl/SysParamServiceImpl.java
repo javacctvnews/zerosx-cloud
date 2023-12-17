@@ -17,13 +17,12 @@ import com.zerosx.resource.mapper.ISysParamMapper;
 import com.zerosx.resource.service.ISysParamService;
 import com.zerosx.resource.vo.SysParamPageVO;
 import com.zerosx.resource.vo.SysParamVO;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -149,4 +148,5 @@ public class SysParamServiceImpl extends SuperServiceImpl<ISysParamMapper, SysPa
     public void excelExport(RequestVO<SysParamPageDTO> requestVO, HttpServletResponse response) {
         excelExport(PageUtils.of(requestVO, false), getWrapper(requestVO.getT()), SysParamPageVO.class, response);
     }
+
 }

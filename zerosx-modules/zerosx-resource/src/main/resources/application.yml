@@ -1,6 +1,43 @@
-spring:
-  main:
-    allow-bean-definition-overriding: true
-    allow-circular-references: true
-
-
+## seata配置
+#seata:
+#  #关闭自动代理
+#  enable-auto-data-source-proxy: false
+#
+#spring:
+#  main:
+#    allow-bean-definition-overriding: true
+#    allow-circular-references: true
+#
+#  datasource:
+#    dynamic:
+#      primary: master #设置默认的数据源或者数据源组,默认值即为master
+#      strict: false #严格匹配数据源,默认false. true未匹配到指定数据源时抛异常,false使用默认数据源
+#      seata: true
+#      datasource:
+#        master:
+#          url: jdbc:mysql://127.0.0.1:3308/zerosx_resource?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true
+#          username: root
+#          password: zerosx@123456
+#          driver-class-name: com.mysql.cj.jdbc.Driver # 3.2.0开始支持SPI可省略此配置
+#        slave:
+#          url: jdbc:mysql://127.0.0.1:3309/zerosx_resource?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true
+#          username: root
+#          password: zerosx@123456
+#          driver-class-name: com.mysql.cj.jdbc.Driver
+#      hikari:
+#        # 最大连接池数量
+#        #maxPoolSize: 20
+#        # 最小空闲线程数量
+#        #minIdle: 10
+#        # 配置获取连接等待超时的时间
+#        connectionTimeout: 30000
+#        # 校验超时时间
+#        validationTimeout: 5000
+#        # 空闲连接存活最大时间，默认10分钟
+#        idleTimeout: 600000
+#        # 此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认30分钟
+#        maxLifetime: 1800000
+#        # 连接测试query（配置检测连接是否有效）
+#        connectionTestQuery: SELECT 1
+#        # 多久检查一次连接的活性
+#        keepaliveTime: 30000

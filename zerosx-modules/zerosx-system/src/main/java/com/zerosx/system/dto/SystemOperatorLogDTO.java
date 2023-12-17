@@ -72,4 +72,7 @@ public class SystemOperatorLogDTO implements Serializable {
     private Long costTime;
     //租户标识
     private String operatorId;
+
+    @Schema(description = "请求标识")
+    private Long requestId;
 }

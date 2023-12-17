@@ -13,7 +13,7 @@ import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.reactive.function.server.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -59,7 +59,7 @@ public class CustomErrorWebExceptionHandler extends DefaultErrorWebExceptionHand
         errorAttributes.put(STATUS, ResultEnum.FAIL.getCode());
         if (error instanceof NotFoundException) {
             NotFoundException e = (NotFoundException) error;
-            HttpStatus httpStatus = e.getStatus();
+            HttpStatusCode httpStatus = e.getStatusCode();
             if (404 == httpStatus.value()) {
                 message = "接口访问404,请查看路由信息是否正确";
                 errorAttributes.put(STATUS, HttpStatus.NOT_FOUND.value());
@@ -74,16 +74,16 @@ public class CustomErrorWebExceptionHandler extends DefaultErrorWebExceptionHand
                 }
             }
         } else if (error instanceof ResponseStatusException) {
-            if (404 == ((ResponseStatusException) error).getStatus().value()) {
+            if (404 == ((ResponseStatusException) error).getStatusCode().value()) {
                 message = "接口访问404,请查看路由信息是否正确或者当前服务是否正常";
             } else {
                 message = "其他异常";
             }
             errorAttributes.put(STATUS, HttpStatus.INTERNAL_SERVER_ERROR.value());
-        } else if (error instanceof InvalidTokenException) {
+        } /*else if (error instanceof InvalidTokenException) {
             errorAttributes.put(STATUS, ResultEnum.UNAUTHORIZED.getCode());
             message = ResultEnum.UNAUTHORIZED.getMessage();
-        } else {
+        } */else {
             errorAttributes.put(STATUS, HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
         errorAttributes.put("code", errorAttributes.get(STATUS));

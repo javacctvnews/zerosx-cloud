@@ -101,9 +101,14 @@ public class BeanCopierUtils {
         if (source == null) {
             return null;
         }
-        T t = getConstructorAccess(targetClass).newInstance();
-        BeanCopier copier = getBeanCopier(source.getClass(), targetClass, converter != null);
-        copier.copy(source, t, converter);
+        T t = null;
+        try {
+            t = getConstructorAccess(targetClass).newInstance();
+            BeanCopier copier = getBeanCopier(source.getClass(), targetClass, converter != null);
+            copier.copy(source, t, converter);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
         return t;
     }
 

@@ -6,7 +6,9 @@ import com.alibaba.excel.write.metadata.WriteSheet;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zerosx.common.core.enums.BizTagEnum;
 import com.zerosx.common.core.utils.EasyTransUtils;
+import com.zerosx.common.core.utils.LeafUtils;
 import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.common.utils.JacksonUtil;
 import com.zerosx.system.SystemApplication;
@@ -35,7 +37,11 @@ public class TestCase {
 
     @Test
     public void Test011() {
-
+        int a = 100000;
+        for (int i = 0; i < a; i++) {
+            String idGenRes = LeafUtils.uidStr(BizTagEnum.LEAF);
+            System.out.println(idGenRes);
+        }
     }
 
 

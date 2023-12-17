@@ -62,10 +62,12 @@ public class DecryptInterceptor extends AbsEncryptInterceptor {
             }
             boolean containsEncrypt = EncryptFactory.containsEncrypt(obj.getClass());
             if (containsEncrypt) {
+                long t1 = System.currentTimeMillis();
                 Set<Field> fields = EncryptFactory.getEncryptFields(obj.getClass());
                 for (Object object : coll) {
                     encryptObject(object, EncryptMode.DEC, fields);
                 }
+                log.debug("解密条数:{} 耗时{}ms", coll.size(), System.currentTimeMillis() - t1);
             } else if (obj instanceof Map) { // 泛型为Map
                 //log.debug("集合的Map类型");
                 MappedStatement mappedStatement = getMappedStatement((DefaultResultSetHandler) invocation.getTarget());

@@ -22,6 +22,7 @@ import com.zerosx.resource.mapper.IAreaCitySourceMapper;
 import com.zerosx.resource.service.IAreaCitySourceService;
 import com.zerosx.resource.vo.AreaCitySourcePageVO;
 import com.zerosx.resource.vo.AreaCitySourceTreeVO;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -72,6 +72,7 @@ public class AreaCitySourceServiceImpl extends SuperServiceImpl<IAreaCitySourceM
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean add(AreaCitySourceDTO areaCitySourceDTO) {
         if (!ROOT_NODE.equals(areaCitySourceDTO.getParentAreaCode())) {
             AreaCitySource parentArea = getAreaCitySource(areaCitySourceDTO.getParentAreaCode());

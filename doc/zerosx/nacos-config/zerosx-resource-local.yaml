@@ -1,0 +1,50 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
+
+  datasource:
+    url: jdbc:mysql://127.0.0.1:13306/zerosx_resource?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true
+    username: root
+    password: zerosx@123456
+    driver-class-name: com.mysql.cj.jdbc.Driver # 3.2.0开始支持SPI可省略此配置
+
+
+logging:
+  level:
+    com.zerosx: debug
+
+
+mybatis-plus:
+  configuration:
+  #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  #关闭打印
+  #log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+
+zerosx:
+
+  tenant:
+    enable: true
+    ignoreTables:
+      - t_area_city_source
+      - t_sys_dict_data
+      - t_sys_dict_type
+      - leaf_alloc
+      - undo_log
+    ignoreSqls:
+      - com.zerosx.resource.mapper.IOssFileUploadMapper.selectByObjectName
+      - com.zerosx.resource.mapper.IOssSupplierMapper.selectOssSupplier
+
+# knife4j-openapi3
+knife4j:
+  # 开启增强配置
+  enable: true
+  # 开启生产环境屏蔽
+  production: false
+  # 开启Swagger的Basic认证功能,默认是false
+  # basic:
+  #   enable: true
+  #   # Basic认证用户名
+  #   username: admin
+  #   # Basic认证密码
+  #   password: admin123

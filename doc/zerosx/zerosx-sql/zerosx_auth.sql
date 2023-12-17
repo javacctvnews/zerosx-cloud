@@ -29,6 +29,7 @@ CREATE TABLE `t_oauth_token_record` (
   KEY `idx_deleted` (`deleted`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='授权记录';
 
+
 DROP TABLE IF EXISTS `undo_log`;
 CREATE TABLE `undo_log` (
   `id` bigint NOT NULL AUTO_INCREMENT,
@@ -45,32 +46,73 @@ CREATE TABLE `undo_log` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb3;
 
 
-DROP TABLE IF EXISTS `oauth_client_details`;
-CREATE TABLE `oauth_client_details` (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `client_id` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '应用标识',
-  `client_name` varchar(128) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT '应用名称',
-  `resource_ids` varchar(256) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '资源限定串(逗号分割)',
-  `client_secret` varchar(256) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '应用密钥(bcyt) 加密',
-  `client_secret_str` varchar(256) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '应用密钥(明文)',
-  `scope` varchar(256) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '范围',
-  `authorized_grant_types` varchar(256) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '5种oauth授权方式(authorization_code,password,refresh_token,client_credentials)',
-  `web_server_redirect_uri` varchar(256) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '回调地址 ',
-  `authorities` varchar(256) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '权限',
-  `access_token_validity` int DEFAULT NULL COMMENT 'access_token有效期',
-  `refresh_token_validity` int DEFAULT NULL COMMENT 'refresh_token有效期',
-  `additional_information` varchar(4096) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT '{}' COMMENT '附加信息',
-  `autoapprove` char(5) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT 'true' COMMENT '是否自动授权 是-true',
-  `create_time` datetime(6) NOT NULL COMMENT '创建时间',
-  `update_time` datetime(6) NOT NULL COMMENT '更新时间',
-  `create_by` varchar(100) DEFAULT NULL COMMENT '创建人',
-  `update_by` varchar(100) DEFAULT NULL COMMENT '更新人',
-  `status` char(1) DEFAULT '0' COMMENT '状态，0：正常，1：停用',
-  `deleted` tinyint NOT NULL DEFAULT '0' COMMENT '逻辑删除，0：未删除，1：已删除',
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `UN_clientID` (`client_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC COMMENT='客户端管理';
+DROP TABLE IF EXISTS `oauth2_authorization`;
+CREATE TABLE `oauth2_authorization` (
+    `id` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+    `registered_client_id` varchar(100) NOT NULL,
+    `principal_name` varchar(200) NOT NULL,
+    `authorization_grant_type` varchar(100) NOT NULL,
+    `authorized_scopes` varchar(1000) DEFAULT NULL,
+    `attributes` blob,
+    `state` varchar(500) DEFAULT NULL,
+    `authorization_code_value` blob,
+    `authorization_code_issued_at` timestamp NULL DEFAULT NULL,
+    `authorization_code_expires_at` timestamp NULL DEFAULT NULL,
+    `authorization_code_metadata` blob,
+    `access_token_value` blob,
+    `access_token_issued_at` timestamp NULL DEFAULT NULL,
+    `access_token_expires_at` timestamp NULL DEFAULT NULL,
+    `access_token_metadata` blob,
+    `access_token_type` varchar(100) DEFAULT NULL,
+    `access_token_scopes` varchar(1000) DEFAULT NULL,
+    `oidc_id_token_value` blob,
+    `oidc_id_token_issued_at` timestamp NULL DEFAULT NULL,
+    `oidc_id_token_expires_at` timestamp NULL DEFAULT NULL,
+    `oidc_id_token_metadata` blob,
+    `refresh_token_value` blob,
+    `refresh_token_issued_at` timestamp NULL DEFAULT NULL,
+    `refresh_token_expires_at` timestamp NULL DEFAULT NULL,
+    `refresh_token_metadata` blob,
+    `user_code_value` blob,
+    `user_code_issued_at` timestamp NULL DEFAULT NULL,
+    `user_code_expires_at` timestamp NULL DEFAULT NULL,
+    `user_code_metadata` blob,
+    `device_code_value` blob,
+    `device_code_issued_at` timestamp NULL DEFAULT NULL,
+    `device_code_expires_at` timestamp NULL DEFAULT NULL,
+    `device_code_metadata` blob,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-/*初始化 认证client 数据*/
-INSERT INTO zerosx_auth.oauth_client_details (id, client_id, client_name, resource_ids, client_secret, client_secret_str, `scope`, authorized_grant_types, web_server_redirect_uri, authorities, access_token_validity, refresh_token_validity, additional_information, autoapprove, create_time, update_time, create_by, update_by, status, deleted)
-    VALUES(1, 'saas', 'SaaS', 'api-system,api-auth,api-resource', '{bcrypt}$2a$10$W3q6VXgUfhHDhpsH54V2Me4Dai2VWwFuePTUEKnVEbBdUE9Qz2a.W', 'Zeros9999!#@', 'all', 'authorization_code,implicit,client_credentials,password,refresh_token,captcha_pwd,sms', NULL, '', 28800, 86400, '{}', 'true', '2023-03-20 14:03:13', '2023-09-20 12:15:45.460000', NULL, 'admin123', '0', 0);
+
+DROP TABLE IF EXISTS `oauth2_authorization_consent`;
+CREATE TABLE `oauth2_authorization_consent` (
+    `registered_client_id` varchar(100) NOT NULL,
+    `principal_name` varchar(200) NOT NULL,
+    `authorities` varchar(1000) NOT NULL,
+    PRIMARY KEY (`registered_client_id`,`principal_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+DROP TABLE IF EXISTS `oauth2_registered_client`;
+CREATE TABLE `oauth2_registered_client` (
+    `id` varchar(100) NOT NULL,
+    `client_id` varchar(100) NOT NULL,
+    `client_id_issued_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `client_secret` varchar(200) DEFAULT NULL,
+    `client_secret_expires_at` timestamp NULL DEFAULT NULL,
+    `client_name` varchar(200) NOT NULL,
+    `client_authentication_methods` varchar(1000) NOT NULL,
+    `authorization_grant_types` varchar(1000) NOT NULL,
+    `redirect_uris` varchar(1000) DEFAULT NULL,
+    `post_logout_redirect_uris` varchar(1000) DEFAULT NULL,
+    `scopes` varchar(1000) NOT NULL,
+    `client_settings` varchar(2000) NOT NULL,
+    `token_settings` varchar(2000) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+INSERT INTO zerosx_sas.oauth2_registered_client (id,client_id,client_id_issued_at,client_secret,client_secret_expires_at,client_name,client_authentication_methods,authorization_grant_types,redirect_uris,post_logout_redirect_uris,scopes,client_settings,token_settings) VALUES
+('saas','saas','2023-11-08 19:06:26','{bcrypt}$2a$10$4LCzbpUMFJT.gaCyEEy9quvkLUPKsXoMsADlzN8QUaTXNSkjRKxei','2030-11-30 00:00:00','saas','client_secret_post,client_secret_jwt,client_secret_basic','refresh_token,client_credentials,password,urn:ietf:params:oauth:grant-type:device_code,authorization_code,sms,captcha_pwd,urn:ietf:params:oauth:grant-type:jwt-bearer','http://127.0.0.1:80','','phone,openid,profile,email','{"@class":"java.util.Collections$UnmodifiableMap","settings.client.require-proof-key":true,"settings.client.require-authorization-consent":false}','{"@class":"java.util.Collections$UnmodifiableMap","settings.token.reuse-refresh-tokens":true,"settings.token.id-token-signature-algorithm":["org.springframework.security.oauth2.jose.jws.SignatureAlgorithm","RS256"],"settings.token.access-token-time-to-live":["java.time.Duration",7200.000000000],"settings.token.access-token-format":{"@class":"org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat","value":"reference"},"settings.token.refresh-token-time-to-live":["java.time.Duration",14400.000000000],"settings.token.authorization-code-time-to-live":["java.time.Duration",7200.000000000],"settings.token.device-code-time-to-live":["java.time.Duration",7200.000000000]}'),
+('zerosx','zerosx','2023-11-08 15:46:43','{bcrypt}$2a$10$9X2XNoUgbp6gX2iMzC.Nzu7rPqpuULSll4VveajejCSW871sPeuxy','2023-11-30 00:00:00','zerosx','client_secret_post,client_secret_jwt,client_secret_basic','refresh_token,password,client_credentials,urn:ietf:params:oauth:grant-type:device_code,authorization_code,sms,captcha_pwd,urn:ietf:params:oauth:grant-type:jwt-bearer','http://127.0.0.1:8080','','phone,openid,profile,email','{"@class":"java.util.Collections$UnmodifiableMap","settings.client.require-proof-key":false,"settings.client.require-authorization-consent":false}','{"@class":"java.util.Collections$UnmodifiableMap","settings.token.reuse-refresh-tokens":true,"settings.token.id-token-signature-algorithm":["org.springframework.security.oauth2.jose.jws.SignatureAlgorithm","RS256"],"settings.token.access-token-time-to-live":["java.time.Duration",7200.000000000],"settings.token.access-token-format":{"@class":"org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat","value":"reference"},"settings.token.refresh-token-time-to-live":["java.time.Duration",14400.000000000],"settings.token.authorization-code-time-to-live":["java.time.Duration",7200.000000000],"settings.token.device-code-time-to-live":["java.time.Duration",7200.000000000]}');

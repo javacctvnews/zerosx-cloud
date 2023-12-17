@@ -12,7 +12,7 @@ import com.zerosx.system.entity.SysUser;
 import com.zerosx.system.vo.SysUserPageVO;
 import com.zerosx.system.vo.SysUserVO;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +32,8 @@ public interface ISysUserService extends ISuperService<SysUser> {
      * @return
      */
     CustomPageVO<SysUserPageVO> pageList(RequestVO<SysUserPageDTO> requestVO, boolean searchCount);
+
+    CustomPageVO<SysUser> pageList2(RequestVO<SysUserPageDTO> requestVO, boolean searchCount);
 
     /**
      * 分页查询的data
