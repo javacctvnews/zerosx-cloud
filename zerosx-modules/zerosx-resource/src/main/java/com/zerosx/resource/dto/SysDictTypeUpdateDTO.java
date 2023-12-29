@@ -22,6 +22,10 @@ public class SysDictTypeUpdateDTO implements Serializable {
     @NotNull
     private Long id;
 
+    @NotBlank
+    @Schema(description = "字典类型编码")
+    private String dictType;
+
     @Schema(description = "字典名称")
     @NotBlank
     private String dictName;

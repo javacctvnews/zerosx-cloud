@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.common.base.constants.CommonConstants;
 import com.zerosx.common.base.constants.SysMenuConstants;
+import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.base.dto.RolePermissionDTO;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.RequestVO;
@@ -14,7 +15,6 @@ import com.zerosx.common.base.vo.SysMenuBO;
 import com.zerosx.common.base.vo.SysPermissionBO;
 import com.zerosx.common.core.enums.system.UserTypeEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
-import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
 import com.zerosx.common.core.utils.EasyTransUtils;
 import com.zerosx.common.core.utils.PageUtils;
@@ -23,6 +23,8 @@ import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.common.utils.JacksonUtil;
 import com.zerosx.ds.constant.DSType;
+import com.zerosx.dynamictp.ZExecutor;
+import com.zerosx.dynamictp.constant.DtpConstants;
 import com.zerosx.system.dto.SysMenuDTO;
 import com.zerosx.system.dto.SysMenuPageDTO;
 import com.zerosx.system.dto.SysRoleMenuQueryDTO;
@@ -35,9 +37,9 @@ import com.zerosx.system.service.ISysMenuService;
 import com.zerosx.system.service.ISysRoleMenuService;
 import com.zerosx.system.service.ISysRoleService;
 import com.zerosx.system.service.ISysUserService;
-import com.zerosx.system.task.SystemAsyncTask;
 import com.zerosx.system.vo.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -68,10 +71,7 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
     @Autowired
     private ISysRoleMenuService sysRoleMenuService;
     @Autowired
-    private SystemAsyncTask systemAsyncTask;
-    @Autowired
     private ISysRoleService sysRoleService;
-
 
     @Override
     @DS(DSType.SLAVE)
@@ -115,7 +115,10 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
         //延时3秒再次删除
         if (!CollectionUtils.isEmpty(roleMenuList)) {
             String[] keyArray = roleMenuList.stream().map(role -> ZCache.ROLE_PERMISSIONS.key(role.getRoleId())).distinct().toArray(String[]::new);
-            systemAsyncTask.asyncRedisDelOptions(keyArray);
+            ZExecutor.getScheduledExecutor(DtpConstants.SCHEDULED_DYNAMIC_TP).schedule(() -> {
+                redissonOpService.del(keyArray);
+            }, 3000, TimeUnit.MILLISECONDS);
+            //systemAsyncTask.asyncRedisDelOptions(keyArray);
         }
         //int i = 1/0;
         return updateById;
@@ -383,14 +386,6 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
                     .orderByAsc(SysMenu::getOrderNum));
         } else {
             Long userId = ZerosSecurityContextHolder.getUserId();
-            /*QueryWrapper<SysMenu> wrapper = Wrappers.query();
-            wrapper.eq("sur.user_id", userId)
-                    .like(StringUtils.isNotBlank(menu.getMenuName()), "m.menu_name", menu.getMenuName())
-                    .eq(StringUtils.isNotBlank(menu.getVisible()), "m.visible", menu.getVisible())
-                    .eq(StringUtils.isNotBlank(menu.getStatus()), "m.status", menu.getStatus())
-                    .orderByAsc("m.parent_id")
-                    .orderByAsc("m.order_num");
-            menuList = baseMapper.selectMenuListByUserId(wrapper);*/
             SysUserVO sysUserVO = sysUserService.queryById(userId);
             Set<Long> sysRoleVOS = sysRoleService.selectUserRoleIds(userId, sysUserVO.getDeptId());
             menuList = baseMapper.selectMenuListByUserId(sysRoleVOS);
@@ -470,7 +465,7 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
     @DS(DSType.SLAVE)
     public List<SysMenuBO> findByRoleCodes(List<Long> roleIds) {
         if (CollectionUtils.isEmpty(roleIds)) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
         return baseMapper.findByRoleCodes(roleIds);
     }
@@ -479,11 +474,11 @@ public class SysMenuServiceImpl extends SuperServiceImpl<ISysMenuMapper, SysMenu
     @DS(DSType.SLAVE)
     public Set<String> queryPermList(Set<Long> roles) {
         if (CollectionUtils.isEmpty(roles)) {
-            return null;
+            return SetUtils.emptySet();
         }
         List<String> permList = baseMapper.queryPermList(roles);
         if (CollectionUtils.isEmpty(permList)) {
-            return null;
+            return SetUtils.emptySet();
         }
         return permList.stream().filter(StringUtils::isNotBlank).collect(Collectors.toSet());
     }

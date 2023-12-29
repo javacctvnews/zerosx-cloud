@@ -5,7 +5,7 @@
 * 给配置文件设置权限，否则配置不生效 ---重要
 
   ```shell
-  chmod 644 /etc/my.cnf
+  chmod 644 /etc/.my.cnf
   ```
 
 * 启动主从节点

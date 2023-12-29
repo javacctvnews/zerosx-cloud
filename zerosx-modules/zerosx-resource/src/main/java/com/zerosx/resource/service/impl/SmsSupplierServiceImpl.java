@@ -290,7 +290,7 @@ public class SmsSupplierServiceImpl extends SuperServiceImpl<ISmsSupplierMapper,
         redissonOpService.del(ZCache.CAPTCHA.key(requestId));
 
         Map<String, String> map = new HashMap<>();
-        String randomStr = IdGenerator.getRandomStr(6);
+        String randomStr = IdGenerator.randomSid(6);
         map.put("code", randomStr);
         //发送短信
         SmsSendDTO smsSendDTO = new SmsSendDTO();

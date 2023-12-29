@@ -1,7 +1,6 @@
 package com.zerosx.system.service.impl;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
-import com.baomidou.dynamic.datasource.toolkit.DynamicDataSourceContextHolder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -9,10 +8,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zerosx.api.system.dto.UserLoginDTO;
 import com.zerosx.api.system.vo.LoginUserVO;
 import com.zerosx.common.base.constants.ZCache;
+import com.zerosx.common.base.constants.ZCacheKey;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.LoginUserTenantsBO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.SysRoleBO;
+import com.zerosx.common.core.anno.ClearCache;
 import com.zerosx.common.core.enums.BizTagEnum;
 import com.zerosx.common.core.enums.system.UserTypeEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
@@ -33,7 +34,6 @@ import com.zerosx.system.entity.SysUserPost;
 import com.zerosx.system.entity.SysUserRole;
 import com.zerosx.system.mapper.ISysUserMapper;
 import com.zerosx.system.service.*;
-import com.zerosx.system.task.SystemAsyncTask;
 import com.zerosx.system.vo.SysRoleVO;
 import com.zerosx.system.vo.SysUserPageVO;
 import com.zerosx.system.vo.SysUserVO;
@@ -75,16 +75,12 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     @Autowired
     private ISysMenuService sysMenuService;
     @Autowired
-    private SystemAsyncTask systemAsyncTask;
-    @Autowired
     private ISysPostService sysPostService;
 
     @Override
     @DS(DSType.SLAVE)
     public CustomPageVO<SysUserPageVO> pageList(RequestVO<SysUserPageDTO> requestVO, boolean searchCount) {
         long t1 = System.currentTimeMillis();
-        String peek = DynamicDataSourceContextHolder.peek();
-        log.debug("数据源:{}", peek);
         Page<SysUser> sysUserPage = sysUserMapper.selectPage(PageUtils.of(requestVO, searchCount), getWrapper(requestVO.getT()));
         log.debug("DB分页查询耗时:{}ms", System.currentTimeMillis() - t1);
         return PageUtils.of(sysUserPage, SysUserPageVO.class);
@@ -110,14 +106,28 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public boolean add(SysUserDTO sysUserDTO) {
+        SysUser addEntity = BeanCopierUtils.copyProperties(sysUserDTO, SysUser.class);
+        Long userId = LeafUtils.uid(BizTagEnum.USER_CODE);
+        addEntity.setId(userId);
+        addEntity.setUserCode(userId.toString());
+        addEntity.setPassword(passwordEncoder.encode(sysUserDTO.getPassword()));
+        //保存用户与角色的关系
+        sysUserRoleService.saveUserRoleIds(addEntity.getId(), sysUserDTO.getRoleIds(), false);
+        //保存用户与岗位的关系
+        sysUserPostService.saveUserPostIds(addEntity.getId(), sysUserDTO.getPostIds(), false);
+        //int i = 1/0;
+        return save(addEntity);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @ClearCache(keys = ZCacheKey.CURRENT_USER, field = "#sysUserDTO.userName")
     public boolean update(SysUserDTO sysUserDTO) {
         SysUser dbUpdate = getById(sysUserDTO.getId());
         if (dbUpdate == null) {
             throw new BusinessException("编辑记录不存在");
         }
-        //先删除缓存在更新 删除后会查询数据库
-        redissonOpService.del(ZCache.CURRENT_USER.key(sysUserDTO.getUserName()));
-
         SysUser updateEntity = BeanCopierUtils.copyProperties(sysUserDTO, SysUser.class);
         //重新保存关系表
         sysUserRoleService.saveUserRoleIds(dbUpdate.getId(), sysUserDTO.getRoleIds(), true);
@@ -126,12 +136,7 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
         LambdaUpdateWrapper<SysUser> updateWrapper = Wrappers.lambdaUpdate(SysUser.class)
                 .set(SysUser::getDeptId, updateEntity.getDeptId())
                 .eq(SysUser::getId, updateEntity.getId());
-        boolean updateById = update(updateEntity, updateWrapper);
-        if (updateById) {
-            //等数据更新完成后删除(延时删除)
-            systemAsyncTask.asyncRedisDelOptions(ZCache.CURRENT_USER.key(sysUserDTO.getUserName()));
-        }
-        return updateById;
+        return update(updateEntity, updateWrapper);
     }
 
     private LambdaQueryWrapper<SysUser> getWrapper(SysUserPageDTO query) {
@@ -141,25 +146,6 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
         qw.eq(StringUtils.isNotBlank(query.getPhoneNumber()), SysUser::getPhoneNumber, query.getPhoneNumber());
         qw.and(StringUtils.isNotBlank(query.getUserKeyword()), wq -> wq.like(SysUser::getUserName, query.getUserKeyword()).or().like(SysUser::getNickName, query.getUserKeyword()));
         return qw;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean add(SysUserDTO sysUserDTO) {
-        String peek = DynamicDataSourceContextHolder.peek();
-        log.debug("数据源:{}", peek);
-        SysUser addEntity = BeanCopierUtils.copyProperties(sysUserDTO, SysUser.class);
-        Long userId = LeafUtils.uid(BizTagEnum.USER_CODE);
-        addEntity.setId(userId);
-        addEntity.setUserCode(userId.toString());
-        addEntity.setPassword(passwordEncoder.encode(sysUserDTO.getPassword()));
-        boolean save = save(addEntity);
-        //保存用户与角色的关系
-        sysUserRoleService.saveUserRoleIds(addEntity.getId(), sysUserDTO.getRoleIds(), false);
-        //保存用户与岗位的关系
-        sysUserPostService.saveUserPostIds(addEntity.getId(), sysUserDTO.getPostIds(), false);
-        //int i = 1/0;
-        return save;
     }
 
     @Override
@@ -214,7 +200,7 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
             List<SysRoleBO> sysRoleBOS = BeanCopierUtils.copyProperties(roles, SysRoleBO.class);
             loginUserVO.setRoles(sysRoleBOS);
         }
-        log.debug("用户【{}】登录 查询用户信息", userLoginDTO.getUsername() + " " + userLoginDTO.getMobilePhone());
+        log.debug("用户【{} {}】登录 查询用户信息", userLoginDTO.getUsername(), userLoginDTO.getMobilePhone());
         return loginUserVO;
     }
 
@@ -321,9 +307,7 @@ public class SysUserServiceImpl extends SuperServiceImpl<ISysUserMapper, SysUser
     }
 
     public SysUserVO getSysUserVO(String userName) {
-        LambdaQueryWrapper<SysUser> suqw = Wrappers.lambdaQuery(SysUser.class);
-        suqw.eq(SysUser::getUserName, userName);
-        SysUser sysUser = getOne(suqw);
+        SysUser sysUser = baseMapper.selectLoginSysUser(userName, "");
         if (sysUser == null) {
             throw new BusinessException("用户不存在");
         }

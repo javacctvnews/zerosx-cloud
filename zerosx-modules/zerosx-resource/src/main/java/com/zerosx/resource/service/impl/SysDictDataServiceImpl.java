@@ -8,8 +8,10 @@ import com.zerosx.common.anno.AutoDictData;
 import com.zerosx.common.base.BaseEnum;
 import com.zerosx.common.base.constants.CommonConstants;
 import com.zerosx.common.base.constants.ZCache;
+import com.zerosx.common.base.constants.ZCacheKey;
 import com.zerosx.common.base.vo.I18nSelectOptionVO;
 import com.zerosx.common.base.vo.RequestVO;
+import com.zerosx.common.core.anno.ClearCache;
 import com.zerosx.common.core.enums.CssTypeEnum;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
 import com.zerosx.common.core.utils.PageUtils;
@@ -74,6 +76,7 @@ public class SysDictDataServiceImpl extends SuperServiceImpl<ISysDictDataMapper,
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @ClearCache(keys = ZCacheKey.DICT_DATA, field = "#sysDictDataUpdateDTO.dictType")
     public boolean update(SysDictDataUpdateDTO sysDictDataUpdateDTO) {
         SysDictData sysDictData = getById(sysDictDataUpdateDTO.getId());
         if (sysDictData == null) {
@@ -83,15 +86,8 @@ public class SysDictDataServiceImpl extends SuperServiceImpl<ISysDictDataMapper,
         updateDictData.setDictType(sysDictData.getDictType());
         //是否已经存在
         checkExist(updateDictData, "字典类型【%s】下已存在键值为【%s】的字典数据", sysDictData.getDictType(), sysDictDataUpdateDTO.getDictValue());
-        //先删除缓存
-        redissonOpService.del(ZCache.DICT_DATA.key(sysDictData.getDictType()));
         //更新数据库
-        boolean update = updateById(updateDictData);
-        //再次删除
-        if (update) {
-            resourceAsyncTask.asyncRedisDelOptions(ZCache.DICT_DATA.key(sysDictData.getDictType()));
-        }
-        return update;
+        return updateById(updateDictData);
     }
 
     @Override

@@ -19,10 +19,14 @@
     </properties>
 
     <dependencies>
-        <!--<dependency>
+        <dependency>
             <groupId>com.zerosx.cloud</groupId>
-            <artifactId>zerosx-common-dynamic-datasource</artifactId>
-        </dependency>-->
+            <artifactId>zerosx-common-dynamictp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-idempotent</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-xxljob</artifactId>
@@ -91,6 +95,10 @@
             <groupId>org.perf4j</groupId>
             <artifactId>perf4j</artifactId>
             <version>${perf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
     </dependencies>
 

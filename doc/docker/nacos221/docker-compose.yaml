@@ -12,6 +12,7 @@ services:
           memory: 1g
     volumes:                            # 数据卷挂载路径设置,将本机目录映射到容器目录
       - "./logs:/home/nacos/logs"
+      - "./conf/application.properties:/home/nacos/conf/application.properties"
     environment:                        # 设置环境变量,相当于docker run命令中的-e
       - PREFER_HOST_MODE=ip             # 如果支持主机名可以使用hostname,否则使用ip，默认也是ip
       - MODE=standalone                 # 单机模式启动

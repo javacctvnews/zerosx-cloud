@@ -17,6 +17,10 @@
     <dependencies>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-dynamictp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-api-resource</artifactId>
         </dependency>
         <dependency>

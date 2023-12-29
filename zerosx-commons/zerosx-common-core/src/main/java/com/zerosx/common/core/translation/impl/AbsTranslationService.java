@@ -3,7 +3,6 @@ package com.zerosx.common.core.translation.impl;
 import com.github.benmanes.caffeine.cache.AsyncCache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.core.feign.AsyncFeignService;
 import com.zerosx.common.core.translation.ITranslationService;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.JacksonUtil;
@@ -33,7 +32,7 @@ public abstract class AbsTranslationService<T> implements ITranslationService<T>
      * 缓存，提高性能
      */
     protected AsyncCache<String, String> cache = Caffeine.newBuilder()
-            .expireAfterWrite(30, TimeUnit.SECONDS)//过期时间
+            .expireAfterWrite(5, TimeUnit.SECONDS)//过期时间
             .maximumSize(1000)//最大条数1000
             .buildAsync();//定义cache
 
@@ -48,7 +47,7 @@ public abstract class AbsTranslationService<T> implements ITranslationService<T>
         CompletableFuture<String> completableFuture = cache.getIfPresent(key);
         if (completableFuture == null) {
             //log.debug("【获取】Caffeine缓存, {} = 缓存为空", key);
-            return EMPTY;
+            return null;
         }
         String cacheValue = completableFuture.get();
         //log.debug("【获取】Caffeine缓存 {} = {}", key, cacheValue);
@@ -64,9 +63,9 @@ public abstract class AbsTranslationService<T> implements ITranslationService<T>
         return SpringUtils.getBean(RedissonOpService.class);
     }
 
-    protected AsyncFeignService getAsyncFeignService() {
+    /*protected AsyncFeignService getAsyncFeignService() {
         return SpringUtils.getBean(AsyncFeignService.class);
-    }
+    }*/
 
     /**
      * 从Redisson缓存获取
@@ -97,12 +96,12 @@ public abstract class AbsTranslationService<T> implements ITranslationService<T>
         }
         String objectName = String.valueOf(key);
         String cacheName = getCaffeineCache(objectName);
-        if (StringUtils.isNotBlank(cacheName)) {
+        if (cacheName != null) {
             return cacheName;
         }
         //先从Redis获取
         String redissonCache = getRedissonCache(objectName);
-        if (redissonCache != null){
+        if (redissonCache != null) {
             putCache(objectName, redissonCache);
             return redissonCache;
         }
@@ -110,16 +109,15 @@ public abstract class AbsTranslationService<T> implements ITranslationService<T>
         try {
             res = getFeignService(objectName);
             Object data = res.getData();
-            if (Objects.isNull(data)) {
-                return EMPTY;
-            }
             String endRes;
-            if (data instanceof String) {
+            if (Objects.isNull(data)) {
+                endRes = EMPTY;
+            } else if (data instanceof String) {
                 endRes = (String) data;
             } else {
                 endRes = JacksonUtil.toJSONString(data);
             }
-            if (StringUtils.isNotBlank(endRes)) {
+            if (endRes != null) {
                 putCache(objectName, endRes);
             }
             return endRes;

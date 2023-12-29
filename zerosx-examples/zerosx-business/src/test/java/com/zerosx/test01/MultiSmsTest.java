@@ -35,7 +35,7 @@ public class MultiSmsTest {
         IOssClientService ossClientService = OSSFactory.createClient(OssTypeEnum.ALIBABA, config);
 
         String fileName = "C:\\Users\\cyh\\Pictures\\desktopImg\\微信图片_20230802205217.png";
-        String objectName = IdGenerator.getIdStr() + ".png";
+        String objectName = IdGenerator.nextSid() + ".png";
         FileInputStream fileInputStream = new FileInputStream(fileName);
         OssObjectVO objectVO = ossClientService.upload(objectName, fileInputStream);
         if (objectVO != null) {
@@ -53,7 +53,7 @@ public class MultiSmsTest {
         IOssClientService ossClientService = OSSFactory.createClient(OssTypeEnum.TENCENT, config);
 
         String fileName = "C:\\Users\\cyh\\Pictures\\desktopImg\\微信图片_20230802205217.png";
-        String objectName = IdGenerator.getIdStr() + ".png";
+        String objectName = IdGenerator.nextSid() + ".png";
         FileInputStream fileInputStream = new FileInputStream(fileName);
         OssObjectVO objectVO = ossClientService.upload(objectName, fileInputStream);
         if (objectVO != null) {
@@ -73,7 +73,7 @@ public class MultiSmsTest {
         IOssClientService ossClientService = OSSFactory.createClient(OssTypeEnum.QINIU, config);
 
         String fileName = "C:\\Users\\cyh\\Pictures\\desktopImg\\微信图片_20230802205217.png";
-        String objectName = IdGenerator.getIdStr() + ".png";
+        String objectName = IdGenerator.nextSid() + ".png";
         FileInputStream fileInputStream = new FileInputStream(fileName);
         OssObjectVO objectVO = ossClientService.upload(objectName, fileInputStream);
         if (objectVO != null) {

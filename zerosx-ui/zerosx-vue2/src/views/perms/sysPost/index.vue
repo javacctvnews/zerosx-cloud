@@ -38,10 +38,10 @@
         <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport"
           v-hasPerms="['perms:syspost:export']">导出</el-button>
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" :searching="searching" @handleQuery="getList"
+      <right-toolbar :showSearch.sync="showSearch" :searching="searchLoading" @handleQuery="getList"
         @resetQuery="resetQuery" />
     </el-row>
-
+    
     <!-- 表格 -->
     <div class="componentTable" style="height: calc(100vh - 220px)">
       <TablePlus ref="tables" :data="list" :columns="columns" v-loading="loading" @handleDelete="handleDelete"
@@ -84,7 +84,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" :loading="dialogLoading" @click="submitForm">确 定</el-button>
+        <!-- :loading="dialogLoading" -->
+        <el-button type="primary"  @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -271,6 +272,7 @@ export default {
       this.getList();
     },
     getList() {
+      this.searchLoading = true;
       this.loading = true;
       //添加默认排序
       if (this.queryParams.sortList.length == 0) {

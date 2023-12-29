@@ -1,6 +1,8 @@
 package com.zerosx.common.redis.templete;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.*;
 import org.redisson.client.codec.Codec;
 import org.redisson.client.protocol.ScoredEntry;
@@ -12,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * redisson客户端的操作工具，推荐使用
  */
+@Slf4j
 @Getter
 public class RedissonOpService {
 
@@ -182,6 +185,15 @@ public class RedissonOpService {
     public boolean del(final String... keys) {
         for (String key : keys) {
             del(key);
+        }
+        return true;
+    }
+
+    public boolean del(final List<String> keys) {
+        for (String key : keys) {
+            if (StringUtils.isNotBlank(key)) {
+                del(key);
+            }
         }
         return true;
     }

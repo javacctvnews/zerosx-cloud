@@ -2,7 +2,6 @@ package com.zerosx.system.controller;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.zerosx.api.auth.IAccessTokenClient;
 import com.zerosx.api.system.ISysUserClient;
 import com.zerosx.api.system.dto.UserLoginDTO;
 import com.zerosx.api.system.vo.LoginUserVO;
@@ -11,10 +10,7 @@ import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.LoginUserTenantsBO;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.core.enums.BizTagEnum;
-import com.zerosx.common.core.enums.system.UserTypeEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
-import com.zerosx.common.core.utils.LeafUtils;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.log.anno.OpLog;
 import com.zerosx.common.log.enums.OpTypeEnum;
@@ -28,18 +24,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,10 +46,6 @@ public class SysUserController implements ISysUserClient {
 
     @Autowired
     private ISysUserService sysUserService;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private IAccessTokenClient authFeignServiceApi;
 
     @Operation(summary = "分页列表")
     @OpLog(mod = "系统用户", btn = "分页查询", opType = OpTypeEnum.QUERY)
@@ -68,7 +54,7 @@ public class SysUserController implements ISysUserClient {
         return ResultVOUtil.success(sysUserService.pageList(requestVO, true));
     }
 
-    @Operation(summary = "分页列表2-测试")
+    @Operation(summary = "分页列表-测试")
     @OpLog(mod = "系统用户", btn = "分页查询2", opType = OpTypeEnum.QUERY)
     @PostMapping("/sys_user/page_list2")
     public ResultVO<CustomPageVO<SysUser>> pageList2(@RequestBody RequestVO<SysUserPageDTO> requestVO) {
@@ -155,56 +141,6 @@ public class SysUserController implements ISysUserClient {
     @PostMapping("/sys_user/current_login_user")
     public ResultVO<LoginUserTenantsBO> currentLoginUser(@RequestParam("userName") String userName) {
         return ResultVOUtil.success(sysUserService.currentLoginUser(userName));
-    }
-
-    @Operation(summary = "新增测试用户")
-    @GetMapping("/sys_user/add_test_users/{num}/{prefix}")
-    public ResultVO<?> test001(@PathVariable("num") Integer num, @PathVariable("prefix") String prefix) throws Exception {
-        List<SysUser> srs = new ArrayList<>();
-        String admin123 = passwordEncoder.encode("Admin123");
-        for (Integer i = 1; i <= num; i++) {
-            //long t1 = System.currentTimeMillis();
-            SysUser sysUser = new SysUser();
-            sysUser.setId(LeafUtils.uid(BizTagEnum.USER_CODE));
-            sysUser.setUserCode(sysUser.getId().toString());
-            sysUser.setPassword(admin123);
-            sysUser.setUserName(prefix + i);
-            sysUser.setNickName("测试账号" + i);
-            sysUser.setEmail("12324" + String.format("%08d", i) + "@qq.com");
-            sysUser.setPhoneNumber("188" + String.format("%08d", i));
-            sysUser.setUserType(UserTypeEnum.TENANT_OPERATOR.getCode());
-            sysUser.setDeptId(1L);
-            sysUser.setSex("2");
-            sysUser.setOperatorId("433980");
-            sysUser.setRemark("测试账号" + i);
-            //sysUserService.save(sysUser);
-            //log.debug("创建测试用户 耗时{}ms", System.currentTimeMillis() - t1);
-            srs.add(sysUser);
-        }
-        List<List<SysUser>> partitions = ListUtils.partition(srs, 1000);
-        for (List<SysUser> users : partitions) {
-            sysUserService.saveBatch(users);
-            Thread.sleep(1000);
-        }
-        return ResultVOUtil.success();
-    }
-
-    @Operation(summary = "批量登录")
-    @GetMapping("/sys_user/login/{num}")
-    public ResultVO<?> login(@PathVariable("num") Integer num) throws InterruptedException {
-        for (Integer i = 1; i <= num; i++) {
-            MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
-            multiValueMap.add("client_id", "saas");
-            multiValueMap.add("client_secret", "Zeros9999!#@");
-            multiValueMap.add("grant_type", "password");
-            multiValueMap.add("username", "zeros" + i);
-            multiValueMap.add("password", "Admin123");
-            multiValueMap.add("user_auth_type", "SysUser");
-            ResultVO resultVO = authFeignServiceApi.postAccessToken(multiValueMap);
-            System.out.println("resultVO = " + resultVO);
-            Thread.sleep(1 * 1000);
-        }
-        return ResultVOUtil.success();
     }
 
 }

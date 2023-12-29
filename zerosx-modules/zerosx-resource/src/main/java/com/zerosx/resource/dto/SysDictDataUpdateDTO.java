@@ -20,6 +20,9 @@ public class SysDictDataUpdateDTO implements Serializable {
     @NotNull(message = "id为空")
     private Long id;
 
+    @Schema(description = "字典类型编码")
+    private String dictType;
+
     @Schema(description = "字典排序")
     @NotNull(message = "字典排序为空")
     private Integer dictSort;

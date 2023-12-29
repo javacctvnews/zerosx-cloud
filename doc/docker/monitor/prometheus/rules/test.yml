@@ -1,0 +1,54 @@
+groups:
+  - name: alertname
+    rules:
+      # 告警规则的名称（alertname）
+      - alert: 实例宕机
+        # expr 是计算公式，up指标可以获取到当前所有运行的Exporter实例以及其状态，即告警阈值为up==0
+        expr: up == 0
+        # for语句会使 Prometheus 服务等待指定的时间, 然后执行查询表达式。（for 表示告警持续的时长，若持续时长小于该时间就不发给alertmanager了，
+        # 大于该时间再发。for的值不要小于prometheus中的scrape_interval，例如scrape_interval为30s，for为15s，
+        # 如果触发告警规则，则再经过for时长后也一定会告警，这是因为最新的度量指标还没有拉取，
+        # 在15s时仍会用原来值进行计算。另外，要注意的是只有在第一次触发告警时才会等待(for)时长。）
+        for: 60s
+        # labels语句允许指定额外的标签列表，把它们附加在告警上。
+        labels:
+          severity: warning
+        # annotations语句指定了另一组标签，它们不被当做告警实例的身份标识，它们经常用于存储一些额外的信息，用于报警信息的展示之类的。
+        annotations:
+          summary: "instance：{{ $labels.instance }} down"
+          description: "instance：{{ $labels.instance }}，Job：{{ $labels.job }}，服务不可用"
+
+      - alert: CPU使用率
+        expr: 100 - round((avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)) > 90
+        for: 1m
+        labels:
+          level: waring
+        annotations:
+          summary: "instance：{{ $labels.instance }}，CPU使用率告警"
+          description: "instance：{{ $labels.instance }}，Job：{{ $labels.job }}，CPU使用率({{ $value }} >= 90)"
+
+      - alert: "内存使用率告警"
+        expr: round((node_memory_MemTotal_bytes - (node_memory_MemFree_bytes+node_memory_Buffers_bytes+node_memory_Cached_bytes )) / node_memory_MemTotal_bytes * 100) >= 90
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "instance：{{ $labels.instance }}，内存使用率告警"
+          description: "instance：{{ $labels.instance }}，Job：{{ $labels.job }}，内存使用率({{ $value }} >= 90)"
+
+      - alert: "磁盘使用率告警"
+        expr: (node_filesystem_size_bytes - node_filesystem_avail_bytes) / node_filesystem_size_bytes * 100 >= 90
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "instance：{{ $labels.instance }}，磁盘使用率告警"
+          description: "instance：{{ $labels.instance }}，Job：{{ $labels.job }}，内存使用率({{ $value }} >= 90)，挂载点: {{ $labels.mountpoint }}"
+      - alert: "磁盘IO性能"
+        expr: 100 - round((avg(irate(node_disk_io_time_seconds_total[1m])) by(instance) *100) *on(instance)group_left(nodename)(node_uname_info)) < 80
+        for: 1m
+        labels:
+          level: waring
+        annotations:
+          summary: "instance：{{ $labels.instance }}，磁盘IO使用率告警"
+          description: "instance：{{ $labels.instance }}，Job：{{ $labels.job }}，磁盘IO使用率({{$value}}>80)"

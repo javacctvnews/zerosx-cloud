@@ -13,6 +13,6 @@ public class UserLoginDTO implements Serializable {
     private String username;
 
     @Schema(description = "手机号码")
-    private String mobilePhone;
+    private String mobilePhone = "";
 
 }

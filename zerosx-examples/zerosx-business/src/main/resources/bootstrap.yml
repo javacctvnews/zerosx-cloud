@@ -21,6 +21,10 @@ spring:
           - dataId: common-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
             group: ${spring.cloud.nacos.config.group}
             refresh: true
+        extension-configs:
+          - dataId: dynamic-tp-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+            group: ${spring.cloud.nacos.config.group}
+            refresh: true
       discovery:
         server-addr: @nacos.server@
         namespace: @nacos.namespace@

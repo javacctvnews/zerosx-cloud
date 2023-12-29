@@ -1,10 +1,12 @@
 package com.zerosx.common.core.translation.impl;
 
+import com.zerosx.api.system.IMutiTenancyGroupClient;
 import com.zerosx.api.system.vo.MutiTenancyGroupBO;
 import com.zerosx.common.base.constants.TranslConstants;
 import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.ResultVO;
+import com.zerosx.common.utils.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -33,12 +35,11 @@ public class OperatorNameTranslationService extends AbsTranslationService<String
     }
 
     @Override
-    protected ResultVO<?> getFeignService(String key) throws Exception {
-        ResultVO<MutiTenancyGroupBO> mutiTenancyGroupBOResultVO = getAsyncFeignService().queryOperator(key).get();
+    protected ResultVO<?> getFeignService(String key) {
+        ResultVO<MutiTenancyGroupBO> mutiTenancyGroupBOResultVO = SpringUtils.getBean(IMutiTenancyGroupClient.class).queryOperator(key);
         if (mutiTenancyGroupBOResultVO.getData() == null) {
             return ResultVOUtil.success("");
         }
         return ResultVOUtil.success(mutiTenancyGroupBOResultVO.getData().getTenantGroupName());
-        //return getAsyncFeignService().getTenantName(key).get();
     }
 }

@@ -1,10 +1,12 @@
 package com.zerosx.common.core.translation.impl;
 
+import com.zerosx.api.resource.ISysDictDataClient;
 import com.zerosx.common.base.constants.TranslConstants;
+import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.base.vo.I18nSelectOptionVO;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.utils.JacksonUtil;
+import com.zerosx.common.utils.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -44,8 +46,8 @@ public class DictTranslationService extends AbsTranslationService<String> {
     }
 
     @Override
-    protected ResultVO<List<I18nSelectOptionVO>> getFeignService(String dictType) throws Exception {
-        return getAsyncFeignService().getDictList(dictType).get();
+    protected ResultVO<List<I18nSelectOptionVO>> getFeignService(String dictType) {
+        return SpringUtils.getBean(ISysDictDataClient.class).getDictList(dictType);
     }
 
 }

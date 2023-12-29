@@ -1,5 +1,5 @@
 server:
-  port: 9100
+  port: 9600
 
 spring:
   application:
@@ -19,6 +19,10 @@ spring:
         password: @nacos.password@
         shared-configs:
           - dataId: common-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+            group: ${spring.cloud.nacos.config.group}
+            refresh: true
+        extension-configs:
+          - dataId: dynamic-tp-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
             group: ${spring.cloud.nacos.config.group}
             refresh: true
       discovery:

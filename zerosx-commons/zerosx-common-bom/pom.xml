@@ -17,11 +17,26 @@
     <description>公共组件的依赖</description>
 
     <properties>
-        <revision>2.0.0</revision>
+        <revision>2.0.1</revision>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.zerosx.cloud</groupId>
+                <artifactId>zerosx-common-hippo4j</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zerosx.cloud</groupId>
+                <artifactId>zerosx-common-dynamictp</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zerosx.cloud</groupId>
+                <artifactId>zerosx-common-idempotent</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.zerosx.cloud</groupId>
                 <artifactId>zerosx-common-web</artifactId>
@@ -106,6 +121,18 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-hippo4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-dynamictp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zerosx.cloud</groupId>
+            <artifactId>zerosx-common-idempotent</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-web</artifactId>

@@ -7,6 +7,8 @@ import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.log.anno.OpLog;
 import com.zerosx.common.log.enums.OpTypeEnum;
+import com.zerosx.idempotent.anno.Idempotent;
+import com.zerosx.idempotent.enums.IdempotentTypeEnum;
 import com.zerosx.resource.dto.SysDictTypeDTO;
 import com.zerosx.resource.dto.SysDictTypeRetrieveDTO;
 import com.zerosx.resource.dto.SysDictTypeUpdateDTO;
@@ -37,6 +39,7 @@ public class SysDictTypeController {
     @Operation(summary = "新增")
     @PostMapping(value = "/sysDictType_insert")
     @OpLog(mod = "字典类型", btn = "新增", opType = OpTypeEnum.INSERT)
+    @Idempotent(type = IdempotentTypeEnum.SPEL, spEL = "#sysDictType.dictType")
     public ResultVO<?> insertSysDictType(@Validated @RequestBody SysDictTypeDTO sysDictType) {
         return ResultVOUtil.success(sysDictTypeService.saveDictType(sysDictType));
     }
@@ -44,6 +47,7 @@ public class SysDictTypeController {
     @Operation(summary = "编辑")
     @PutMapping(value = "/sysDictType_update")
     @OpLog(mod = "字典类型", btn = "编辑", opType = OpTypeEnum.UPDATE)
+    @Idempotent(type = IdempotentTypeEnum.SPEL, spEL = "#sysDictTypeUpdateDTO.dictType")
     public ResultVO<?> updateSysDictType(@Validated @RequestBody SysDictTypeUpdateDTO sysDictTypeUpdateDTO) {
         return ResultVOUtil.success(sysDictTypeService.updateSysDictType(sysDictTypeUpdateDTO));
     }

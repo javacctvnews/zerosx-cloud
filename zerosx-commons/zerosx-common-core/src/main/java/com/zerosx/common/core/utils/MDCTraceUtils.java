@@ -85,6 +85,9 @@ public class MDCTraceUtils {
     }
 
     public static String getNextSpanId() {
+        if (spanNumber.get() == null) {
+            return "";
+        }
         return StrUtil.format("{}.{}", getSpanId(), spanNumber.get().incrementAndGet());
     }
 

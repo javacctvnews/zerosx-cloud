@@ -201,6 +201,8 @@ INSERT INTO zerosx_resource.t_sys_param (param_name,param_key,param_value,param_
 ('最大日期查询范围','query_date_scope','180','0','0','限制最大的日期查询范围，默认无限制','2023-08-02 12:05:53','admin123','2023-08-19 17:30:04','admin123',NULL,0),
 ('knif4j接口地址','openapi3-url','http://localhost:9100/doc.html','0','0','基于openapi3的knif4j内部接口地址:https://apifox.com/apidoc/shared-34924519-6dc9-4845-b60d-a12316ad6eb8','2023-08-11 11:48:16','admin123','2023-08-13 09:57:15','admin123',NULL,0),
 ('系统监控地址','monitor-url','http://127.0.0.1:19120/login','0','0','SpringBootAdmin系统监控地址http://localhost:19120/login','2023-08-12 10:40:31','admin123','2023-08-14 13:51:25','admin123',NULL,0);
+INSERT INTO zerosx_resource.t_sys_param (param_name, param_key, param_value, param_scope, status, remark, create_time, create_by, update_time, update_by, operator_id, deleted) VALUES('Grafana监控', 'grafana-url', 'http://192.168.3.100:3000', '0', '0', 'Grafana监控', '2023-12-25 23:17:10', 'admin123', '2023-12-25 23:22:44', 'admin123', NULL, 0);
+INSERT INTO zerosx_resource.t_sys_param (param_name, param_key, param_value, param_scope, status, remark, create_time, create_by, update_time, update_by, operator_id, deleted) VALUES('Prometheus监控', 'prometheus-url', 'http://192.168.3.100:9090/targets', '0', '0', 'Prometheus监控', '2023-12-27 22:51:21', 'admin123', '2023-12-27 23:37:58', 'admin123', NULL, 0);
 
 /* 数据字典 */
 INSERT INTO zerosx_resource.t_sys_dict_type (dict_name,dict_type,dict_status,remarks,create_time,create_by,update_time,update_by,deleted) VALUES

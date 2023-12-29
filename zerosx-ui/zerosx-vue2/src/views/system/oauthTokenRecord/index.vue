@@ -11,7 +11,7 @@
         <el-input v-model="queryParams.t.username" placeholder="请输入用户名称" clearable style="width: 220px;"
           @keyup.enter.native="handleQuery" />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <el-form-item label="登录结果" prop="status">
         <el-select v-model="queryParams.t.status" placeholder="登录结果" clearable style="width: 220px">
           <el-option v-for="dict in dict.type.OperatorResEnum" :key="dict.value" :label="dict.label"
             :value="dict.value" />

@@ -7,6 +7,8 @@ import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.log.anno.OpLog;
 import com.zerosx.common.log.enums.OpTypeEnum;
+import com.zerosx.idempotent.anno.Idempotent;
+import com.zerosx.idempotent.enums.IdempotentTypeEnum;
 import com.zerosx.system.dto.SysDeptDTO;
 import com.zerosx.system.dto.SysDeptPageDTO;
 import com.zerosx.system.entity.SysDept;
@@ -16,12 +18,11 @@ import com.zerosx.system.vo.SysDeptVO;
 import com.zerosx.system.vo.SysTreeSelectVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.List;
@@ -58,6 +59,7 @@ public class SysDeptController {
     @Operation(summary = "新增")
     @OpLog(mod = "部门管理", btn = "新增", opType = OpTypeEnum.INSERT)
     @PostMapping("/sys_dept/save")
+    @Idempotent(type = IdempotentTypeEnum.SPEL, spEL = "'sysDept_'+#sysDeptDTO.deptName")
     public ResultVO<?> add(@Validated @RequestBody SysDeptDTO sysDeptDTO) {
         return ResultVOUtil.successBoolean(sysDeptService.add(sysDeptDTO));
     }
@@ -65,6 +67,7 @@ public class SysDeptController {
     @Operation(summary = "编辑")
     @OpLog(mod = "部门管理", btn = "编辑", opType = OpTypeEnum.UPDATE)
     @PostMapping("/sys_dept/update")
+    @Idempotent(type = IdempotentTypeEnum.SPEL, spEL = "'sysDept_'+#sysDeptDTO.deptName")
     public ResultVO<?> update(@Validated @RequestBody SysDeptDTO sysDeptDTO) {
         return ResultVOUtil.successBoolean(sysDeptService.update(sysDeptDTO));
     }

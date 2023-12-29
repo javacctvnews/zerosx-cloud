@@ -65,7 +65,7 @@
                 <div>14、分布式ID：基于美团Leaf分布式ID生成方案适配此项目，实现了基于MySQL数据库表方案；</div>
                 <div>15、多数据源：集成dynamic-datasource多数据源（项目中应用场景是MySQL一主一从模式，其他场景需自行测试验证）；</div>
                 <div>16、代码生成器：高度符合阿里巴巴开发手册规范的前后端代码一键生成，减少CRUD基础开发，更专注业务开发；</div>
-                <div>17、系统监控：集成SpringBootAdmin应用监控；</div>
+                <div>17、系统监控：集成SpringBootAdmin应用监控；Grafana数据可视化、监控、告警一体化平台的集成（部署文档、基础的可视化监控和告警通知）</div>
               </el-collapse-item>
               <el-collapse-item title="软件定制开发合作或其他咨询" name="4">
                 <ul>
@@ -76,42 +76,15 @@
 
           </basic-container>
           <!-- <basic-container>
-            <div style="height: 315px;text-align:center;line-height: 300px;">内容区域3</div>
+            <div style="height: 500px;text-align:center;line-height: 300px;">内容区域3</div>
           </basic-container> -->
         </el-col>
         <el-col :span="8">
           <el-col :span="24">
             <basic-container>
-              <div style="height: 1000px;">
-                <!-- <div class="block">
-                  <el-timeline>
-                    <el-timeline-item timestamp="2023/10/17" placement="top">
-                      <el-card>
-                        <h3>V0.0.2</h3>
-                        <ol>
-                          <li>分离zerosx-resource资源微服务</li>
-                          <li>规范部分代码命名</li>
-                          <li>修复encrypt组件验证BUG（丢失自增ID等一些字段的值）</li>
-                          <li>导出功能增加nacos配置项</li>
-                          <li>seata分布式事务案例优化</li>
-                          <li>多租户前后逻辑优化（针对一个账户管理一个租户和多个租户情况）</li>
-                          <li>个人中心模块优化（头像上传、基本信息展示更多信息等）</li>
-                          <li>图片上传组件的删除按钮在删除时会删除服务器oss源文件</li>
-                          <li>修复数据字典翻译feign接口BUG</li>
-                          <li>补全更新md文档、数据库及YAML配置脚本</li>
-                        </ol>
-                      </el-card>
-                    </el-timeline-item>
-                    <el-timeline-item timestamp="2023/9/20" placement="top">
-                      <el-card>
-                        <h3>V0.0.1</h3>
-                        <p>初始版本，包括非业务功能及内置业务功能</p>
-                      </el-card>
-                    </el-timeline-item>
-                  </el-timeline>
-                </div> -->
+              <div>
                 <el-collapse title="版本更新日志" v-model="activeLogs">
-                  <el-collapse-item title="V2.0.0" name="4">
+                  <el-collapse-item title="V2.0.0" name="5">
                     <ul>
                       <li style="color: red;">
                         Zerosx Cloud多租户开发平台的初个基于JDK17的RC版本，后续基于JDK17或以上的版本号规则是2.x.x，对应代码分支是2.x.x。此次更新的特性如下：
@@ -123,6 +96,22 @@
                       <li>5.补全逻辑：用户和运营商非正常状态下无法操作任何数据</li>
                       <li>6.重新整理MD说明文档和组件部署文档</li>
                       <li>7.其他功能优化：1）字段翻译功能；2）Redis的key定义规范化和简单化；3）前端删除提示语优化等等</li>
+                    </ul>
+                  </el-collapse-item>
+                  <el-collapse-item title="V1.0.0" name="4">
+                    <ul>
+                      <li style="color: red;">
+                        Zerosx Cloud多租户开发平台的初个基于JDK8的RC版本，后续基于JDK8的版本号规则是1.x.x，对应代码分支是1.x.x。此次更新的特性如下：
+                      </li>
+                      <li>1.添加版本管理插件</li>
+                      <li>2.Springboot版本更新为2.7.18</li>
+                      <li>3.将验证码、短信发送功能移入zerosx-resource服务</li>
+                      <li>4.修复管理平台[系统管理-客户端管理-认证客户端]的历史遗留BUG（多选框无法正常选中和回显的问题）</li>
+                      <li>5.集成美团Leaf分布式ID生成方案</li>
+                      <li>6.补全逻辑：用户和运营商非正常状态下无法操作任何数据</li>
+                      <li>7.重新整理MD说明文档和组件部署文档</li>
+                      <li>8.其他功能优化：1）字段翻译功能；2）Redis的key定义规范化和简单化；3）前端删除提示语优化等等</li>
+                
                     </ul>
                   </el-collapse-item>
                   <el-collapse-item title="V0.0.3" name="3">
@@ -176,7 +165,7 @@ export default {
     return {
       activeNames: ['1', '2', '3', '4'],
       logActiveNames: ['32'],
-      activeLogs: ['4'],
+      activeLogs: ['4','5'],
       lyrics: [
         '天青色等烟雨，而我在等你，炊烟袅袅升起，隔江千万里',
         '翻着我们的照片，想念若隐若现，去年的冬天，我们笑得很甜',

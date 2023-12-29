@@ -42,7 +42,7 @@
 
 ### 软件架构图
 
-<img style="width: 80%;text-align: center;" src="./doc/images/zerosx-cloud.png" alt="系统架构图"/>
+<img style="width: 80%;text-align: center;" src="./doc/images/zerosx-clould-V2.png" alt="系统架构图"/>
 
 > 备注：图中灰色虚线块组件作者并未搭建（服务器资源有限），只做一个选型参考。
 
@@ -51,6 +51,8 @@
 ```shell
 ├─zerosx-cloud								#顶级工程目录
 │ └─doc						              	#项目文档（组件、SQL、操作说明）
+│   └─docker		              			#系统所用到的组件的安装文档
+│   └─zerosx		              			#系统所用到的SQL和YAML配置
 │ └─zerosx-api				              	#Feign对内api
 │   └─zerosx-api-auth		              	#授权服务api
 │   └─zerosx-api-examples	              	#示例工程api
@@ -62,7 +64,10 @@
 │   └─zerosx-common-bom						#common模块依赖项
 │   └─zerosx-common-core					#公共核心模块
 │   └─zerosx-common-db						#数据权限
+│   └─zerosx-common-dynamic-datasource		#动态数据源
+│   └─zerosx-common-dynamictp				#动态可监控线程池框架
 │   └─zerosx-common-encrypt					#数据加解密
+│   └─zerosx-common-idempotent				#幂等组件
 │   └─zerosx-common-loadbalancer			#loadbalancer和feign封装
 │   └─zerosx-common-log						#日志记录
 │   └─zerosx-common-oss						#OSS对象存储
@@ -225,10 +230,43 @@
    </tr>
     <tr>
       <td><img src="./doc/images/img17-1.png" /></td>
-      <td><img src="./doc/images/img17-2.png" /></td>
+      <td><img src="doc/images/img17-2.png" /></td>
    </tr>
     <tr>
       <td><img src="./doc/images/img17-3.png" /></td>
       <td><img src="./doc/images/seata.png" /></td>
    </tr>
 </table>
+
+
+
+### 监控告警系统截图
+
+<table>
+   <tr>
+      <td><img src="./doc/images/grafana_login.png" /></td>
+      <td><img src="./doc/images/grafana_host.png" /></td>
+   </tr>
+   <tr>
+      <td><img src="./doc/images/grafana_redis.png" /></td>
+      <td><img src="./doc/images/grafana_nacos.png" /></td>
+   </tr>
+    <tr>
+      <td><img src="./doc/images/grafana_mysql.png" /></td>
+      <td><img src="./doc/images/grafana_jvm.png" /></td>
+   </tr>
+    <tr>
+      <td><img src="./doc/images/grafana_dynamictp.png" /></td>
+      <td><img src="./doc/images/prometheus_alert.png" /></td>
+   </tr>
+   <tr>
+      <td><img src="./doc/images/prometheus_targets.png" /></td>
+   </tr>
+</table>
+
+
+
+
+
+
+

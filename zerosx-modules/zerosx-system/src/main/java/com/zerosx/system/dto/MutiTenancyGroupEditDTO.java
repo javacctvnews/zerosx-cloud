@@ -19,6 +19,8 @@ public class MutiTenancyGroupEditDTO {
     @NotNull(message = "租户集团ID为空")
     private Long id;
 
+    private String operatorId;
+
     private String tenantGroupName;
 
     private String tenantShortName;

@@ -31,6 +31,9 @@
         <module>zerosx-common-utils</module>
         <module>zerosx-common-xxljob</module>
         <module>zerosx-common-dynamic-datasource</module>
+        <module>zerosx-common-idempotent</module>
+        <module>zerosx-common-dynamictp</module>
+        <module>zerosx-common-hippo4j</module>
     </modules>
 
 </project>

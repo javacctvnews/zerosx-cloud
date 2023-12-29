@@ -9,6 +9,8 @@ import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.log.anno.OpLog;
 import com.zerosx.common.log.enums.OpTypeEnum;
+import com.zerosx.idempotent.anno.Idempotent;
+import com.zerosx.idempotent.enums.IdempotentTypeEnum;
 import com.zerosx.resource.dto.SysDictDataDTO;
 import com.zerosx.resource.dto.SysDictDataUpdateDTO;
 import com.zerosx.resource.service.ISysDictDataService;
@@ -21,6 +23,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +49,7 @@ public class SysDictDataController {
     @Operation(summary = "新增")
     @PostMapping(value = "/sysDictData_insert")
     @OpLog(mod = "字典数据", btn = "新增", opType = OpTypeEnum.INSERT)
+    @Idempotent(type = IdempotentTypeEnum.SPEL, spEL = "#sysDictDataDTO.dictType+'_'+#sysDictDataDTO.dictValue")
     public ResultVO<?> insert(@RequestBody @Validated SysDictDataDTO sysDictDataDTO) {
         return ResultVOUtil.successBoolean(sysDictDataService.insert(sysDictDataDTO));
     }
@@ -53,6 +57,7 @@ public class SysDictDataController {
     @Operation(summary = "编辑")
     @PutMapping(value = "/sysDictData_update")
     @OpLog(mod = "字典数据-编辑", btn = "编辑", opType = OpTypeEnum.UPDATE)
+    @Idempotent(type = IdempotentTypeEnum.SPEL, spEL = "#sysDictDataUpdateDTO.dictType+'_'+#sysDictDataUpdateDTO.dictValue")
     public ResultVO<?> update(@RequestBody @Validated SysDictDataUpdateDTO sysDictDataUpdateDTO) {
         return ResultVOUtil.successBoolean(sysDictDataService.update(sysDictDataUpdateDTO));
     }

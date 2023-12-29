@@ -6,9 +6,11 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zerosx.api.system.vo.MutiTenancyGroupBO;
 import com.zerosx.common.base.constants.TranslConstants;
 import com.zerosx.common.base.constants.ZCache;
+import com.zerosx.common.base.constants.ZCacheKey;
 import com.zerosx.common.base.exception.BusinessException;
 import com.zerosx.common.base.vo.RequestVO;
 import com.zerosx.common.base.vo.SelectOptionVO;
+import com.zerosx.common.core.anno.ClearCache;
 import com.zerosx.common.core.enums.StatusEnum;
 import com.zerosx.common.core.service.impl.SuperServiceImpl;
 import com.zerosx.common.core.utils.EasyTransUtils;
@@ -25,7 +27,6 @@ import com.zerosx.system.dto.MutiTenancyGroupSaveDTO;
 import com.zerosx.system.entity.MutiTenancyGroup;
 import com.zerosx.system.mapper.IMutiTenancyGroupMapper;
 import com.zerosx.system.service.IMutiTenancyGroupService;
-import com.zerosx.system.task.SystemAsyncTask;
 import com.zerosx.system.vo.MutiTenancyGroupPageVO;
 import com.zerosx.system.vo.MutiTenancyGroupVO;
 import jakarta.servlet.http.HttpServletResponse;
@@ -57,8 +58,6 @@ public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGr
     private IMutiTenancyGroupMapper mutiTenancyGroupMapper;
     @Autowired
     private RedissonOpService redissonOpService;
-    @Autowired
-    private SystemAsyncTask systemAsyncTask;
 
     @Override
     @DS(DSType.SLAVE)
@@ -70,7 +69,7 @@ public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGr
     @Transactional(rollbackFor = Exception.class)
     public boolean saveMutiTenancyGroup(MutiTenancyGroupSaveDTO mutiTenancyGroupSaveDTO) {
         //随机生成租户ID 6位长度
-        String tenantId = IdGenerator.getRandomStr(6);
+        String tenantId = IdGenerator.randomSid(6);
         MutiTenancyGroup mutiTenancyGroup = BeanCopierUtils.copyProperties(mutiTenancyGroupSaveDTO, MutiTenancyGroup.class);
         mutiTenancyGroup.setOperatorId(tenantId);
         mutiTenancyGroup.setAuditStatus(1);
@@ -85,6 +84,7 @@ public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGr
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @ClearCache(keys = ZCacheKey.OPERATOR, field = "#editDTO.operatorId")
     public boolean editMutiTenancyGroup(MutiTenancyGroupEditDTO editDTO) {
         MutiTenancyGroup dbGroup = getById(editDTO.getId());
         if (dbGroup == null) {
@@ -98,12 +98,7 @@ public class MutiTenancyGroupServiceImpl extends SuperServiceImpl<IMutiTenancyGr
             }
         }
         MutiTenancyGroup mutiTenancyGroup = BeanCopierUtils.copyProperties(editDTO, MutiTenancyGroup.class);
-        redissonOpService.hDel(ZCache.OPERATOR.key(dbGroup.getOperatorId()));
-        boolean b = updateById(mutiTenancyGroup);
-        if (b) {
-            systemAsyncTask.asyncHRemove(ZCache.OPERATOR.key(dbGroup.getOperatorId()), null);
-        }
-        return b;
+        return updateById(mutiTenancyGroup);
     }
 
     @Override

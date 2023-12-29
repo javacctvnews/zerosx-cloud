@@ -24,7 +24,7 @@
     </modules>
 
     <properties>
-        <revision>2.0.0</revision>
+        <revision>2.0.1</revision>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -37,10 +37,9 @@
         <spring-cloud.version>2022.0.4</spring-cloud.version>
         <spring-boot-admin-starter-server.version>3.1.5</spring-boot-admin-starter-server.version>
 
-        <mybatis-plus-boot-starter.version>3.5.3.1</mybatis-plus-boot-starter.version>
-        <mysql-connector-java.version>8.0.33</mysql-connector-java.version>
-        <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
-        <mybatis.version>3.5.10</mybatis.version>
+        <mysql-connector-j.version>8.0.33</mysql-connector-j.version>
+        <mybatis-plus-boot-starter.version>3.5.4.1</mybatis-plus-boot-starter.version>
+        <mybatis.version>3.5.13</mybatis.version>
         <bcprov-jdk15to18.version>1.75</bcprov-jdk15to18.version>
 
         <commons-io.version>2.12.0</commons-io.version>
@@ -63,6 +62,9 @@
 
         <reflections.version>0.10.2</reflections.version>
         <cglib.version>3.3.0</cglib.version>
+        <prometheus.version>1.12.1</prometheus.version>
+        <dynamic-tp.version>1.1.6.1-3.x</dynamic-tp.version>
+        <hippo4j.version>1.5.0</hippo4j.version>
 
         <!-- 插件版本 -->
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
@@ -174,7 +176,7 @@
             <dependency>
                 <groupId>com.mysql</groupId>
                 <artifactId>mysql-connector-j</artifactId>
-                <version>${mysql-connector-java.version}</version>
+                <version>${mysql-connector-j.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -237,6 +239,26 @@
                 <groupId>cglib</groupId>
                 <artifactId>cglib</artifactId>
                 <version>${cglib.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-registry-prometheus</artifactId>
+                <version>${prometheus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dromara.dynamictp</groupId>
+                <artifactId>dynamic-tp-spring-cloud-starter-nacos</artifactId>
+                <version>${dynamic-tp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dromara.dynamictp</groupId>
+                <artifactId>dynamic-tp-spring-boot-starter-adapter-webserver</artifactId>
+                <version>${dynamic-tp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hippo4j</groupId>
+                <artifactId>hippo4j-config-spring-boot-starter</artifactId>
+                <version>${hippo4j.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -309,8 +331,9 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <compilerArgs>
                         <arg>-parameters</arg>
-                        <arg>--add-exports=java.base/java.lang=ALL-UNNAMED</arg>
-                        <arg>--add-exports=java.base/sun.net=ALL-UNNAMED</arg>
+                        <!--<arg>&#45;&#45;add-exports=java.base/java.lang=ALL-UNNAMED</arg>-->
+                        <arg>--add-exports</arg>
+                        <arg>java.base/sun.net.util=ALL-UNNAMED</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>

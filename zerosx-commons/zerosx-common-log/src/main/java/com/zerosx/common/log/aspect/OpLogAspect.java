@@ -1,12 +1,12 @@
 package com.zerosx.common.log.aspect;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
+import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.core.enums.BizTagEnum;
 import com.zerosx.common.core.interceptor.ZerosSecurityContextHolder;
-import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.core.utils.LeafUtils;
 import com.zerosx.common.log.anno.OpLog;
-import com.zerosx.common.log.feign.AsyncSysOperatorLogService;
+import com.zerosx.common.log.feign.ISysOperatorLogClient;
 import com.zerosx.common.log.properties.CustomLogProperties;
 import com.zerosx.common.log.vo.SystemOperatorLogBO;
 import com.zerosx.common.redis.templete.RedissonOpService;
@@ -24,6 +24,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
@@ -47,8 +48,9 @@ public class OpLogAspect {
     private RedissonOpService redissonOpService;
     @Autowired
     private CustomLogProperties customLogProperties;
+    @Lazy
     @Autowired
-    private AsyncSysOperatorLogService asyncLogService;
+    private ISysOperatorLogClient sysOperatorLogClient;
 
     /**
      * 参数及返回值存储最大长度
@@ -125,7 +127,7 @@ public class OpLogAspect {
             operLog.setCostTime(System.currentTimeMillis() - TIME_THREAD_LOCAL.get());
             // 保存数据库
             if (customLogProperties.getSaveByFeign()) {
-                asyncLogService.saveSysLog(operLog);
+                sysOperatorLogClient.add(operLog);
             } else if (customLogProperties.getSaveByRedis()) {
                 redissonOpService.zAdd(ZCache.SYS_OP_LOG.key(), operLog, (double) operLog.getOperatorTime().getTime());
             }

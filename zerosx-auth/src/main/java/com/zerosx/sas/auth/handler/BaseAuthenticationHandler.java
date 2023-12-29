@@ -50,7 +50,7 @@ public class BaseAuthenticationHandler {
         } else if (CustomAuthorizationGrantType.SMS.getValue().equals(otr.getGrantType())) {
             otr.setUsername(parameters.getFirst(CustomOAuth2ParameterNames.PHONE));
         }
-        otr.setRequestId(IdGenerator.getIdStr());
+        otr.setRequestId(IdGenerator.nextSid());
         UserAgent userAgent = UserAgentUtil.parse(request.getHeader(CommonConstants.USER_AGENT));
         otr.setBrowserType(userAgent.getBrowser().getName() + "/" + userAgent.getVersion());
         otr.setOsType(userAgent.getPlatform() + "/" + userAgent.getOsVersion());

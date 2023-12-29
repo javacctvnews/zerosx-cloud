@@ -1,10 +1,12 @@
 package com.zerosx.common.core.translation.impl;
 
+import com.zerosx.api.resource.IOssFileUploadClient;
 import com.zerosx.common.base.constants.TranslConstants;
 import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.oss.model.OssObjectVO;
 import com.zerosx.common.utils.JacksonUtil;
+import com.zerosx.common.utils.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -45,8 +47,8 @@ public class OssTranslationService extends AbsTranslationService<String> {
     }
 
     @Override
-    protected ResultVO<String> getFeignService(String key) throws Exception {
-        return getAsyncFeignService().getObjectViewUrl(key).get();
+    protected ResultVO<String> getFeignService(String key) {
+        return SpringUtils.getBean(IOssFileUploadClient.class).getObjectViewUrl(key);
     }
 
 }

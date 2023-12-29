@@ -12,7 +12,7 @@
 
     <artifactId>zerosx-common-web</artifactId>
     <version>${revision}</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <description>web 模块</description>
 
     <dependencies>

@@ -1,6 +1,6 @@
 package com.zerosx.common.log.feign.fallback;
 
-import com.zerosx.common.log.feign.ISysOperatorLogService;
+import com.zerosx.common.log.feign.ISysOperatorLogClient;
 import com.zerosx.common.log.vo.SystemOperatorLogBO;
 import com.zerosx.common.base.utils.ResultVOUtil;
 import com.zerosx.common.base.vo.ResultVO;
@@ -17,11 +17,11 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-public class SystemOperatorLogFallbackFactory implements FallbackFactory<ISysOperatorLogService> {
+public class SystemOperatorLogFallbackFactory implements FallbackFactory<ISysOperatorLogClient> {
 
     @Override
-    public ISysOperatorLogService create(Throwable cause) {
-        return new ISysOperatorLogService() {
+    public ISysOperatorLogClient create(Throwable cause) {
+        return new ISysOperatorLogClient() {
             @Override
             public ResultVO<?> add(SystemOperatorLogBO systemOperatorLogBO) {
                 log.error("日志服务调用失败:{}", cause.getMessage());

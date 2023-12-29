@@ -117,7 +117,7 @@ public class DefaultExceptionAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ResultVO<?> handleException(Exception e) {
-        return defHandler("异常描述:" + e.getMessage(), e);
+        return defHandler(e.getMessage(), e);
     }
 
     protected <T> ResultVO<T> defHandler(String errDesc, Exception e) {

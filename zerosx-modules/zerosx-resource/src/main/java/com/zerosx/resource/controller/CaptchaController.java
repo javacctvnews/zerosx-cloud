@@ -25,9 +25,13 @@ public class CaptchaController {
     @Operation(summary = "图形验证码")
     @GetMapping("/captcha")
     @OpLog(mod = "验证码", btn = "图形验证码", opType = OpTypeEnum.INSERT)
-    public ResultVO<AuthCaptchaVO> getImgCode() {
+    public ResultVO<AuthCaptchaVO> captcha() {
         return ResultVOUtil.success(captchaService.createCaptcha());
     }
 
-
+    @Operation(summary = "获取防重令牌")
+    @GetMapping("/idempotent/token")
+    public ResultVO<String> idempotentToken() {
+        return ResultVOUtil.success(captchaService.idempotentToken());
+    }
 }

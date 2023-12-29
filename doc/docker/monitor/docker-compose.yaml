@@ -1,0 +1,74 @@
+version: "3.7"
+services:
+
+  prometheus:
+    image: prom/prometheus:v2.45.2
+    container_name: "prometheus6"
+    user: root
+    #restart: always
+    restart: no
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/rules/:/etc/prometheus/rules/
+      - D:/Docker/data/prometheus/data:/prometheus
+
+  grafana:
+    image: grafana/grafana:10.2.2
+    container_name: "grafana6"
+    user: root
+    ports:
+      - "3000:3000"
+    #restart: always
+    restart: no
+    volumes:
+      - D:/Docker/data/grafana/data:/var/lib/grafana
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./grafana/log:/var/log/grafana
+
+  node-exporter:
+    image: prom/node-exporter:v1.7.0
+    container_name: "node_exporter6"
+    user: root
+    ports:
+      - "9100:9100"
+    #restart: always
+    restart: no
+
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.55.0
+    container_name: "redis_exporter6"
+    environment:
+      REDIS_ADDR: redis://192.168.3.100:6479
+      REDIS_PASSWORD: zerosx@123456
+    ports:
+      - 9121:9121
+    restart: no
+
+  mysqld-exporter:
+    image: prom/mysqld-exporter:v0.15.0
+    container_name: "mysqld_exporter6"
+    volumes:
+      - ./mysqld/.my.cnf:/.my.cnf
+    environment:
+      - DATA_SOURCE_NAME=root:zerosx@123456@(192.168.3.100:13306)/
+    ports:
+      - 9104:9104
+    restart: no
+
+  alertmanager:
+    image: prom/alertmanager:v0.26.0
+    container_name: alertmanager6
+    restart: no
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - 9093:9093
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+      - "--log.level=debug"
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - D:/Docker/data/alertmanager/data:/alertmanager
+

@@ -23,9 +23,9 @@ public class FileUploadUtils {
     public static String extractFilename(MultipartFile file, String prefix) {
         String dateFormat = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyMMdd"));
         if (StringUtils.isBlank(prefix)) {
-            return MessageFormat.format("{0}_{1}.{2}", dateFormat, IdGenerator.getIdStr(), getExtension(file));
+            return MessageFormat.format("{0}_{1}.{2}", dateFormat, IdGenerator.nextSid(), getExtension(file));
         }
-        return MessageFormat.format("{0}_{1}_{2}.{3}", prefix, dateFormat, IdGenerator.getIdStr(), getExtension(file));
+        return MessageFormat.format("{0}_{1}_{2}.{3}", prefix, dateFormat, IdGenerator.nextSid(), getExtension(file));
     }
 
 

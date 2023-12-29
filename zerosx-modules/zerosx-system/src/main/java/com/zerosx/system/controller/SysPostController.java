@@ -8,6 +8,8 @@ import com.zerosx.common.base.vo.SelectOptionVO;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.log.anno.OpLog;
 import com.zerosx.common.log.enums.OpTypeEnum;
+import com.zerosx.idempotent.anno.Idempotent;
+import com.zerosx.idempotent.enums.IdempotentTypeEnum;
 import com.zerosx.system.dto.SysPostDTO;
 import com.zerosx.system.dto.SysPostPageDTO;
 import com.zerosx.system.service.ISysPostService;
@@ -15,12 +17,12 @@ import com.zerosx.system.vo.SysPostPageVO;
 import com.zerosx.system.vo.SysPostVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -46,8 +48,14 @@ public class SysPostController {
         return ResultVOUtil.success(sysPostService.pageList(requestVO, true));
     }
 
+    /**
+     * 幂等案例：
+     * 新增时有岗位名称的租户内唯一校验，高并发情况下会存在多个线程同时
+     * 查到不存在的情况，然后插入多个租户内同名岗位，故需要幂等处理
+     */
     @Operation(summary = "新增")
     @OpLog(mod = "岗位管理", btn = "新增", opType = OpTypeEnum.INSERT)
+    @Idempotent(type = IdempotentTypeEnum.SPEL, spEL = "'SysPost:'+#sysPostDTO.operatorId+'_'+#sysPostDTO.postName")
     @PostMapping("/sys_post/save")
     public ResultVO<?> add(@Validated @RequestBody SysPostDTO sysPostDTO) {
         return ResultVOUtil.successBoolean(sysPostService.add(sysPostDTO));
@@ -55,6 +63,7 @@ public class SysPostController {
 
     @Operation(summary = "编辑")
     @OpLog(mod = "岗位管理", btn = "编辑", opType = OpTypeEnum.UPDATE)
+    @Idempotent(type = IdempotentTypeEnum.SPEL, spEL = "'SysPost:'+#sysPostDTO.operatorId+'_'+#sysPostDTO.postName")
     @PostMapping("/sys_post/update")
     public ResultVO<?> update(@Validated @RequestBody SysPostDTO sysPostDTO) {
         return ResultVOUtil.successBoolean(sysPostService.update(sysPostDTO));

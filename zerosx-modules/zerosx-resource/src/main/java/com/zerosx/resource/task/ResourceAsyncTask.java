@@ -3,7 +3,6 @@ package com.zerosx.resource.task;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,7 +24,7 @@ public class ResourceAsyncTask {
      *
      * @param keys
      */
-    @Async
+    //@Async
     public void asyncRedisDelOptions(String... keys) {
         try {
             Thread.sleep(3000);

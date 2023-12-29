@@ -1,23 +1,27 @@
 package com.zerosx.gateway.auth;
 
+import com.zerosx.api.system.ISysMenuClient;
 import com.zerosx.common.base.constants.SecurityConstants;
+import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.base.dto.RolePermissionDTO;
 import com.zerosx.common.base.vo.LoginUserTenantsBO;
 import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.base.vo.SysMenuBO;
 import com.zerosx.common.base.vo.SysPermissionBO;
 import com.zerosx.common.core.enums.system.UserTypeEnum;
-import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.core.utils.AntPathMatcherUtils;
+import com.zerosx.common.core.utils.MDCTraceUtils;
 import com.zerosx.common.core.vo.CustomUserDetails;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.sas.properties.CustomSecurityProperties;
 import com.zerosx.common.sas.properties.PermissionProperties;
 import com.zerosx.common.utils.JacksonUtil;
-import com.zerosx.gateway.feign.AsyncSysUserService;
+import com.zerosx.dynamictp.ZExecutor;
+import com.zerosx.dynamictp.constant.DtpConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
@@ -32,6 +36,7 @@ import reactor.core.publisher.Mono;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * url级权限认证
@@ -45,9 +50,10 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
     @Autowired
     protected CustomSecurityProperties customSecurityProperties;
     @Autowired
-    private AsyncSysUserService asyncSysUserService;
-    @Autowired
     private RedissonOpService redissonOpService;
+    @Lazy
+    @Autowired
+    private ISysMenuClient sysMenuClient;
 
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
@@ -74,6 +80,7 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
             return false;
         }*/
         ServerHttpRequest serverHttpRequest = serverWebExchange.getRequest();
+        handleLogId(serverHttpRequest);
         PermissionProperties permissionProperties = customSecurityProperties.getPerms();
         if (permissionProperties == null) {
             return false;
@@ -129,7 +136,8 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
             try {
                 RolePermissionDTO rolePermissionDTO = new RolePermissionDTO();
                 rolePermissionDTO.setRoles(dbRoles);
-                ResultVO<SysPermissionBO> permissionBOResultVO = asyncSysUserService.queryPermsByRoleIds(rolePermissionDTO).get();
+                ThreadPoolExecutor executor = ZExecutor.getExecutor(DtpConstants.DYNAMIC_TP);
+                ResultVO<SysPermissionBO> permissionBOResultVO = executor.submit(() -> sysMenuClient.queryPermsByRoleIds(rolePermissionDTO)).get();
                 if (permissionBOResultVO.getData() != null && !CollectionUtils.isEmpty(permissionBOResultVO.getData().getPermissionUrls())) {
                     permissionUrls.addAll(permissionBOResultVO.getData().getPermissionUrls());
                 }
@@ -156,6 +164,14 @@ public class CustomAuthorizationManager implements ReactiveAuthorizationManager<
             return false;
         }).findAny().orElse(null);
         return sysMenuBO != null;
+    }
+
+    private static void handleLogId(ServerHttpRequest serverHttpRequest) {
+        String logId = serverHttpRequest.getHeaders().getFirst(MDCTraceUtils.TRACE_ID_HEADER);
+        String spanId = serverHttpRequest.getHeaders().getFirst(MDCTraceUtils.SPAN_ID_HEADER);
+        if (StringUtils.isNotBlank(logId)) {
+            MDCTraceUtils.putTrace(logId, spanId);
+        }
     }
 
 }

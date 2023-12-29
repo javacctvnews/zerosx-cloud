@@ -31,7 +31,7 @@ public class CaptchaServiceImpl implements ICaptchaService {
     public AuthCaptchaVO createCaptcha() {
         AuthCaptchaVO vo = new AuthCaptchaVO();
         // 保存验证码信息的key
-        String uuid = IdGenerator.getIdStr();
+        String uuid = IdGenerator.nextSid();
         // 三个参数分别为宽、高、位数
         SpecCaptcha gifCaptcha = new SpecCaptcha(110, 38, 5);
         gifCaptcha.setCharType(3);
@@ -43,8 +43,14 @@ public class CaptchaServiceImpl implements ICaptchaService {
         vo.setImg(gifCaptcha.toBase64());//图片
         log.debug("UUID:{} 验证码:{}", uuid, imgCode);
         // 保存验证码
-        redissonOpService.set(ZCache.CAPTCHA.key(uuid), imgCode, ZCache.CAPTCHA_EXPIRE);
+        redissonOpService.set(ZCache.CAPTCHA.key(uuid), imgCode, ZCache.DEFAULT_EXPIRE);
         return vo;
     }
 
+    @Override
+    public String idempotentToken() {
+        String token = IdGenerator.nextSid();
+        redissonOpService.set(ZCache.IDEMPOTENT_TOKEN.key(token), token, ZCache.DEFAULT_EXPIRE);
+        return token;
+    }
 }

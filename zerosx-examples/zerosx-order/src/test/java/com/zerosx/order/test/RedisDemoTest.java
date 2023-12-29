@@ -74,16 +74,16 @@ public class RedisDemoTest {
     @Test
     public void testHash() throws Exception {
         String key = "hash01";
-        redissonOpService.hPut(key, "field1", IdGenerator.getIdStr());
-        redissonOpService.hPut(key, "field2", IdGenerator.getIdStr());
-        redissonOpService.hPut(key, "field3", IdGenerator.getIdStr());
-        redissonOpService.hPut(key, "field4", IdGenerator.getIdStr());
+        redissonOpService.hPut(key, "field1", IdGenerator.nextSid());
+        redissonOpService.hPut(key, "field2", IdGenerator.nextSid());
+        redissonOpService.hPut(key, "field3", IdGenerator.nextSid());
+        redissonOpService.hPut(key, "field4", IdGenerator.nextSid());
 
         Map<String, Object> fieMap = new HashMap<>();
-        fieMap.put("field91", IdGenerator.getIdStr());
-        fieMap.put("field92", IdGenerator.getIdStr());
-        fieMap.put("field93", IdGenerator.getIdStr());
-        fieMap.put("field94", IdGenerator.getIdStr());
+        fieMap.put("field91", IdGenerator.nextSid());
+        fieMap.put("field92", IdGenerator.nextSid());
+        fieMap.put("field93", IdGenerator.nextSid());
+        fieMap.put("field94", IdGenerator.nextSid());
         redissonOpService.hPut(key, fieMap);
 
         Map<String, A> fieMapA = new HashMap<>();

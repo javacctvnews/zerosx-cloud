@@ -16,11 +16,11 @@ public class IdGenerator {
 
     private static Sequence WORKER = new Sequence();
 
-    public static long getId() {
+    public static long nextId() {
         return WORKER.nextId();
     }
 
-    public static String getIdStr() {
+    public static String nextSid() {
         return String.valueOf(WORKER.nextId());
     }
 
@@ -30,7 +30,7 @@ public class IdGenerator {
      * @Param: length 随机数长度
      * @return: java.lang.String
      */
-    public static String getRandomStr(int length) {
+    public static String randomSid(int length) {
         if (length <= 0) {
             return "";
         }
@@ -46,7 +46,7 @@ public class IdGenerator {
             // 如果差值大于0，则说明需要生成的串长大于获取的随机数长度，此时需要将最大长度设置为当前随机串的长度
             length = maxLength;
             // 同时递归调用该随机数获取方法，获取剩余长度的随机数
-            value += getRandomStr(diff);
+            value += randomSid(diff);
         }
         // 获取最终的随机数
         value = randomValue.substring(0, length) + value;
@@ -59,12 +59,12 @@ public class IdGenerator {
      * @param minLen 最小长度
      * @return 唯一ID
      */
-    public static String getIdLen(Integer minLen) {
-        String uuid = getIdStr();
+    public static String nextSid(Integer minLen) {
+        String uuid = nextSid();
         int length = uuid.length();
         if (length >= minLen) {
             return uuid;
         }
-        return uuid + IdGenerator.getRandomStr(minLen - length);
+        return uuid + IdGenerator.randomSid(minLen - length);
     }
 }

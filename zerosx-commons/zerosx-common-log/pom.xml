@@ -22,6 +22,12 @@
         <dependency>
             <groupId>com.zerosx.cloud</groupId>
             <artifactId>zerosx-common-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.zerosx.cloud</groupId>
+                    <artifactId>zerosx-common-dynamictp</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

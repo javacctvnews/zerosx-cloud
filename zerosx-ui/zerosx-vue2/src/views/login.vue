@@ -13,7 +13,7 @@
                 <h3>体验账号</h3>
                 <ul>
                   <li>超级管理员账号：admin123/Admin123</li>
-                  <li>租户管理员账号：zuo123/Zuo123456</li>
+                  <li>租户管理员账号：zerosx/Admin123</li>
                 </ul>
               </div>
             </div>
@@ -294,7 +294,9 @@ export default {
             Cookies.remove('rememberMe');
           }
           this.$store.dispatch("Login", this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || "/" }).catch(() => { });
+            this.$router.push({ path: this.redirect || "/" }).catch((ex) => {
+              console.log('出现异常:', ex)
+            });
           }).catch((err) => {
             console.log('出现异常:', err)
             this.loading = false;

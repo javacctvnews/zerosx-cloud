@@ -8,6 +8,8 @@ import com.zerosx.common.base.vo.SelectOptionVO;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.log.anno.OpLog;
 import com.zerosx.common.log.enums.OpTypeEnum;
+import com.zerosx.idempotent.anno.Idempotent;
+import com.zerosx.idempotent.enums.IdempotentTypeEnum;
 import com.zerosx.system.dto.MutiTenancyGroupEditDTO;
 import com.zerosx.system.dto.MutiTenancyGroupQueryDTO;
 import com.zerosx.system.dto.MutiTenancyGroupSaveDTO;
@@ -42,6 +44,7 @@ public class MutiTenancyGroupController {
 
     @Operation(summary = "保存")
     @PostMapping("/muti_tenancy/save")
+    @Idempotent(type = IdempotentTypeEnum.SPEL, spEL = "#mutiTenancyGroupSaveDTO.socialCreditCode")
     @OpLog(mod = "多租户集团", btn = "新增", opType = OpTypeEnum.INSERT)
     public ResultVO saveMutiTenancyGroup(@Validated @RequestBody MutiTenancyGroupSaveDTO mutiTenancyGroupSaveDTO) {
         return ResultVOUtil.success(mutiTenancyGroupService.saveMutiTenancyGroup(mutiTenancyGroupSaveDTO));
@@ -49,8 +52,9 @@ public class MutiTenancyGroupController {
 
     @Operation(summary = "更新")
     @PostMapping("/muti_tenancy/update")
+    @Idempotent(type = IdempotentTypeEnum.SPEL, spEL = "#mutiTenancyGroupEditDTO.socialCreditCode")
     @OpLog(mod = "多租户集团", btn = "编辑", opType = OpTypeEnum.UPDATE)
-    public ResultVO updateGroupCompany(@Validated @RequestBody MutiTenancyGroupEditDTO mutiTenancyGroupEditDTO) throws Exception {
+    public ResultVO updateGroupCompany(@Validated @RequestBody MutiTenancyGroupEditDTO mutiTenancyGroupEditDTO) {
         return ResultVOUtil.success(mutiTenancyGroupService.editMutiTenancyGroup(mutiTenancyGroupEditDTO));
     }
 
@@ -71,7 +75,7 @@ public class MutiTenancyGroupController {
     @OpLog(mod = "多租户集团", btn = "导出", opType = OpTypeEnum.EXPORT)
     @PostMapping("/muti_tenancy/export")
     public void operatorExport(@RequestBody RequestVO<MutiTenancyGroupQueryDTO> requestVO, HttpServletResponse response) throws IOException {
-        mutiTenancyGroupService.excelExport(requestVO,response);
+        mutiTenancyGroupService.excelExport(requestVO, response);
     }
 
     @Operation(summary = "按id查询")

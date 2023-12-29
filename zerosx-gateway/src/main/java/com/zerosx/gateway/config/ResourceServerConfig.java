@@ -1,6 +1,7 @@
 package com.zerosx.gateway.config;
 
 
+import com.zerosx.api.system.ISysUserClient;
 import com.zerosx.common.log.properties.CustomLogProperties;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.sas.auth.CustomOAuth2AuthorizationService;
@@ -9,7 +10,6 @@ import com.zerosx.common.utils.JacksonUtil;
 import com.zerosx.gateway.auth.CustomAuthenticationManager;
 import com.zerosx.gateway.auth.CustomAuthorizationManager;
 import com.zerosx.gateway.auth.CustomServerWebExchangeMatcher;
-import com.zerosx.gateway.feign.AsyncSysUserService;
 import com.zerosx.gateway.filter.CustomServerWebExchangeContextFilter;
 import com.zerosx.gateway.filter.TraceIDFilter;
 import com.zerosx.gateway.handler.CustomAccessDeniedHandler;
@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
@@ -45,17 +46,18 @@ public class ResourceServerConfig {
     @Autowired
     private RedissonOpService redissonOpService;
     @Autowired
-    private AsyncSysUserService asyncLoginUserService;
-    @Autowired
     private CustomLogProperties customLogProperties;
     @Autowired
     private CustomOAuth2AuthorizationService customOAuth2AuthorizationService;
+    @Lazy
+    @Autowired
+    private ISysUserClient sysUserClient;
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain() {
         ServerHttpSecurity http = ServerHttpSecurity.http();
         http.addFilterAt(new TraceIDFilter(customLogProperties), SecurityWebFiltersOrder.FIRST);
-        http.addFilterAt(new CustomServerWebExchangeContextFilter(customOAuth2AuthorizationService, customSecurityProperties, redissonOpService, asyncLoginUserService), SecurityWebFiltersOrder.FIRST);
+        http.addFilterAt(new CustomServerWebExchangeContextFilter(customOAuth2AuthorizationService, customSecurityProperties, redissonOpService, sysUserClient), SecurityWebFiltersOrder.FIRST);
         //认证处理器
         ReactiveAuthenticationManager customAuthenticationManager = new CustomAuthenticationManager(customOAuth2AuthorizationService);
         CustomAuthenticationEntryPoint entryPoint = new CustomAuthenticationEntryPoint();

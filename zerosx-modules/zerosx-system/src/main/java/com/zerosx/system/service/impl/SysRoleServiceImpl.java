@@ -17,6 +17,8 @@ import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.ds.constant.DSType;
+import com.zerosx.dynamictp.ZExecutor;
+import com.zerosx.dynamictp.constant.DtpConstants;
 import com.zerosx.system.dto.SysRoleDTO;
 import com.zerosx.system.dto.SysRoleMenuQueryDTO;
 import com.zerosx.system.dto.SysRolePageDTO;
@@ -27,7 +29,6 @@ import com.zerosx.system.service.ISysDeptService;
 import com.zerosx.system.service.ISysMenuService;
 import com.zerosx.system.service.ISysRoleMenuService;
 import com.zerosx.system.service.ISysRoleService;
-import com.zerosx.system.task.SystemAsyncTask;
 import com.zerosx.system.vo.SysRoleMenuTreeVO;
 import com.zerosx.system.vo.SysRolePageVO;
 import com.zerosx.system.vo.SysRoleVO;
@@ -42,6 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -61,8 +63,6 @@ public class SysRoleServiceImpl extends SuperServiceImpl<ISysRoleMapper, SysRole
     private ISysMenuService sysMenuService;
     @Autowired
     private RedissonOpService redissonOpService;
-    @Autowired
-    private SystemAsyncTask systemAsyncTask;
     @Autowired
     private ISysDeptService sysDeptService;
 
@@ -93,7 +93,7 @@ public class SysRoleServiceImpl extends SuperServiceImpl<ISysRoleMapper, SysRole
         SysRole addEntity = BeanCopierUtils.copyProperties(sysRoleDTO, SysRole.class);
         addEntity.setRoleSort(sysRoleDTO.getRoleSort() == null ? 0 : sysRoleDTO.getRoleSort());
         if (StringUtils.isBlank(sysRoleDTO.getRoleKey())) {
-            addEntity.setRoleKey(IdGenerator.getIdStr());
+            addEntity.setRoleKey(IdGenerator.nextSid());
         }
         checkExistName(sysRoleDTO);
         boolean save = save(addEntity);
@@ -150,7 +150,10 @@ public class SysRoleServiceImpl extends SuperServiceImpl<ISysRoleMapper, SysRole
         sysRoleMenuService.saveSysRoleMenus(as);
         boolean updateById = updateById(updateEntity);
         //延时删除
-        systemAsyncTask.asyncRedisDelOptions(ZCache.ROLE_PERMISSIONS.key(sysRoleDTO.getId()));
+        //systemAsyncTask.asyncRedisDelOptions(ZCache.ROLE_PERMISSIONS.key(sysRoleDTO.getId()));
+        ZExecutor.getScheduledExecutor(DtpConstants.SCHEDULED_DYNAMIC_TP).schedule(() -> {
+            redissonOpService.del(ZCache.ROLE_PERMISSIONS.key(sysRoleDTO.getId()));
+        }, 3000, TimeUnit.MILLISECONDS);
         return updateById;
     }
 

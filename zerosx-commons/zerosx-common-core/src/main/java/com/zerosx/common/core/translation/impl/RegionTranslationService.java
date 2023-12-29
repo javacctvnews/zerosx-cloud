@@ -1,5 +1,6 @@
 package com.zerosx.common.core.translation.impl;
 
+import com.zerosx.api.resource.IRegionClient;
 import com.zerosx.common.base.constants.TranslConstants;
 import com.zerosx.common.base.vo.ResultVO;
 import com.zerosx.common.base.constants.ZCache;
@@ -31,8 +32,8 @@ public class RegionTranslationService extends AbsTranslationService<String> {
     }
 
     @Override
-    protected ResultVO<?> getFeignService(String key) throws Exception {
-        return getAsyncFeignService().getAreaName(key).get();
+    protected ResultVO<?> getFeignService(String key) {
+        return SpringUtils.getBean(IRegionClient.class).getAreaName(key);
     }
 
 }

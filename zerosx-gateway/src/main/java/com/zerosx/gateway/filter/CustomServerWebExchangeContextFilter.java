@@ -1,17 +1,19 @@
 package com.zerosx.gateway.filter;
 
+import com.zerosx.api.system.ISysUserClient;
 import com.zerosx.common.base.constants.HeadersConstants;
 import com.zerosx.common.base.constants.SecurityConstants;
+import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.base.vo.LoginUserTenantsBO;
 import com.zerosx.common.base.vo.ResultVO;
-import com.zerosx.common.base.constants.ZCache;
 import com.zerosx.common.core.utils.AntPathMatcherUtils;
 import com.zerosx.common.core.vo.CustomUserDetails;
 import com.zerosx.common.redis.templete.RedissonOpService;
 import com.zerosx.common.sas.auth.CustomOAuth2AuthorizationService;
 import com.zerosx.common.sas.properties.CustomSecurityProperties;
 import com.zerosx.common.utils.JacksonUtil;
-import com.zerosx.gateway.feign.AsyncSysUserService;
+import com.zerosx.dynamictp.ZExecutor;
+import com.zerosx.dynamictp.constant.DtpConstants;
 import com.zerosx.gateway.utils.WebFluxRespUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +29,7 @@ import reactor.core.publisher.Mono;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * CustomServerWebExchangeContextFilter
@@ -42,13 +44,15 @@ public class CustomServerWebExchangeContextFilter extends ServerWebExchangeConte
     private final CustomOAuth2AuthorizationService customOAuth2AuthorizationService;
     private final CustomSecurityProperties customSecurityProperties;
     private final RedissonOpService redissonOpService;
-    private final AsyncSysUserService asyncLoginUserService;
+    private final ISysUserClient sysUserClient;
 
-    public CustomServerWebExchangeContextFilter(CustomOAuth2AuthorizationService customOAuth2AuthorizationService, CustomSecurityProperties customSecurityProperties, RedissonOpService redissonOpService, AsyncSysUserService asyncLoginUserService) {
+    public CustomServerWebExchangeContextFilter(CustomOAuth2AuthorizationService customOAuth2AuthorizationService,
+                                                CustomSecurityProperties customSecurityProperties, RedissonOpService redissonOpService,
+                                                ISysUserClient sysUserClient) {
         this.customOAuth2AuthorizationService = customOAuth2AuthorizationService;
         this.customSecurityProperties = customSecurityProperties;
         this.redissonOpService = redissonOpService;
-        this.asyncLoginUserService = asyncLoginUserService;
+        this.sysUserClient = sysUserClient;
     }
 
     @Override
@@ -97,7 +101,6 @@ public class CustomServerWebExchangeContextFilter extends ServerWebExchangeConte
         return buildExchange(exchange, chain, headerValues);
     }
 
-
     public LoginUserTenantsBO queryUserInfo(String username) {
         //根据用户名先查询Redis，Redis不存在时查询DB （DB中用户数据与Redis一致性）
         String usernameKey = ZCache.CURRENT_USER.key(username);
@@ -111,16 +114,17 @@ public class CustomServerWebExchangeContextFilter extends ServerWebExchangeConte
                 redissonOpService.del(usernameKey);
             }
         }
-        //缓存不存在时调用接口查询数据库
-        ResultVO<LoginUserTenantsBO> loginAppUserResultVO;
         try {
-            loginAppUserResultVO = asyncLoginUserService.currentLoginUser(username).get();
-        } catch (InterruptedException | ExecutionException e) {
+            //缓存不存在时调用接口查询数据库
+            log.debug("【权限控制】从【MySQL】中获取用户【{}】用户信息", username);
+            ThreadPoolExecutor executor = ZExecutor.getExecutor(DtpConstants.DYNAMIC_TP);
+            ResultVO<LoginUserTenantsBO> loginAppUserResultVO = executor.submit(() -> sysUserClient.currentLoginUser(username)).get();
+            //ResultVO<LoginUserTenantsBO> loginAppUserResultVO = sysUserClient.currentLoginUser(username);
+            return loginAppUserResultVO.getData();
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
             return null;
         }
-        log.debug("【权限控制】从【MySQL】中获取用户【{}】用户信息", username);
-        return loginAppUserResultVO.getData();
     }
 
     private static Mono<Void> buildExchange(ServerWebExchange exchange, WebFilterChain chain, MultiValueMap<String, String> headerValues) {

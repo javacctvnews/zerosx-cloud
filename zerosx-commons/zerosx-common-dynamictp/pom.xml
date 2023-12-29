@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.zerosx.cloud</groupId>
+        <artifactId>zerosx-commons</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>zerosx-common-dynamictp</artifactId>
+    <name>zerosx-common-dynamictp</name>
+    <packaging>jar</packaging>
+    <description>动态可监控线程池框架</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.dromara.dynamictp</groupId>
+            <artifactId>dynamic-tp-spring-cloud-starter-nacos</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dromara.dynamictp</groupId>
+            <artifactId>dynamic-tp-spring-boot-starter-adapter-webserver</artifactId>
+        </dependency>
+    </dependencies>
+</project>

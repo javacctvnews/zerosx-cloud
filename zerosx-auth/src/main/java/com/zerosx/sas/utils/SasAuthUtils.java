@@ -106,7 +106,7 @@ public class SasAuthUtils {
      * @return token值
      */
     public static String tokenValue() {
-        return IdGenerator.getIdLen(32);
+        return IdGenerator.nextSid(32);
     }
 
 }

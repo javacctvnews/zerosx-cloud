@@ -6,9 +6,7 @@ import com.alibaba.excel.write.metadata.WriteSheet;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zerosx.common.core.enums.BizTagEnum;
 import com.zerosx.common.core.utils.EasyTransUtils;
-import com.zerosx.common.core.utils.LeafUtils;
 import com.zerosx.common.utils.BeanCopierUtils;
 import com.zerosx.common.utils.JacksonUtil;
 import com.zerosx.system.SystemApplication;
@@ -17,6 +15,7 @@ import com.zerosx.system.entity.SystemOperatorLog;
 import com.zerosx.system.mapper.ISysUserMapper;
 import com.zerosx.system.service.ISystemOperatorLogService;
 import com.zerosx.system.vo.SystemOperatorLogPageVO;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Slf4j
 @SpringBootTest(classes = SystemApplication.class)
@@ -33,14 +33,25 @@ public class TestCase {
     private ISysUserMapper sysUserMapper;
     @Autowired
     private ISystemOperatorLogService systemOperatorLogService;
-
+    @Resource
+    private ThreadPoolExecutor messageConsumeDynamicExecutor;
+    @Resource
+    private ThreadPoolExecutor messageProduceDynamicExecutor;
 
     @Test
-    public void Test011() {
-        int a = 100000;
+    public void Test011() throws Exception {
+        int a = 100;
         for (int i = 0; i < a; i++) {
-            String idGenRes = LeafUtils.uidStr(BizTagEnum.LEAF);
-            System.out.println(idGenRes);
+            int as = i;
+            messageConsumeDynamicExecutor.execute(() -> {
+                log.debug("messageConsumeDynamicExecutor:{}", as);
+            });
+        }
+        for (int i = 0; i < a; i++) {
+            int as = i;
+            messageProduceDynamicExecutor.execute(() -> {
+                log.debug("messageProduceDynamicExecutor:{}", as);
+            });
         }
     }
 

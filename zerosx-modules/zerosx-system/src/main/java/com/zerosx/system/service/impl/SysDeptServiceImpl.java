@@ -82,7 +82,7 @@ public class SysDeptServiceImpl extends SuperServiceImpl<ISysDeptMapper, SysDept
     @Transactional(rollbackFor = Exception.class)
     public boolean add(SysDeptDTO sysDeptDTO) {
         SysDept addEntity = BeanCopierUtils.copyProperties(sysDeptDTO, SysDept.class);
-        addEntity.setDeptCode(IdGenerator.getIdStr());
+        addEntity.setDeptCode(IdGenerator.nextSid());
         checkExistName(sysDeptDTO);
         boolean save = save(addEntity);
         sysRoleDeptService.updateSysDeptRoles(addEntity.getId(), sysDeptDTO.getRoleIds(), false);
@@ -237,11 +237,9 @@ public class SysDeptServiceImpl extends SuperServiceImpl<ISysDeptMapper, SysDept
     @Override
     public String queryName(Long id) {
         SysDept sysDept = getById(id);
-        if (sysDept == null) {
-            return StringUtils.EMPTY;
-        }
-        redissonOpService.hPut(ZCache.DEPT.key(id), TranslConstants.DEPT_NAME, sysDept.getDeptName());
-        return sysDept.getDeptName();
+        String deptName = sysDept == null ? StringUtils.EMPTY : sysDept.getDeptName();
+        redissonOpService.hPut(ZCache.DEPT.key(id), TranslConstants.DEPT_NAME, deptName);
+        return deptName;
     }
 
 }

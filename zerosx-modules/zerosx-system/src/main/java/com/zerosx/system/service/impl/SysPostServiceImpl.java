@@ -73,7 +73,7 @@ public class SysPostServiceImpl extends SuperServiceImpl<ISysPostMapper, SysPost
     @Transactional(rollbackFor = Exception.class)
     public boolean add(SysPostDTO sysPostDTO) {
         SysPost addEntity = BeanCopierUtils.copyProperties(sysPostDTO, SysPost.class);
-        addEntity.setPostCode(IdGenerator.getIdStr());
+        addEntity.setPostCode(IdGenerator.nextSid());
         checkExistName(sysPostDTO);
         boolean save = save(addEntity);
         log.debug("SysPost入库参数：{}", JacksonUtil.toJSONString(addEntity));
@@ -99,7 +99,7 @@ public class SysPostServiceImpl extends SuperServiceImpl<ISysPostMapper, SysPost
         countqw.ne(sysPostDTO.getId() != null, SysPost::getId, sysPostDTO.getId());
         long count = count(countqw);
         if (count > 0) {
-            throw new BusinessException("已存在【" + sysPostDTO.getPostName() + "】，不能重复添加");
+            throw new BusinessException("已存在的岗位【" + sysPostDTO.getPostName() + "】，不能重复添加");
         }
     }
 

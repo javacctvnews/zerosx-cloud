@@ -8,6 +8,8 @@ import com.zerosx.common.base.vo.SelectOptionVO;
 import com.zerosx.common.core.vo.CustomPageVO;
 import com.zerosx.common.log.anno.OpLog;
 import com.zerosx.common.log.enums.OpTypeEnum;
+import com.zerosx.idempotent.anno.Idempotent;
+import com.zerosx.idempotent.enums.IdempotentTypeEnum;
 import com.zerosx.system.dto.SysRoleDTO;
 import com.zerosx.system.dto.SysRolePageDTO;
 import com.zerosx.system.service.ISysRoleService;
@@ -49,6 +51,7 @@ public class SysRoleController {
     @Operation(summary = "新增")
     @OpLog(mod = "角色管理", btn = "新增", opType = OpTypeEnum.INSERT)
     @PostMapping("/sys_role/save")
+    @Idempotent(type = IdempotentTypeEnum.SPEL, spEL = "'sysRole_'+#sysRoleDTO.roleName")
     public ResultVO<?> add(@Validated @RequestBody SysRoleDTO sysRoleDTO) {
         return ResultVOUtil.successBoolean(sysRoleService.add(sysRoleDTO));
     }
@@ -56,6 +59,7 @@ public class SysRoleController {
     @Operation(summary = "编辑")
     @OpLog(mod = "角色管理", btn = "编辑", opType = OpTypeEnum.UPDATE)
     @PostMapping("/sys_role/update")
+    @Idempotent(type = IdempotentTypeEnum.SPEL, spEL = "'sysRole_'+#sysRoleDTO.roleName")
     public ResultVO<?> update(@Validated @RequestBody SysRoleDTO sysRoleDTO) {
         return ResultVOUtil.successBoolean(sysRoleService.update(sysRoleDTO));
     }

@@ -11,5 +11,10 @@ public interface ICaptchaService {
      */
     AuthCaptchaVO createCaptcha();
 
+    /**
+     * 获取防重令牌
+     *
+     */
+    String idempotentToken();
 
 }

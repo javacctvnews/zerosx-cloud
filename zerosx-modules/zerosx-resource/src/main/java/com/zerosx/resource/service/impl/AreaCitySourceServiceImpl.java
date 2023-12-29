@@ -85,7 +85,7 @@ public class AreaCitySourceServiceImpl extends SuperServiceImpl<IAreaCitySourceM
             throw new BusinessException("已存在的行政区域，新增失败");
         }
         AreaCitySource addEntity = BeanCopierUtils.copyProperties(areaCitySourceDTO, AreaCitySource.class);
-        addEntity.setExtId(IdGenerator.getRandomStr(12));
+        addEntity.setExtId(IdGenerator.randomSid(12));
         return save(addEntity);
     }
 

@@ -1,0 +1,39 @@
+global:
+  # Smtp发送配置
+  smtp_smarthost: 'smtp.163.com:465'
+  smtp_from: 'javacctvnews@163.com'
+  smtp_auth_username: 'javacctvnews@163.com'
+  smtp_auth_password: 'XXXXXXXXXXXXXXXXX'
+  smtp_require_tls: false
+
+route:
+  # 告警应该根据的标签分组
+  group_by: ['alertname']
+  #同一组的告警发出前需要等待多少时间（为了批次发送多个告警）
+  group_wait: 30s
+  #同一组的多批次告警间隔多少时间后才能发出
+  group_interval: 30s
+  #重复的告警等待多久后才能再次发出
+  repeat_interval: 60s
+  #接收人
+  receiver: 'email'
+
+
+#接收人，可以是邮箱、微信、钉钉、飞书等
+receivers:
+  - name: 'web.hook'
+    webhook_configs:
+      - url: 'http://127.0.0.1:5001/'
+  - name: 'email'
+    email_configs:
+      - to: 'javacctvnews@163.com'
+        send_resolved: true
+      - to: '841132320@qq.com'
+        send_resolved: true
+#抑制规则，比如主机宕机了，主机上的应用、中间件等告警不必要再发送告警了
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'dev', 'instance']

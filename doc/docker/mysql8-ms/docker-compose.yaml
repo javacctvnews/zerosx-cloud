@@ -15,7 +15,7 @@ services:
     restart: 'no'#unless-stopped
     # 数据卷挂载路径设置,将本机目录映射到容器目录
     volumes:
-      - "./master/my.cnf:/etc/my.cnf"
+      - "./master/.my.cnf:/etc/.my.cnf"
       - "D:/Docker/data/mysql8-ms/master/data:/var/lib/mysql"
       - "./master/log:/var/log/mysql"
     environment: # 设置环境变量,相当于docker run命令中的-e
@@ -43,7 +43,7 @@ services:
     restart: 'no'#unless-stopped
     # 数据卷挂载路径设置,将本机目录映射到容器目录
     volumes:
-      - "./slave/my.cnf:/etc/my.cnf"
+      - "./slave/.my.cnf:/etc/.my.cnf"
       - "D:/Docker/data/mysql8-ms/slave/data:/var/lib/mysql"
       - "./slave/log:/var/log/mysql"
     environment: # 设置环境变量,相当于docker run命令中的-e

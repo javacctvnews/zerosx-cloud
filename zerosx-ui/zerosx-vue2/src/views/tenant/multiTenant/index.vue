@@ -333,6 +333,15 @@ export default {
         },
         {
           attrs: {
+            label: '社会信用代码',
+            prop: 'socialCreditCode',
+            minWidth: '160',
+            align: "center",
+          },
+        },
+        
+        {
+          attrs: {
             label: '创建时间',
             prop: 'createTime',
             minWidth: '150',

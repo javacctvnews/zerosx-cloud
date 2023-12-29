@@ -1,6 +1,7 @@
 package com.zerosx.sas.vo;
 
 import com.alibaba.excel.annotation.ExcelIgnore;
+import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.zerosx.common.base.anno.Trans;
 import com.zerosx.common.base.constants.TranslConstants;
@@ -20,6 +21,7 @@ import java.util.Date;
  */
 @Getter
 @Setter
+@ExcelIgnoreUnannotated
 @Schema(description = "登录日志:分页结果对象")
 public class OauthTokenRecordPageVO implements Serializable {
 

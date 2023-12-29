@@ -1,0 +1,74 @@
+# my global config
+global:
+  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+           - 192.168.3.100:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - "/etc/prometheus/rules/*.yml"
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  - job_name: 'Prometheus'
+    static_configs:
+      - targets: ['192.168.3.100:9090']
+  - job_name: 'Grafana'
+    static_configs:
+      - targets: ['192.168.3.100:3000']
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['192.168.3.100:9100']
+        labels:
+          instance: 'node_exporter'
+
+  # 中间件
+  # Nacos，JSON文件：Nacos-grafana.json
+  - job_name: 'Nacos'
+    metrics_path: '/nacos/actuator/prometheus'
+    static_configs:
+      - targets: ['192.168.3.100:8848']
+  # Redis, Dashboard ID = 11835
+  - job_name: 'redis_exporter'
+    # 本任务的抓取间隔，覆盖全局配置
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['192.168.3.100:9121']
+        labels:
+          instance: 'redis_exporter'
+  # Mysql
+  - job_name: 'Mysql8'
+    static_configs:
+      - targets: ['192.168.3.100:9104']
+
+  # 微服务JVM, Dashboard ID = 4701
+  - job_name: 'zerosx-cloud'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ '192.168.3.100:9600','192.168.3.100:19102','192.168.3.100:19108','192.168.3.100:19106']
+#  - job_name: 'zerosx-gateway'
+#    metrics_path: '/actuator/prometheus'
+#    static_configs:
+#      - targets: ['192.168.3.100:9600']
+#  - job_name: 'zerosx-system'
+#    metrics_path: '/actuator/prometheus'
+#    static_configs:
+#      - targets: ['192.168.3.100:19102']
+#  - job_name: 'zerosx-auth'
+#    metrics_path: '/actuator/prometheus'
+#    static_configs:
+#      - targets: ['192.168.3.100:19108']
+#  - job_name: 'zerosx-resource'
+#    metrics_path: '/actuator/prometheus'
+#    static_configs:
+#      - targets: ['192.168.3.100:19106']
